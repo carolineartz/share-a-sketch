@@ -4,7 +4,7 @@ import * as React from "react"
 import { Box } from "grommet"
 import styled from "styled-components"
 import { hslToColorString, lighten, tint } from "polished"
-import firebase from "./../Firebase"
+import firebase from "../Firebase"
 
 const DEFAULT_SATURATION = 0.47
 const DEFAULT_LIGHTNESS = 0.49

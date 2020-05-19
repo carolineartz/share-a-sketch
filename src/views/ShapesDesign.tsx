@@ -2,7 +2,7 @@ import React from "react"
 
 import { Box, Keyboard, Sidebar, Nav, Button } from "grommet"
 import styled from "styled-components"
-import { ColorCycleButton } from "../components/ColorCycleButton"
+import { ColorCycleButton } from "../components/ShapeCycleButton"
 import firebase from "../Firebase"
 import times from "lodash.times"
 
