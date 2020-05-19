@@ -2,8 +2,8 @@ import React from "react"
 
 import { Box, Keyboard, Sidebar, Nav, Button } from "grommet"
 import styled from "styled-components"
-import { ColorCycleButton } from "./../components/ColorCycleButton"
-import firebase from "./../Firebase"
+import { ColorCycleButton } from "../components/ColorCycleButton"
+import firebase from "../Firebase"
 import times from "lodash.times"
 
 type ButtonData = {
@@ -11,7 +11,7 @@ type ButtonData = {
   value: any
 }
 
-export const ColorDesign = () => {
+export const ShapesDesign = () => {
   const [currentMode, setMode]: [
     ShapeMode,
     React.Dispatch<React.SetStateAction<ShapeMode>>

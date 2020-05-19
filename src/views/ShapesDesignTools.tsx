@@ -2,7 +2,7 @@ import * as React from "react"
 import { Box, Button } from "grommet"
 import { Projects, ClearOption } from "grommet-icons"
 
-export const ColorDesignTools = () => {
+export const ShapesDesignTools = () => {
   return (
     <>
       <Button key="color-design-tools-projects" icon={<Projects />} hoverIndicator />
