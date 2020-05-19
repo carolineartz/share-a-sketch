@@ -1,64 +1,62 @@
 import React from "react"
 
-import { Box, Keyboard } from "grommet"
+import { Box, Keyboard, Sidebar, Nav, Button } from "grommet"
 import styled from "styled-components"
 import { ColorCycleButton } from "./../components/ColorCycleButton"
 import firebase from "./../Firebase"
+import times from "lodash.times"
 
-type ButtonColor = {
+type ButtonData = {
   id: string
   value: any
 }
 
 export const ColorDesign = () => {
   const [currentMode, setMode]: [
-    ColorMode,
-    React.Dispatch<React.SetStateAction<ColorMode>>
-  ] = React.useState("hue" as ColorMode)
+    ShapeMode,
+    React.Dispatch<React.SetStateAction<ShapeMode>>
+  ] = React.useState("color" as ShapeMode)
 
-  const [colors, setColors]: [
-    ButtonColor[],
-    React.Dispatch<React.SetStateAction<ButtonColor[]>>
-  ] = React.useState([] as ButtonColor[])
+  const [shapes, setShapes]: [
+    ButtonData[],
+    React.Dispatch<React.SetStateAction<ButtonData[]>>
+  ] = React.useState([] as ButtonData[])
 
   const handleKeyPress = (event: any) => {
     switch (event.key) {
-      case "h":
-        setMode("hue")
-        break
       case "s":
-        setMode("saturation")
+        setMode("shape")
         break
-      case "l":
-        setMode("lightness")
+      case "c":
+        setMode("color")
         break
     }
   }
 
-  const handleEscape = () => setMode("hue")
+  const handleEscape = () => setMode("shape")
 
   React.useEffect(() => {
     firebase
       .database()
-      .ref("colors")
+      .ref("shapes")
       .orderByKey()
       .limitToFirst(100)
       .once("value")
       .then((snapshot: any) => {
-        const colors = Object.entries(snapshot.val()).map(
-          ([colorId, colorVal]: [string, unknown]) => {
-            return { id: colorId, value: colorVal }
+        const shapes = Object.entries(snapshot.val()).map(
+          ([shapeId, shapeVal]: [string, unknown]) => {
+            return { id: shapeId, value: shapeVal }
           }
         )
-        setColors(colors)
+        setShapes(shapes)
       })
   }, [])
 
   return (
     <Keyboard target="document" onEsc={handleEscape} onKeyDown={handleKeyPress}>
       <Container>
-        {colors.map(({ id, value }: ButtonColor) => (
-          <ColorCycleButton key={id} id={id} mode={currentMode} initialColor={value} />
+        {shapes.map(({ id, value }: ButtonData) => (
+          <ColorCycleButton key={id} id={id} mode={currentMode} initialData={value} />
         ))}
       </Container>
     </Keyboard>
@@ -66,8 +64,8 @@ export const ColorDesign = () => {
 }
 
 const Container = styled(Box)`
+  /* background: #0a0b27; */
   display: grid;
-  grid-gap: 0.25em;
   grid-template-columns: repeat(10, 3em);
   grid-auto-rows: 3em;
 `

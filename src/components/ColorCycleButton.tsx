@@ -3,86 +3,123 @@ import * as React from "react"
 
 import { Box } from "grommet"
 import styled from "styled-components"
-import { hslToColorString } from "polished"
+import { hslToColorString, lighten, tint } from "polished"
 import firebase from "./../Firebase"
 
-
-// const DEFAULT_HUE = 10
-// const DEFAULT_SATURATION = 0.8
-// const DEFAULT_LIGHTNESS = 0.6
+const DEFAULT_SATURATION = 0.47
+const DEFAULT_LIGHTNESS = 0.49
 
 type ColorCycleButtonProps = {
   id: string
-  mode: ColorMode
-  initialColor: ColorComponents
+  mode: ShapeMode
+  initialData: ShapeData
 }
 
-type ColorComponents = {
-  hue: number
-  saturation: number
-  lightness: number
+type ShapeData = {
+  hue?: number
+  saturation?: number
+  lightness?: number
+  clip?: string
 }
 
-export const ColorCycleButton = ({ id, mode, initialColor }: ColorCycleButtonProps) => {
+const SHAPE_CLIPS: string[] = [
+  "0 0, 100% 0, 100% 100%",
+  "0 0, 100% 0, 0 100%",
+  "0 0, 100% 100%, 0 100%",
+  "100% 0, 100% 100%, 0 100%",
+]
+const SHAPE_COLORS: number[] = [170, 200, 230, 260, 290, 320]
 
+export const ColorCycleButton = ({ id, mode, initialData }: ColorCycleButtonProps) => {
   const [color, setColor] = React.useState({
-    hue: initialColor.hue,
-    saturation: parseFloat(initialColor.saturation.toFixed(2)),
-    lightness: parseFloat(initialColor.lightness.toFixed(2)),
+    hue: initialData.hue || SHAPE_COLORS[0],
+    saturation: DEFAULT_SATURATION,
+    lightness: DEFAULT_LIGHTNESS,
   })
+  const [shape, setShape] = React.useState(initialData.clip || SHAPE_CLIPS[0])
 
-  const colorRef = firebase.database().ref("colors/" + id)
+  const shapeRef = firebase.database().ref("shapes/" + id)
 
   React.useEffect(() => {
-    colorRef.on("value", (snapshot: any) => {
-      setColor(snapshot.val())
+    shapeRef.on("value", (snapshot: any) => {
+      setColor({
+        hue: snapshot.val().hue || SHAPE_COLORS[0],
+        saturation: DEFAULT_SATURATION,
+        lightness: DEFAULT_LIGHTNESS,
+      })
+
+      setShape(snapshot.val().clip || SHAPE_CLIPS[0])
     })
   }, [])
 
   return (
-    <ColorButton
-      id={id}
-      height="100%"
-      width="100%"
-      round="small"
-      elevation="medium"
-      bg={color}
+    <ButtonContainer
       onClick={() => {
         switch (mode) {
-          case "hue":
-            colorRef.set({
-              hue: color.hue === 360 ? 0 : color.hue + 20,
-              saturation: color.saturation,
-              lightness: color.lightness,
-            })
+          case "color":
+            const lastHueIndex: number = SHAPE_COLORS.indexOf(color.hue)
+            const nextHue = lastHueIndex >= 0 && SHAPE_COLORS[lastHueIndex + 1]
 
-            break
-          case "saturation":
-            const saturation = parseFloat(color.saturation.toFixed(2))
-            colorRef.set({
-              hue: color.hue,
-              saturation: saturation === 1 ? 0.2 : saturation + 0.2,
-              lightness: color.lightness,
+            shapeRef.set({
+              hue: nextHue || SHAPE_COLORS[0],
+              saturation: DEFAULT_SATURATION,
+              lightness: DEFAULT_LIGHTNESS,
+              clip: shape,
             })
             break
-          case "lightness":
-            const lightness = parseFloat(color.lightness.toFixed(2))
-            colorRef.set({
+          case "shape":
+            const lastShapeIndex: number = SHAPE_CLIPS.indexOf(shape)
+            const nextShape = lastShapeIndex >= 0 && SHAPE_CLIPS[lastShapeIndex + 1]
+            console.log(nextShape)
+            shapeRef.set({
               hue: color.hue,
-              saturation: color.saturation,
-              lightness: lightness === 1 ? 0.2 : lightness + 0.2,
+              saturation: DEFAULT_SATURATION,
+              lightness: DEFAULT_LIGHTNESS,
+              clip: nextShape || SHAPE_CLIPS[0],
             })
+            break
         }
       }}
-    />
+    >
+      <ColorButton
+        id={id}
+        height="100%"
+        width="100%"
+        hue={color.hue}
+        saturation={color.saturation}
+        lightness={color.lightness}
+        clip={shape}
+      />
+    </ButtonContainer>
   )
 }
 
 type ColorButtonProps = {
-  bg: ColorComponents
+  hue: number
+  saturation: number
+  lightness: number
+  clip: string
 }
 
 const ColorButton = styled(Box)<ColorButtonProps>`
-  background: ${props => hslToColorString(props.bg)};
+  background: ${({ hue, saturation, lightness }) =>
+    hslToColorString({ hue, saturation, lightness })};
+  clip-path: ${({ clip }) => `polygon(${clip})`};
   cursor: pointer;
+  &:active,
+  &:focus {
+    outline: none;
+  }
+`
+
+const ButtonContainer = styled(Box)`
+  background: #0a0b27;
+  &:active,
+  &:focus {
+    box-shadow: none;
+  }
+
+  &:hover {
+    border: 3px solid #DA8455;
+  }
 `
