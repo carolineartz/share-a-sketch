@@ -42,11 +42,11 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash.times": "^4.3.6",
     "@types/styled-components": "^5.1.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "concurrently": "^5.2.0",
-    "eslint": "^7.0.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-react": "^1.1.7",
     "eslint-loader": "^4.0.2",
@@ -55,6 +55,8 @@
     "firebase-tools": "^8.2.0",
     "grommet": "^2.13.0",
     "grommet-icons": "^4.4.0",
+    "lodash.times": "^4.3.2",
+    "polished": "^3.6.3",
     "prettier": "^2.0.5",
     "prettier-eslint": "^9.0.1",
     "styled-components": "^5.1.0"
