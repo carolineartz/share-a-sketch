@@ -40,7 +40,7 @@ export const ColorDesign = () => {
       .database()
       .ref("shapes")
       .orderByKey()
-      .limitToFirst(100)
+      .limitToFirst(64)
       .once("value")
       .then((snapshot: any) => {
         const shapes = Object.entries(snapshot.val()).map(
@@ -66,6 +66,6 @@ export const ColorDesign = () => {
 const Container = styled(Box)`
   /* background: #0a0b27; */
   display: grid;
-  grid-template-columns: repeat(10, 3em);
-  grid-auto-rows: 3em;
+  grid-template-columns: repeat(8, 4.5em);
+  grid-auto-rows: 4.5em;
 `
