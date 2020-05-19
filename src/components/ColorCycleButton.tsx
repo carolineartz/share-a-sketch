@@ -80,6 +80,9 @@ export const ColorCycleButton = ({ id, mode, initialData }: ColorCycleButtonProp
             break
         }
       }}
+      css={`
+        margin: -1px;
+      `}
     >
       <ColorButton
         id={id}
@@ -120,6 +123,6 @@ const ButtonContainer = styled(Box)`
   }
 
   &:hover {
-    border: 3px solid #DA8455;
+    border: 3px solid white;
   }
 `

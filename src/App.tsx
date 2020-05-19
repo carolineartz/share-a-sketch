@@ -1,7 +1,10 @@
 import React from "react"
 
 import { Grommet, Box, Button, Sidebar, Avatar, Nav } from "grommet"
-import { Help, Projects, Clock } from "grommet-icons"
+import { Help, Projects, Clock, Cube, Brush } from "grommet-icons"
+import { Toolbar } from "./components/Toolbar"
+import { ColorDesignTools } from "./views/ColorDesignTools"
+import { NavToggleButtons } from "./components/NavToggleButtons"
 
 // import times from "lodash.times"
 import { ColorDesign } from "./views/ColorDesign"
@@ -23,24 +26,36 @@ const App = () => {
   const [view, setView]: [View, React.Dispatch<React.SetStateAction<View>>] = React.useState(
     "press" as View
   )
+  console.log(view)
 
   return (
-    <Grommet full themeMode="dark" theme={customTheme}>
-      <Box pad="medium" justify="between" direction="row">
-        <Sidebar
-          background="brand"
-          elevation="small"
-          round="xsmall"
-          header={<Avatar src="//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80" />}
-          footer={<Button icon={<Help />} hoverIndicator />}
-        >
-          <Nav gap="small">
-            <Button icon={<Projects />} hoverIndicator />
-            <Button icon={<Clock />} hoverIndicator />
-          </Nav>
-        </Sidebar>
-        <Box pad="small" background="white" elevation="small" round="xsmall">
-          <ColorDesign />
+    <Grommet full theme={customTheme}>
+      <Box pad="medium">
+        <Box pad={{ bottom: "medium" }}>
+          <NavToggleButtons
+            width="100%"
+            pad="small"
+            justify="center"
+            active={view === "press" ? "left" : "right"}
+            left={{
+              icon: <Cube />,
+              label: "Shapes",
+              onClick: () => setView("press"),
+            }}
+            right={{
+              icon: <Brush />,
+              label: "Draw",
+              onClick: () => setView("draw"),
+            }}
+          />
+        </Box>
+        <Box gap="medium" direction="row">
+          <Toolbar>{view === ("press" as View) ? <ColorDesignTools /> : <Box />}</Toolbar>
+          <Box align="center" flex="grow">
+            <Box flex="grow" pad="small" background="white" elevation="small" round="xsmall">
+              {view === "press" && <ColorDesign />}
+            </Box>
+          </Box>
         </Box>
       </Box>
     </Grommet>
