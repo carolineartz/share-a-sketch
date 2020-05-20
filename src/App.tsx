@@ -8,15 +8,25 @@ import { NavToggleButtons } from "./components/NavToggleButtons"
 
 import { ShapesDesign } from "./views/ShapesDesign"
 import { DrawDesign } from "./views/DrawDesign"
+import { DrawDesignTools } from "./views/DrawDesignTools"
+import {DesignCanvas} from "./components/DesignCanvas"
+import * as DesignModeContext from "./views/DesignModeContext"
 
 import customTheme from "./theme"
 
-type View = "press" | "draw"
+// const DesignModeContext = React.createContext({
+//   mode: "shape",
+//   changeMode: () => {}
+// })
 
 const App = () => {
-  const [view, setView]: [View, React.Dispatch<React.SetStateAction<View>>] = React.useState(
-    "press" as View
+  const [view, setView]: [DesignView, React.Dispatch<React.SetStateAction<DesignView>>] = React.useState(
+    "press" as DesignView
   )
+  const { setMode } = DesignModeContext.useDesignMode()
+  // const [mode, setMode]: [DesignMode, React.Dispatch<React.SetStateAction<DesignMode>>] = React.useState(
+  //   "shape" as DesignMode
+  // )
 
   return (
     <Grommet full theme={customTheme}>
@@ -28,34 +38,44 @@ const App = () => {
             justify="center"
             active={view === "press" ? "left" : "right"}
             left={{
-              icon: <Cube />,
+              icon: <Cube color={view === "press" ? "white" : "text"} />,
               label: "Shapes",
-              onClick: () => setView("press"),
+              onClick: () => {
+                setView("press")
+                setMode("rotate")
+              },
             }}
             right={{
-              icon: <Brush />,
+              icon: <Brush color={view === "draw" ? "white" : "text"} />,
               label: "Draw",
-              onClick: () => setView("draw"),
+              onClick: () => {
+                setView("draw")
+                setMode("paint")
+              },
             }}
           />
         </Box>
-        <Box gap="medium" direction="row">
-          <Toolbar>{view === ("press" as View) ? <ShapesDesignTools /> : <Box />}</Toolbar>
-          <Box align="center" flex="grow">
-            <Box
-              flex="grow"
-              pad="small"
-              background="white"
-              height="672px" // TOOD: use ResponsiveContext
-              width="672px" // TOOD: use ResponsiveContext
-              elevation="small"
-              round="xsmall"
-            >
-              {view === "press" && <ShapesDesign />}
-              {view === "draw" && <DrawDesign />}
-            </Box>
+        <DesignModeContext.Provider>
+          <Box gap="medium" direction="row">
+            <Toolbar>{view === ("press" as DesignView) ? <ShapesDesignTools /> : <DrawDesignTools />}</Toolbar>
+            <DesignCanvas>
+              <Box
+                flex="grow"
+                pad="small"
+                background="white"
+                width="100%"
+                height="100%"
+                // height="672px" // TOOD: use ResponsiveContext
+                // width="672px" // TOOD: use ResponsiveContext
+                elevation="small"
+                round="xsmall"
+              >
+                {view === "press" && <ShapesDesign />}
+                {view === "draw" && <DrawDesign />}
+              </Box>
+            </DesignCanvas>
           </Box>
-        </Box>
+        </DesignModeContext.Provider>
       </Box>
     </Grommet>
   )

@@ -3,6 +3,8 @@ import { Box, Sidebar, Avatar, Button, Clock, Nav, ButtonProps, BoxProps } from 
 import { Projects, Help, Ad } from "grommet-icons"
 import styled, { css } from "styled-components"
 
+import * as DesignModeContext from "./../views/DesignModeContext"
+
 type NavToggleButtonProps = BoxProps & {
   active: ButtonToggleSide
   left: ButtonProps & {
@@ -13,16 +15,11 @@ type NavToggleButtonProps = BoxProps & {
   }
 }
 
+// FIXME either have the mode state or be generic and pass it in
 export const NavToggleButtons = ({ left, right, active, ...restProps }: NavToggleButtonProps) => {
   return (
     <Box direction="row" {...restProps}>
-      <ButtonToggle
-        icon={left.icon}
-        active={active === "left"}
-        side="left"
-        label={left.label}
-        onClick={left.onClick}
-      />
+      <ButtonToggle icon={left.icon} active={active === "left"} side="left" label={left.label} onClick={left.onClick} />
       <ButtonToggle
         icon={right.icon}
         active={active === "right"}

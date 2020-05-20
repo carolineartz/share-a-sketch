@@ -2,6 +2,7 @@
 import * as React from "react"
 
 import { Box } from "grommet"
+import * as DesignModeContext from "./../views/DesignModeContext"
 import styled from "styled-components"
 import { hslToColorString } from "polished"
 import firebase from "../Firebase"
@@ -11,7 +12,6 @@ const DEFAULT_LIGHTNESS = 0.49
 
 type ShapeCycleButtonProps = {
   id: string
-  mode: ShapeMode
   initialData: ShapeData
 }
 
@@ -30,7 +30,9 @@ const SHAPE_CLIPS: string[] = [
 ]
 const SHAPE_COLORS: number[] = [170, 200, 230, 260, 290, 320]
 
-export const ShapeCycleButton = ({ id, mode, initialData }: ShapeCycleButtonProps) => {
+export const ShapeCycleButton = ({ id, initialData }: ShapeCycleButtonProps) => {
+  const { mode } = DesignModeContext.useDesignMode()
+
   const [color, setColor] = React.useState({
     hue: initialData.hue || SHAPE_COLORS[0],
     saturation: DEFAULT_SATURATION,
@@ -67,16 +69,13 @@ export const ShapeCycleButton = ({ id, mode, initialData }: ShapeCycleButtonProp
               lightness: DEFAULT_LIGHTNESS,
             })
             break
-          case "shape":
+          case "rotate":
             const lastShapeIndex: number = SHAPE_CLIPS.indexOf(shape)
             const nextShape = lastShapeIndex >= 0 && SHAPE_CLIPS[lastShapeIndex + 1]
 
             setShape(nextShape || SHAPE_CLIPS[0])
         }
       }}
-      css={`
-        margin: -1px;
-      `}
     >
       <ColorButton
         id={id}
@@ -115,8 +114,10 @@ const ButtonContainer = styled(Box)`
   &:focus {
     box-shadow: none;
   }
-
   &:hover {
-    border: 3px solid white;
+    box-shadow: 3px 3px white inset, -3px -3px white inset;
+    div {
+      box-shadow: 3px 3px white inset, -3px -3px white inset;
+    }
   }
 `

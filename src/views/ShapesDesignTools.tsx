@@ -1,12 +1,29 @@
 import * as React from "react"
-import { Box, Button } from "grommet"
-import { Projects, ClearOption } from "grommet-icons"
+import { Button } from "grommet"
+import { Cycle, ClearOption } from "grommet-icons"
+import * as DesignModeContext from "./DesignModeContext"
 
 export const ShapesDesignTools = () => {
+  const { mode, setMode } = DesignModeContext.useDesignMode()
+
   return (
     <>
-      <Button key="color-design-tools-projects" icon={<Projects />} hoverIndicator />
-      <Button key="color-design-tools-clock" icon={<ClearOption />} hoverIndicator />
+      <Button
+        title="Rotate Shape"
+        key="shapes-design-rotate"
+        icon={<Cycle color={mode === "rotate" ? "white" : "text"} />}
+        hoverIndicator
+        active={mode === "rotate"}
+        onClick={() => setMode("rotate")}
+      />
+      <Button
+        title="Color Shape"
+        key="shapes-design-color"
+        icon={<ClearOption color={mode === "color" ? "white" : "text"} />}
+        hoverIndicator
+        active={mode === "color"}
+        onClick={() => setMode("color")}
+      />
     </>
   )
 }

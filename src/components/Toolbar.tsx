@@ -8,19 +8,7 @@ type ToolbarProps = {
 
 export const Toolbar = ({ children }: ToolbarProps) => {
   return (
-    <Sidebar
-      // background="#4256b8"
-      // border={{
-      //   color: "control",
-      //   size: "medium",
-      //   style: "dashed",
-      //   side: "all",
-      // }}
-      elevation="small"
-      round="xsmall"
-      header={<Ad />}
-      footer={<Button icon={<Help />} hoverIndicator />}
-    >
+    <Sidebar elevation="small" round="xsmall" footer={<Button icon={<Help />} hoverIndicator />}>
       <Nav gap="small">{children}</Nav>
     </Sidebar>
   )

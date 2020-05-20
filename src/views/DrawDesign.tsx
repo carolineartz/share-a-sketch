@@ -5,13 +5,16 @@ import { Box, Keyboard, Nav, Button } from "grommet"
 
 import firebase from "../Firebase"
 import DrawingCanvas from "./../DrawingCanvas"
+import * as DesignModeContext from "./DesignModeContext"
 
 type PathData = {
   id: string
   value: any
 }
 
+
 export const DrawDesign = () => {
+  const { mode, setMode } = DesignModeContext.useDesignMode()
   const canvasRef = React.useRef(null)
   const [drawingCanvas, setDrawingCanvas]: [DrawingCanvas | undefined, React.Dispatch<React.SetStateAction<undefined | DrawingCanvas>>] = React.useState() // prettier-ignore
 
@@ -38,6 +41,8 @@ export const DrawDesign = () => {
         console.log("CHILD ADDED")
         drawingCanvas.loadPath({ id: addedSnapshot.key, value: addedSnapshot.val() })
       })
+
+      setMode("paint")
     }
 
     return () => {
@@ -55,21 +60,33 @@ export const DrawDesign = () => {
         dc = new DrawingCanvas({ canvas })
         setDrawingCanvas(dc)
       }
+      if (mode === "paint") {
+        dc.draw()
+      }
+
+      else if (mode === "erase") {
+        dc.erase()
+      }
     }
     return () => {
       firebase.database().ref().off()
     }
-  }, [drawingCanvas])
+  }, [drawingCanvas, mode])
 
   const handleKeyPress = (event: any) => {
     switch (event.key) {
+      case "p":
       case "d":
         if (drawingCanvas) {
+          setMode("paint")
+          drawingCanvas.mode = "paint"
           drawingCanvas.draw()
         }
         break
       case "e":
         if (drawingCanvas) {
+          setMode("erase")
+          drawingCanvas.mode = "erase"
           drawingCanvas.erase()
         }
     }

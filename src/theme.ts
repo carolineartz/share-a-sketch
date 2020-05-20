@@ -1,16 +1,32 @@
-import { deepFreeze, DeepReadonly, deepMerge } from "grommet/utils"
-// import { ThemeType } from "grommet/themes/base"
-import { dark, ThemeType } from "grommet"
+import { deepFreeze } from "grommet/utils"
+import { ThemeType } from "grommet"
 
 export const customTheme: ThemeType = {
+  button: {
+    extend: "font-weight: bold",
+  },
   global: {
+    font: {
+      family: "Quicksand",
+    },
+    hover: {
+      background: {
+        opacity: 1.0
+      }
+    },
+    active: {
+      color: "white",
+      background: {
+        opacity: 0.75
+      }
+    },
     colors: {
-      active: "rgba(102,102,102,0.5)",
+      active: "brand",
       border: "rgba(255,255,255,0.33)",
-      brand: "#02c6cc",
+      brand: "#4291b9",
       control: "#6AB2E0",
       focus: "#6AB2E0",
-      text: "#eeeeee",
+      text: "#0a0a27",
       "accent-1": "#DA8455",
       "accent-2": "#60EB9F",
       "accent-3": "#60EBE1",

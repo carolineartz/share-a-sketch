@@ -16,7 +16,7 @@ type ToolState = "inactive" | "active"
 export default class DrawingCanvas {
   localIds: Set<string> = new Set()
   brush: DrawTool
-  mode: DrawMode = "draw"
+  mode: DrawMode = "paint"
   toolState: ToolState = "inactive"
 
   constructor({ canvas, initialData }: { canvas: HTMLCanvasElement; initialData?: any }) {
@@ -30,7 +30,7 @@ export default class DrawingCanvas {
       this.toolState = "inactive"
       const brush = this.brush
       // just drew a new line, need to update its store it add event listenr to erase if appropriate
-      if (this.mode === "draw" && brush.currentPath) {
+      if (this.mode === "paint" && brush.currentPath) {
         this.setPathEventHandlers(brush.currentPath)
       }
     }
@@ -38,7 +38,7 @@ export default class DrawingCanvas {
     paper.project.view.onMouseDown = (event: paper.MouseEvent) => {
       this.toolState = "active"
 
-      if (this.mode === "draw" && this.brush.currentPath) {
+      if (this.mode === "paint" && this.brush.currentPath) {
         this.localIds.add(this.brush.currentPath.data.id)
       }
     }
@@ -95,7 +95,7 @@ export default class DrawingCanvas {
     if (this.mode === "erase") {
       this.brush = new DrawTool()
     }
-    this.mode = "draw"
+    this.mode = "paint"
     this.brush.activate()
   }
 }
