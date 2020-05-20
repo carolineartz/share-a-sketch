@@ -38,28 +38,11 @@ export const ShapeCycleButton = ({ id, mode, initialData }: ShapeCycleButtonProp
   })
   const [shape, setShape] = React.useState(initialData.clip || SHAPE_CLIPS[0])
 
-  React.useEffect(() => {
-    const shapeRef = firebase.database().ref("shapes/" + id)
-
-    shapeRef.on("value", (snapshot: any) => {
-      setColor({
-        hue: snapshot.val().hue || SHAPE_COLORS[0],
-        saturation: DEFAULT_SATURATION,
-        lightness: DEFAULT_LIGHTNESS,
-      })
-
-      setShape(snapshot.val().clip || SHAPE_CLIPS[0])
-
-      return () => {
-        shapeRef.off()
-      }
-    })
-  }, [id])
+  const shapeRef = React.useRef(firebase.database().ref("/shapes/" + id))
 
   React.useEffect(() => {
-    const shapeRef = firebase.database().ref("shapes/" + id)
-
-    shapeRef.set({
+    const sr = shapeRef.current
+    sr.set({
       hue: color.hue,
       saturation: color.saturation,
       lightness: color.lightness,
@@ -67,9 +50,9 @@ export const ShapeCycleButton = ({ id, mode, initialData }: ShapeCycleButtonProp
     })
 
     return () => {
-      shapeRef.off()
+      sr.off()
     }
-  }, [color, shape, id])
+  }, [color, shape])
 
   return (
     <ButtonContainer
@@ -109,6 +92,7 @@ export const ShapeCycleButton = ({ id, mode, initialData }: ShapeCycleButtonProp
 }
 
 type ColorButtonProps = {
+  id: string
   hue: number
   saturation: number
   lightness: number
@@ -116,8 +100,7 @@ type ColorButtonProps = {
 }
 
 const ColorButton = styled(Box)<ColorButtonProps>`
-  background: ${({ hue, saturation, lightness }) =>
-    hslToColorString({ hue, saturation, lightness })};
+  background: ${({ hue, saturation, lightness }) => hslToColorString({ hue, saturation, lightness })};
   clip-path: ${({ clip }) => `polygon(${clip})`};
   cursor: pointer;
   &:active,

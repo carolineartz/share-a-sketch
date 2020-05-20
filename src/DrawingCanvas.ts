@@ -54,7 +54,6 @@ export default class DrawingCanvas {
 
   loadPath(pathData: PathData) {
     const existingPath = this.findPath(pathData.id) as any
-    // debugger
     if (existingPath) {
       existingPath.setPathData(pathData.value)
     } else {
@@ -118,6 +117,7 @@ class DrawTool extends Tool {
       const key = firebase.database().ref("draw_paths").push().key
       this.pathRef = firebase.database().ref(`/draw_paths/${key}`)
       console.log("ADDING KEY")
+
       this.currentPath = new Path()
       this.currentPath.data.id = key
       this.currentPath.strokeColor = new Color("black")
@@ -138,12 +138,4 @@ class DrawTool extends Tool {
       }
     }
   }
-
-  // syncData() {
-  //   return debounce(() => {
-  //     if (this.pathRef && this.currentPath) {
-  //       this.pathRef.set((this.currentPath as any).getPathData())
-  //     }
-  //   }, 300)
-  // }
 }

@@ -2,7 +2,6 @@
 import React from "react"
 
 import { Box, Keyboard, Nav, Button } from "grommet"
-import styled from "styled-components"
 
 import firebase from "../Firebase"
 import DrawingCanvas from "./../DrawingCanvas"
@@ -14,9 +13,9 @@ type PathData = {
 
 export const DrawDesign = () => {
   const canvasRef = React.useRef(null)
-  const [paths, setPaths]: [PathData[], React.Dispatch<React.SetStateAction<PathData[]>>] = React.useState([] as PathData[]) // prettier-ignore
   const [drawingCanvas, setDrawingCanvas]: [DrawingCanvas | undefined, React.Dispatch<React.SetStateAction<undefined | DrawingCanvas>>] = React.useState() // prettier-ignore
 
+  // TODO: combine effects
   React.useEffect(() => {
     console.log("UPDATING FOR NEW DRAWING CANVAS")
 
@@ -27,12 +26,9 @@ export const DrawDesign = () => {
         .once("value")
         .then((snapshot: any) => {
           try {
-            const ps = Object.entries(snapshot.val()).map(([pathId, pathVal]: [string, unknown]) => {
-              const p = { id: pathId, value: pathVal }
-              drawingCanvas.loadPath(p)
-              return p
+            Object.entries(snapshot.val()).map(([pathId, pathVal]: [string, unknown]) => {
+              drawingCanvas.loadPath({ id: pathId, value: pathVal })
             })
-            setPaths(ps)
           } catch (e) {
             console.error(e)
           }
@@ -40,16 +36,7 @@ export const DrawDesign = () => {
 
       pathsRef.on("child_added", (addedSnapshot: any) => {
         console.log("CHILD ADDED")
-        // debugger
         drawingCanvas.loadPath({ id: addedSnapshot.key, value: addedSnapshot.val() })
-        // const key = addedSnapshot.key
-
-        // if (!drawingCanvas.localIds.has(key)) {
-          // const pathRef = firebase.database().ref(`/draw_paths/${key}`)
-          // pathRef.on("value", (updatedSnapshot: any) => {
-          //   drawingCanvas.loadPath(updatedSnapshot.val())
-          // })
-        // }
       })
     }
 
@@ -57,12 +44,6 @@ export const DrawDesign = () => {
       pathsRef.off()
     }
   }, [drawingCanvas])
-
-  // React.useEffect(() => {
-  //     const pathRef = firebase.database().ref(`/draw_paths`)
-  //     // pathRef.off()
-
-  // })
 
   React.useEffect(() => {
     const canvas = canvasRef.current
