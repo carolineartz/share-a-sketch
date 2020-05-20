@@ -7,6 +7,8 @@ import { ShapesDesignTools } from "./views/ShapesDesignTools"
 import { NavToggleButtons } from "./components/NavToggleButtons"
 
 import { ShapesDesign } from "./views/ShapesDesign"
+import { DrawDesign } from "./views/DrawDesign"
+
 import customTheme from "./theme"
 
 type View = "press" | "draw"
@@ -50,6 +52,7 @@ const App = () => {
               round="xsmall"
             >
               {view === "press" && <ShapesDesign />}
+              {view === "draw" && <DrawDesign />}
             </Box>
           </Box>
         </Box>
