@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import paper, { Tool, Path, Color } from "paper"
 import debounce from "lodash.debounce"
+import throttle from "lodash.throttle"
 import firebase from "./Firebase"
 
 type PathMap = Record<
@@ -107,7 +108,7 @@ class DrawTool extends Tool {
   constructor() {
     super()
 
-    const syncData = debounce(() => {
+    const syncData = throttle(() => {
       if (this.pathRef && this.currentPath) {
         this.pathRef.set((this.currentPath as any).getPathData())
       }
