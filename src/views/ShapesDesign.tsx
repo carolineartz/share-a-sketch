@@ -1,10 +1,9 @@
 import React from "react"
 
-import { Box, Keyboard, Sidebar, Nav, Button } from "grommet"
+import { Box, Keyboard } from "grommet"
 import styled from "styled-components"
-import { ColorCycleButton } from "../components/ShapeCycleButton"
+import { ShapeCycleButton } from "../components/ShapeCycleButton"
 import firebase from "../Firebase"
-import times from "lodash.times"
 
 type ButtonData = {
   id: string
@@ -36,9 +35,8 @@ export const ShapesDesign = () => {
   const handleEscape = () => setMode("shape")
 
   React.useEffect(() => {
-    firebase
-      .database()
-      .ref("shapes")
+    const shapesRef = firebase.database().ref("shapes")
+    shapesRef
       .orderByKey()
       .limitToFirst(64)
       .once("value")
@@ -50,13 +48,17 @@ export const ShapesDesign = () => {
         )
         setShapes(shapes)
       })
+
+    return () => {
+      shapesRef.off()
+    }
   }, [])
 
   return (
     <Keyboard target="document" onEsc={handleEscape} onKeyDown={handleKeyPress}>
       <Container>
         {shapes.map(({ id, value }: ButtonData) => (
-          <ColorCycleButton key={id} id={id} mode={currentMode} initialData={value} />
+          <ShapeCycleButton key={id} id={id} mode={currentMode} initialData={value} />
         ))}
       </Container>
     </Keyboard>
