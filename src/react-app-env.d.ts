@@ -6,3 +6,8 @@ type DrawMode = "draw" | "erase" | "none"
 type ButtonToggleSide = "left" | "right"
 
 declare module "lz-string"
+
+type PathData = {
+  id: string
+  value: any
+}

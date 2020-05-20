@@ -5,69 +5,80 @@ import { Box, Keyboard, Nav, Button } from "grommet"
 import styled from "styled-components"
 
 import firebase from "../Firebase"
-import times from "lodash.times"
 import DrawingCanvas from "./../DrawingCanvas"
-import LZString from "lz-string"
 
-type DrawData = {
+type PathData = {
   id: string
   value: any
 }
+
 export const DrawDesign = () => {
   const canvasRef = React.useRef(null)
-  // const drawingRef = React.useRef(null)
-  const [drawingRef, setDrawingRef]: [
-    any | undefined,
-    React.Dispatch<React.SetStateAction<any | undefined>>
-  ] = React.useState()
-
-  const [drawingCanvas, setDrawingCanvas]: [
-    DrawingCanvas | undefined,
-    React.Dispatch<React.SetStateAction<undefined | DrawingCanvas>>
-  ] = React.useState()
+  const [paths, setPaths]: [PathData[], React.Dispatch<React.SetStateAction<PathData[]>>] = React.useState([] as PathData[]) // prettier-ignore
+  const [drawingCanvas, setDrawingCanvas]: [DrawingCanvas | undefined, React.Dispatch<React.SetStateAction<undefined | DrawingCanvas>>] = React.useState() // prettier-ignore
 
   React.useEffect(() => {
-    firebase
-      .database()
-      .ref("drawing-comp")
-      .orderByKey()
-      .limitToFirst(1)
-      .once("value", (snapshot: any) => {
-        const drawings = Object.entries(snapshot.val()).map(
-          ([drawingId, drawingVal]: [string, unknown]) => {
-            return {
-              ref: "/drawing-comp/" + drawingId,
-              value: drawingVal,
-            }
+    console.log("UPDATING FOR NEW DRAWING CANVAS")
+
+    const pathsRef = firebase.database().ref("draw_paths")
+    if (drawingCanvas) {
+      pathsRef
+        .orderByKey()
+        .once("value")
+        .then((snapshot: any) => {
+          try {
+            const ps = Object.entries(snapshot.val()).map(([pathId, pathVal]: [string, unknown]) => {
+              const p = { id: pathId, value: pathVal }
+              drawingCanvas.loadPath(p)
+              return p
+            })
+            setPaths(ps)
+          } catch (e) {
+            console.error(e)
           }
-        )
-        // const dr = firebase.database().ref("/drawing-comp/" + drawings[0].id)
-        setDrawingRef(drawings[0])
+        })
+
+      pathsRef.on("child_added", (addedSnapshot: any) => {
+        console.log("CHILD ADDED")
+        // debugger
+        drawingCanvas.loadPath({ id: addedSnapshot.key, value: addedSnapshot.val() })
+        // const key = addedSnapshot.key
+
+        // if (!drawingCanvas.localIds.has(key)) {
+          // const pathRef = firebase.database().ref(`/draw_paths/${key}`)
+          // pathRef.on("value", (updatedSnapshot: any) => {
+          //   drawingCanvas.loadPath(updatedSnapshot.val())
+          // })
+        // }
       })
-    return () => {
-      firebase.database().ref().off()
     }
-  }, [])
+
+    return () => {
+      pathsRef.off()
+    }
+  }, [drawingCanvas])
+
+  // React.useEffect(() => {
+  //     const pathRef = firebase.database().ref(`/draw_paths`)
+  //     // pathRef.off()
+
+  // })
 
   React.useEffect(() => {
     const canvas = canvasRef.current
 
-    if (canvas && drawingRef) {
-      // const dr = firebase.database().ref(drawingRef)
+    if (canvas) {
       let dc = drawingCanvas
 
       if (!dc) {
         dc = new DrawingCanvas({ canvas })
         setDrawingCanvas(dc)
       }
-
-      const decoded = LZString.decompressFromUTF16(drawingRef.value)
-      dc.import(decoded)
     }
     return () => {
       firebase.database().ref().off()
     }
-  }, [drawingRef, drawingCanvas])
+  }, [drawingCanvas])
 
   const handleKeyPress = (event: any) => {
     switch (event.key) {
@@ -89,12 +100,3 @@ export const DrawDesign = () => {
     </Keyboard>
   )
 }
-
-// const Container = styled(Box)`
-//   /* background: #0a0b27; */
-//   display: grid;
-// <Keyboard target="document" onEsc={handleEscape} onKeyDown={handleKeyPress}>
-// </Keyboard>
-//   grid-template-columns: repeat(8, 4.5em);
-//   grid-auto-rows: 4.5em;
-// `
