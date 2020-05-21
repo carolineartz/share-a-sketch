@@ -1,9 +1,9 @@
 import * as React from "react"
-import firebase from "./../Firebase"
 import times from "lodash.times"
 import range from "lodash.range"
 import zipObject from "lodash.zipobject"
 import constant from "lodash.constant"
+import firebase from "../Firebase"
 
 const shapesRef = firebase.database().ref("shapes_new")
 
@@ -22,18 +22,13 @@ const DEFAULT_SHAPE: Shape = {
   rotationIndex: DEFAULT_ROTATION_INDEX,
 }
 
-export const createShapes = (): Promise<ShapeData> => {
-  return Promise.all(
-    range(200).map(() => {
-      return shapesRef.push(DEFAULT_SHAPE).key
-    })
-  ).then(foo => {
-    return zipObject(foo as string[], times(200, constant(DEFAULT_SHAPE))) as ShapeData
-  })
-}
+export const createShapes = (): Promise<ShapeData> =>
+  Promise.all(range(200).map(() => shapesRef.push(DEFAULT_SHAPE).key)).then(
+    foo => zipObject(foo as string[], times(200, constant(DEFAULT_SHAPE))) as ShapeData
+  )
 
-export const loadShapes = (onLoadShapes: React.Dispatch<React.SetStateAction<ShapeData>>): Promise<void> => {
-  return shapesRef
+export const loadShapes = (onLoadShapes: React.Dispatch<React.SetStateAction<ShapeData>>): Promise<void> =>
+  shapesRef
     .orderByKey()
     .limitToFirst(200)
     .once("value")
@@ -45,13 +40,11 @@ export const loadShapes = (onLoadShapes: React.Dispatch<React.SetStateAction<Sha
         shapes = await createShapes()
         onLoadShapes(shapes)
       }
-
     })
-    .catch((err: any) => {
+    .catch(() => {
       // const foo = createShapes()
       console.error("error fetching shapes")
     })
-}
 
 export const connect = (onChange: React.Dispatch<React.SetStateAction<ShapeData>>): void => {
   shapesRef.on("child_changed", (snapshot: any) => {
@@ -62,9 +55,9 @@ export const connect = (onChange: React.Dispatch<React.SetStateAction<ShapeData>
   })
 }
 
-export const disconnect = () => shapesRef.off()
+export const disconnect = (): void => shapesRef.off()
 
-export const updateShape = ({ id, shape }: { id: string; shape: Shape }) => {
+export const updateShape = ({ id, shape }: { id: string; shape: Shape }): void => {
   const shapeRef = firebase.database().ref(`/shapes_new/${id}`)
   shapeRef.set(shape)
 }

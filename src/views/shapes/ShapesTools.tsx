@@ -1,9 +1,9 @@
 import * as React from "react"
 import { Button } from "grommet"
 import { Cycle, ClearOption } from "grommet-icons"
-import * as DesignModeContext from "./../DesignModeContext"
+import * as DesignModeContext from "../DesignModeContext"
 
-export const ShapesTools = () => {
+export const ShapesTools = (): JSX.Element => {
   const { mode, setMode } = DesignModeContext.useDesignMode()
 
   return (

@@ -1,7 +1,7 @@
 import { deepFreeze } from "grommet/utils"
 import { ThemeType } from "grommet"
 
-export const customTheme: ThemeType = {
+const theme: ThemeType = {
   button: {
     extend: "font-weight: bold; border-width: 5px ;",
   },
@@ -11,13 +11,13 @@ export const customTheme: ThemeType = {
     },
     hover: {
       background: {
-        opacity: 1.0
-      }
+        opacity: 1.0,
+      },
     },
     active: {
       color: "white",
       background: {
-        opacity: 1
+        opacity: 1,
       },
       // border:
     },
@@ -66,4 +66,4 @@ export const customTheme: ThemeType = {
   // },
 }
 
-export default deepFreeze(customTheme)
+export const customTheme = deepFreeze(theme)

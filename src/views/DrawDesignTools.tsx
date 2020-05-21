@@ -3,7 +3,7 @@ import { Button } from "grommet"
 import { Edit, Erase } from "grommet-icons"
 import * as DesignModeContext from "./DesignModeContext"
 
-export const DrawDesignTools = () => {
+export const DrawDesignTools = (): JSX.Element => {
   const { mode, setMode } = DesignModeContext.useDesignMode()
 
   return (

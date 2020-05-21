@@ -1,0 +1,7 @@
+build/*
+.firebase/*
+!*/**/*.js
+!*/**/*.jsx
+!*/**/*.ts
+!*/**/*.tsx
+node_modules/*

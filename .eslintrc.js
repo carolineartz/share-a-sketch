@@ -1,55 +1,28 @@
-// basic .eslintrc.js compatible with react prettier and typescript
 module.exports = {
-  // Specifies the ESLint parser for TypeScript
-  parser: "@typescript-eslint/parser",
-  extends: [
-    "eslint:recommended", // start with the default recommended rules
-    "plugin:react/recommended", // uses react-specific linting rules
-    "plugin:@typescript-eslint/recommended", // uses typescript-specific lintinng rules
-    "plugin:prettier/recommended", // enables eslint-plugin-prettier and eslint-config-prettier
-    "prettier/@typescript-eslint", // disables typescript-specific linting rules that conflict with prettier
-    "prettier/react" // disables react-specific linting rules that conflict with prettier
+  "extends": [
+    "sarpik"
   ],
-  plugins: [
-    "react",
-    "@typescript-eslint",
-    "prettier"
-  ],
-  settings: {
-    react: {
-      pragma: "React",
-      version: "detect"
-    }
-  },
-  env: {
-    browser: true,
-    node: true,
-    es6: true,
-  },
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-    // Allows for the parsing of modern ECMAScript features
-    ecmaVersion: 2018,
-    // Allows for the use of imports
-    sourceType: "module",
-  },
-  rules: {
-    // Disable prop-types as we use TypeScript for type checking
-    "react/prop-types": "off",
-    // Allow implicit void for now...
-    "@typescript-eslint/explicit-function-return-type": "off",
-    // Enable prettier rules
-    "prettier/prettier": 1,
-    // allow @ts-ignore for testing purposes
-    "@typescript-eslint/ban-ts-ignore": "off",
-    "@typescript-eslint/interface-name-prefix": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-use-before-define": "off",
-    "@typescript-eslint/no-namespace":"off",
-    "react/display-name": "off",
-    "react/no-unescaped-entities": "off",
-  },
-};
+    "rules": {
+    "no-console": "off",
+    "no-unused-vars": "off",
+    "indent": ["error", 2],
+    "semi": ["error", "never"],
+    "react/jsx-props-no-spreading": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/explicit-function-return-type": ["error", {
+      "allowExpressions": true,
+      "allowTypedFunctionExpressions": true,
+      "allowHigherOrderFunctions": true,
+      "allowConciseArrowFunctionExpressionsStartingWithVoid": true,
+    }],
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "es5",
+        "singleQuote": false,
+        "printWidth": 120,
+        "semi": false
+      }
+    ]
+  }
+}

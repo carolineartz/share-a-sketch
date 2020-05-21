@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import paper, { Tool, Path, Color, Size } from "paper"
-import debounce from "lodash.debounce"
 import throttle from "lodash.throttle"
 import firebase from "./Firebase"
 
@@ -21,7 +19,7 @@ export default class DrawingCanvas {
   toolState: ToolState = "inactive"
   onResize: Function
 
-  constructor({ canvas, initialData }: { canvas: HTMLCanvasElement; initialData?: any }) {
+  constructor({ canvas }: { canvas: HTMLCanvasElement }) {
     paper.setup(canvas)
     ;(window as any).paper = paper
     this.scope = paper
@@ -29,15 +27,16 @@ export default class DrawingCanvas {
     this.brush = new DrawTool()
     this.draw()
 
-    this.onResize = () => {
+    this.onResize = (): void => {
       const elem = paper.project.view.element
       if (elem.parentElement) {
         const rect = elem.parentElement.getBoundingClientRect()
         ;(paper.project.view as any).setViewSize(new Size(rect.width, rect.height))
+        // eslint-disable-next-line indent
       }
     }
 
-    paper.project.view.onMouseUp = (event: paper.MouseEvent) => {
+    paper.project.view.onMouseUp = (_event: paper.MouseEvent): void => {
       this.toolState = "inactive"
       const brush = this.brush
       // just drew a new line, need to update its store it add event listenr to erase if appropriate
@@ -46,7 +45,7 @@ export default class DrawingCanvas {
       }
     }
 
-    paper.project.view.onMouseDown = (event: paper.MouseEvent) => {
+    paper.project.view.onMouseDown = (_event: paper.MouseEvent): void => {
       this.toolState = "active"
 
       if (this.mode === "paint" && this.brush.currentPath) {
@@ -63,7 +62,7 @@ export default class DrawingCanvas {
     return this.paths.find(path => path.data.id === pathId)
   }
 
-  loadPath(pathData: PathData) {
+  loadPath(pathData: PathData): void {
     const existingPath = this.findPath(pathData.id) as any
     if (existingPath) {
       existingPath.setPathData(pathData.value)
@@ -85,8 +84,8 @@ export default class DrawingCanvas {
     }
   }
 
-  setPathEventHandlers(path: paper.Path) {
-    path.onMouseEnter = (event: paper.MouseEvent) => {
+  setPathEventHandlers(path: paper.Path): void {
+    path.onMouseEnter = (_event: paper.MouseEvent): void => {
       if (this.mode === "erase" && this.toolState === "active") {
         path.remove()
         if (path.data.id) {
@@ -98,19 +97,19 @@ export default class DrawingCanvas {
       }
     }
 
-    path.onMouseLeave = (event: paper.MouseEvent) => {
+    path.onMouseLeave = (_event: paper.MouseEvent): void => {
       if (path) {
         path.fullySelected = false
       }
     }
   }
 
-  erase() {
+  erase(): void {
     this.mode = "erase"
     this.brush.remove()
   }
 
-  draw() {
+  draw(): void {
     if (this.mode === "erase") {
       this.brush = new DrawTool()
     }
@@ -132,8 +131,11 @@ class DrawTool extends Tool {
       }
     }, 300)
 
-    this.onMouseDown = (_evt: paper.ToolEvent) => {
-      const key = firebase.database().ref("draw_paths").push().key
+    this.onMouseDown = (_evt: paper.ToolEvent): void => {
+      const key = firebase
+        .database()
+        .ref("draw_paths")
+        .push().key
       this.pathRef = firebase.database().ref(`/draw_paths/${key}`)
       console.log("ADDING KEY")
 
@@ -144,13 +146,13 @@ class DrawTool extends Tool {
       this.currentPath.strokeCap = "round"
     }
 
-    this.onMouseUp = (_evt: paper.ToolEvent) => {
+    this.onMouseUp = (_evt: paper.ToolEvent): void => {
       if (this.currentPath) {
         this.currentPath.simplify()
       }
     }
 
-    this.onMouseDrag = (evt: paper.ToolEvent) => {
+    this.onMouseDrag = (evt: paper.ToolEvent): void => {
       if (this.currentPath) {
         this.currentPath.add(evt.point)
         syncData()

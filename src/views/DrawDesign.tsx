@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable indent */
 import React from "react"
 
-import { Box, Keyboard, Nav, Button } from "grommet"
-import { ResizableCanvas } from "./../components/ResizableCanvas"
+import { Keyboard } from "grommet"
+import { ResizableCanvas } from "../components/ResizableCanvas"
 import firebase from "../Firebase"
-import DrawingCanvas from "./../DrawingCanvas"
+import DrawingCanvas from "../DrawingCanvas"
 import * as DesignModeContext from "./DesignModeContext"
 
 type PathData = {
@@ -12,11 +12,10 @@ type PathData = {
   value: any
 }
 
-export const DrawDesign = () => {
+export const DrawDesign = (): JSX.Element => {
   const { mode, setMode } = DesignModeContext.useDesignMode()
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const [drawingCanvas, setDrawingCanvas]: [DrawingCanvas | undefined, React.Dispatch<React.SetStateAction<undefined | DrawingCanvas>>] = React.useState() // prettier-ignore
-
 
   // TODO: combine effects
   React.useEffect(() => {
@@ -68,10 +67,14 @@ export const DrawDesign = () => {
       }
     }
     return () => {
-      firebase.database().ref().off()
+      firebase
+        .database()
+        .ref()
+        .off()
     }
   }, [drawingCanvas, mode])
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleKeyPress = (event: any) => {
     switch (event.key) {
       case "p":

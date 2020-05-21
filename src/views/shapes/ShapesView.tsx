@@ -1,13 +1,13 @@
 import * as React from "react"
-import * as DesignModeContext from "../DesignModeContext"
-import * as ShapesApi from "../../api/shapesApi"
 import styled from "styled-components"
 import { Box } from "grommet"
+import * as DesignModeContext from "../DesignModeContext"
+import * as ShapesApi from "../../api/shapesApi"
 import { ShapeButton } from "./ShapeButton"
 
 const SHAPE_COLORS: string[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 
-export const ShapesView = () => {
+export const ShapesView = (): JSX.Element => {
   const { mode } = DesignModeContext.useDesignMode()
   const [shapes, setShapes]: [
     ShapesApi.ShapeData,
@@ -27,26 +27,24 @@ export const ShapesView = () => {
 
   return (
     <Shapes fill>
-      {Object.entries(shapes).map(([id, { rotationIndex, color }]) => {
-        return (
-          <ShapeButton
-            key={id}
-            color={color}
-            rotation={(rotationIndex % 4) * 90}
-            onClick={() =>
-              ShapesApi.updateShape({
-                id: id,
-                shape: {
-                  rotationIndex: mode === "rotate" ? rotationIndex + 1 : rotationIndex,
-                  color: mode === "color" ? SHAPE_COLORS[SHAPE_COLORS.indexOf(color) + 1] || SHAPE_COLORS[0] : color,
-                },
-              })
-            }
-          >
-            <Box />
-          </ShapeButton>
-        )
-      })}
+      {Object.entries(shapes).map(([id, { rotationIndex, color }]) => (
+        <ShapeButton
+          key={id}
+          color={color}
+          rotation={(rotationIndex % 4) * 90}
+          onClick={() =>
+            ShapesApi.updateShape({
+              id: id,
+              shape: {
+                rotationIndex: mode === "rotate" ? rotationIndex + 1 : rotationIndex,
+                color: mode === "color" ? SHAPE_COLORS[SHAPE_COLORS.indexOf(color) + 1] || SHAPE_COLORS[0] : color,
+              },
+            })
+          }
+        >
+          <Box />
+        </ShapeButton>
+      ))}
     </Shapes>
   )
 }

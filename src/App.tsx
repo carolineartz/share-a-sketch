@@ -1,21 +1,18 @@
 import React from "react"
 
-import { Grommet, Box, Button, Sidebar, Avatar, Nav, Layer, Stack } from "grommet"
-import { Help, Projects, Clock, Cube, Brush } from "grommet-icons"
-// import { Toolbar } from "./components/Toolbar"
+import { Grommet, Box } from "grommet"
+import { Cube, Brush } from "grommet-icons"
+import styled from "styled-components"
 import { ToolMenu } from "./components/ToolMenu"
 import { ShapesTools } from "./views/shapes/ShapesTools"
 import { NavToggleButtons } from "./components/NavToggleButtons"
-
-import { DrawDesign } from "./views/DrawDesign"
 import { DrawDesignTools } from "./views/DrawDesignTools"
 import * as DesignModeContext from "./views/DesignModeContext"
 import { ShapesView } from "./views/shapes/ShapesView"
 
-import customTheme from "./theme"
-import styled from "styled-components"
+import { customTheme } from "./theme"
 
-const App = () => {
+const App = (): JSX.Element => {
   const [view, setView]: [DesignView, React.Dispatch<React.SetStateAction<DesignView>>] = React.useState(
     "press" as DesignView
   )

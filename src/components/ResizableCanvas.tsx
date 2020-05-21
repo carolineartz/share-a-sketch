@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import * as React from "react"
 
 import debounce from "lodash.debounce"
@@ -9,7 +10,6 @@ type ResizableCanvasProps = {
 
 export const ResizableCanvas = React.forwardRef<HTMLCanvasElement, ResizableCanvasProps>(
   ({ drawingCanvas }: ResizableCanvasProps, ref) => {
-
     React.useEffect(() => {
       const handleResize = debounce(() => {
         if (drawingCanvas) {
