@@ -75,9 +75,16 @@ export const ShapesDesign = () => {
 // const
 
 const Container = styled(Box)`
+  /* display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: repeat(8, auto); */
+
   display: grid;
   height: 100%;
   width: 100%;
-  grid-template-columns: repeat(8, auto);
+  /* --max: calc(85vh * 0.12) */
+  /* --max: 12vh */
+  grid-template-columns: repeat(8, minmax(12%, calc(85vh * 0.12)));
   /* grid-auto-rows: 12.5%; */
 `

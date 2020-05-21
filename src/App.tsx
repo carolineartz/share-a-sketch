@@ -9,7 +9,6 @@ import { NavToggleButtons } from "./components/NavToggleButtons"
 import { ShapesDesign } from "./views/ShapesDesign"
 import { DrawDesign } from "./views/DrawDesign"
 import { DrawDesignTools } from "./views/DrawDesignTools"
-import {DesignCanvas} from "./components/DesignCanvas"
 import * as DesignModeContext from "./views/DesignModeContext"
 
 import customTheme from "./theme"
@@ -30,8 +29,8 @@ const App = () => {
 
   return (
     <Grommet full theme={customTheme}>
-      <Box pad="medium">
-        <Box pad={{ bottom: "medium" }}>
+      <Box pad="small">
+
           <NavToggleButtons
             width="100%"
             pad="small"
@@ -54,11 +53,11 @@ const App = () => {
               },
             }}
           />
-        </Box>
+
         <DesignModeContext.Provider>
-          <Box gap="medium" direction="row">
+          <Box gap="medium" direction="row" justify="center">
             <Toolbar>{view === ("press" as DesignView) ? <ShapesDesignTools /> : <DrawDesignTools />}</Toolbar>
-            <DesignCanvas>
+            <Box width="100%" height="90vw" style={{ maxWidth: "85vh", maxHeight: "85vh" }}>
               <Box
                 flex="grow"
                 pad="small"
@@ -73,7 +72,7 @@ const App = () => {
                 {view === "press" && <ShapesDesign />}
                 {view === "draw" && <DrawDesign />}
               </Box>
-            </DesignCanvas>
+            </Box>
           </Box>
         </DesignModeContext.Provider>
       </Box>

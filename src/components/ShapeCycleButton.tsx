@@ -58,6 +58,10 @@ export const ShapeCycleButton = ({ id, initialData }: ShapeCycleButtonProps) => 
 
   return (
     <ButtonContainer
+      hue={color.hue}
+      saturation={color.saturation}
+      lightness={color.lightness}
+      clip={shape}
       onClick={() => {
         switch (mode) {
           case "color":
@@ -91,7 +95,7 @@ export const ShapeCycleButton = ({ id, initialData }: ShapeCycleButtonProps) => 
 }
 
 type ColorButtonProps = {
-  id: string
+  id?: string
   hue: number
   saturation: number
   lightness: number
@@ -99,17 +103,53 @@ type ColorButtonProps = {
 }
 
 const ColorButton = styled(Box)<ColorButtonProps>`
+  /* background: #0a0b27; */
   background: ${({ hue, saturation, lightness }) => hslToColorString({ hue, saturation, lightness })};
+
+  /* background: ${({ hue, saturation, lightness }) => hslToColorString({ hue, saturation, lightness })}; */
   clip-path: ${({ clip }) => `polygon(${clip})`};
+  /* height: 100%; */
+  /* margin: -2px; */
+  /* width: 101%; */
+  /* height: 101%; */
+  /* width: calc(100% + 2px);
+  height: calc(100% + 2px); */
+  /* top: -1px;
+  left: -1px; */
+  /* position: absolute; */
+  /* margin: -1px; */
+  /* top: -1px;
+  left: -1px; */
+  /* margin: -1px; */
+  /* height: 101%;
+  width: 101%; */
+  max-width: none !important;
+  max-height: none !important;
   cursor: pointer;
   &:active,
   &:focus {
     outline: none;
   }
-`
+  `
 
-const ButtonContainer = styled(Box)`
+const ButtonContainer = styled(Box)<ColorButtonProps>`
   background: #0a0b27;
+  max-width: none;
+  height: 101%;
+  width: 101%;
+
+  /* background: ${({ hue, saturation, lightness }) => hslToColorString({ hue, saturation, lightness })}; */
+  /* height: calc(85vh / 12);
+  max-height: calc(85vh / 12); */
+  display: flex;
+    max-width: none !important;
+  max-height: none !important;
+  /* position: relative; */
+
+  /* width: calc(100% + 2px); */
+  /* height: calc(100% + 2px); */
+  /* margin: 1px; */
+  /* margin: -2px; */
   &:active,
   &:focus {
     box-shadow: none;

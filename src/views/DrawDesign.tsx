@@ -2,7 +2,7 @@
 import React from "react"
 
 import { Box, Keyboard, Nav, Button } from "grommet"
-
+import { ResizableCanvas } from "./../components/ResizableCanvas"
 import firebase from "../Firebase"
 import DrawingCanvas from "./../DrawingCanvas"
 import * as DesignModeContext from "./DesignModeContext"
@@ -12,11 +12,11 @@ type PathData = {
   value: any
 }
 
-
 export const DrawDesign = () => {
   const { mode, setMode } = DesignModeContext.useDesignMode()
-  const canvasRef = React.useRef(null)
+  const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const [drawingCanvas, setDrawingCanvas]: [DrawingCanvas | undefined, React.Dispatch<React.SetStateAction<undefined | DrawingCanvas>>] = React.useState() // prettier-ignore
+
 
   // TODO: combine effects
   React.useEffect(() => {
@@ -29,7 +29,7 @@ export const DrawDesign = () => {
         .once("value")
         .then((snapshot: any) => {
           try {
-            Object.entries(snapshot.val()).map(([pathId, pathVal]: [string, unknown]) => {
+            Object.entries(snapshot.val()).forEach(([pathId, pathVal]: [string, unknown]) => {
               drawingCanvas.loadPath({ id: pathId, value: pathVal })
             })
           } catch (e) {
@@ -48,7 +48,7 @@ export const DrawDesign = () => {
     return () => {
       pathsRef.off()
     }
-  }, [drawingCanvas])
+  }, [drawingCanvas, setMode])
 
   React.useEffect(() => {
     const canvas = canvasRef.current
@@ -60,11 +60,10 @@ export const DrawDesign = () => {
         dc = new DrawingCanvas({ canvas })
         setDrawingCanvas(dc)
       }
+
       if (mode === "paint") {
         dc.draw()
-      }
-
-      else if (mode === "erase") {
+      } else if (mode === "erase") {
         dc.erase()
       }
     }
@@ -94,7 +93,7 @@ export const DrawDesign = () => {
 
   return (
     <Keyboard target="document" onKeyDown={handleKeyPress}>
-      <canvas ref={canvasRef} style={{ height: "100%", width: "100%" }} />
+      <ResizableCanvas drawingCanvas={drawingCanvas} ref={canvasRef} />
     </Keyboard>
   )
 }

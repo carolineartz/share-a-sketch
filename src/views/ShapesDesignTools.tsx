@@ -27,3 +27,9 @@ export const ShapesDesignTools = () => {
     </>
   )
 }
+
+
+  // max-width: 85vh;
+  // max-height: 90vw;
+  // width: 100%;
+  // height: 85vh;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import paper, { Tool, Path, Color } from "paper"
+import paper, { Tool, Path, Color, Size } from "paper"
 import debounce from "lodash.debounce"
 import throttle from "lodash.throttle"
 import firebase from "./Firebase"
@@ -14,17 +14,28 @@ type PathMap = Record<
 type ToolState = "inactive" | "active"
 
 export default class DrawingCanvas {
+  scope: paper.PaperScope
   localIds: Set<string> = new Set()
   brush: DrawTool
   mode: DrawMode = "paint"
   toolState: ToolState = "inactive"
+  onResize: Function
 
   constructor({ canvas, initialData }: { canvas: HTMLCanvasElement; initialData?: any }) {
     paper.setup(canvas)
     ;(window as any).paper = paper
+    this.scope = paper
 
     this.brush = new DrawTool()
     this.draw()
+
+    this.onResize = () => {
+      const elem = paper.project.view.element
+      if (elem.parentElement) {
+        const rect = elem.parentElement.getBoundingClientRect()
+        ;(paper.project.view as any).setViewSize(new Size(rect.width, rect.height))
+      }
+    }
 
     paper.project.view.onMouseUp = (event: paper.MouseEvent) => {
       this.toolState = "inactive"
@@ -82,6 +93,14 @@ export default class DrawingCanvas {
           const pathRef = firebase.database().ref(`/draw_paths/${path.data.id}`)
           pathRef.remove()
         }
+      } else if (this.mode === "erase") {
+        path.fullySelected = true
+      }
+    }
+
+    path.onMouseLeave = (event: paper.MouseEvent) => {
+      if (path) {
+        path.fullySelected = false
       }
     }
   }
