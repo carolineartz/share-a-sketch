@@ -1,9 +1,9 @@
 import * as React from "react"
 import { Button } from "grommet"
 import { Cycle, ClearOption } from "grommet-icons"
-import * as DesignModeContext from "./DesignModeContext"
+import * as DesignModeContext from "./../DesignModeContext"
 
-export const ShapesDesignTools = () => {
+export const ShapesTools = () => {
   const { mode, setMode } = DesignModeContext.useDesignMode()
 
   return (
@@ -27,9 +27,3 @@ export const ShapesDesignTools = () => {
     </>
   )
 }
-
-
-  // max-width: 85vh;
-  // max-height: 90vw;
-  // width: 100%;
-  // height: 85vh;

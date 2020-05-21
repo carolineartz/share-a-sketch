@@ -3,7 +3,7 @@ import { ThemeType } from "grommet"
 
 export const customTheme: ThemeType = {
   button: {
-    extend: "font-weight: bold",
+    extend: "font-weight: bold; border-width: 5px ;",
   },
   global: {
     font: {
@@ -17,19 +17,20 @@ export const customTheme: ThemeType = {
     active: {
       color: "white",
       background: {
-        opacity: 0.75
-      }
+        opacity: 1
+      },
+      // border:
     },
     colors: {
       active: "brand",
       border: "rgba(255,255,255,0.33)",
-      brand: "#4291b9",
+      brand: "#eaaf2a",
       control: "#6AB2E0",
       focus: "#6AB2E0",
       text: "#0a0a27",
       "accent-1": "#DA8455",
       "accent-2": "#60EB9F",
-      "accent-3": "#60EBE1",
+      "accent-3": "#eaaf2a",
       "accent-4": "#6AB2E0",
       "neutral-1": "#EB6060",
       "neutral-2": "#01C781",

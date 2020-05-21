@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from "react"
 
-const defaultMode: DesignMode = "rotate" as DesignMode
+const defaultMode: DesignMode = "color" as DesignMode
 
 export const DesignModeContext = React.createContext<DesignModeContextType>({
   mode: defaultMode,

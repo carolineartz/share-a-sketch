@@ -18,10 +18,27 @@ type NavToggleButtonProps = BoxProps & {
 // FIXME either have the mode state or be generic and pass it in
 export const NavToggleButtons = ({ left, right, active, ...restProps }: NavToggleButtonProps) => {
   return (
-    <Box direction="row" {...restProps}>
-      <ButtonToggle icon={left.icon} active={active === "left"} side="left" label={left.label} onClick={left.onClick} />
+    <Box
+      direction="row"
+      round="large"
+      elevation="medium"
+      {...restProps}
+      style={{ alignSelf: "center" }}
+      margin="medium"
+    >
+      <ButtonToggle
+        color="white"
+        size="large"
+        icon={left.icon}
+        active={active === "left"}
+        side="left"
+        label={left.label}
+        onClick={left.onClick}
+      />
       <ButtonToggle
         icon={right.icon}
+        size="large"
+        color="white"
         active={active === "right"}
         side="right"
         label={right.label}
@@ -36,6 +53,14 @@ type ButtonToggleProps = ButtonProps & {
 }
 
 const ButtonToggle = styled(Button)<ButtonToggleProps>`
+  ${props =>
+    props.active
+      ? css`
+          background-color: #eaaf2a;
+        `
+      : css`
+          background-color: white;
+        `}
   ${props =>
     props.side === "left" &&
     css`
