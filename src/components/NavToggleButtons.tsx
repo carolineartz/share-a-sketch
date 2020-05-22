@@ -13,7 +13,7 @@ type NavToggleButtonProps = BoxProps & {
 }
 
 export const NavToggleButtons = ({ left, right, active, ...restProps }: NavToggleButtonProps): JSX.Element => (
-  <Box direction="row" round="large" elevation="medium" {...restProps} style={{ alignSelf: "center" }} margin="medium">
+  <Box direction="row" round="large" elevation="large" {...restProps} style={{ alignSelf: "center" }} margin="medium">
     <ButtonToggle
       color="white"
       size="large"

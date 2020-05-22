@@ -16,6 +16,21 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
 
-// export const database = firebase.database().ref()
+export const connection = {
+  ref: firebase.database().ref(".info/connected"),
+  listen: (onChange: (status: DatabaseStatus) => any) => {
+    connection.ref.on("value", (snapshot: any) => {
+      // snap.val() => boolean
+      if (snapshot.val()) {
+        onChange("connected")
+      } else {
+        onChange("disconnected")
+      }
+    })
+  },
+  disconnect: () => {
+    connection.ref.off()
+  },
+}
 
 export default firebase

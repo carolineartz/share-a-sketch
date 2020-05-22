@@ -9,6 +9,7 @@ import { NavToggleButtons } from "./components/NavToggleButtons"
 import { DrawDesignTools } from "./views/DrawDesignTools"
 import * as DesignModeContext from "./views/DesignModeContext"
 import { ShapesView } from "./views/shapes/ShapesView"
+import { ConnectionStatus } from "./components/ConnectionStatus"
 
 import { customTheme } from "./theme"
 
@@ -44,6 +45,7 @@ const App = (): JSX.Element => {
               },
             }}
           />
+          <ConnectionStatus />
           <ToolMenu>{view === "press" ? <ShapesTools /> : <DrawDesignTools />}</ToolMenu>
         </DesignModeContext.Provider>
       </Container>
@@ -59,6 +61,7 @@ const Container = styled(Box)`
   overflow: hidden;
   position: relative;
   > * {
+    /* background: white; */
     position: absolute;
   }
 `

@@ -9,6 +9,8 @@ type DrawMode = "paint" | "erase" | "none"
 
 type ButtonToggleSide = "left" | "right"
 
+type DatabaseStatus = "connected" | "disconnected"
+
 declare module "lz-string"
 
 type PathData = {

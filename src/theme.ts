@@ -11,7 +11,8 @@ const theme: ThemeType = {
     },
     hover: {
       background: {
-        opacity: 1.0,
+        color: "brand",
+        opacity: 0.6,
       },
     },
     active: {
@@ -26,7 +27,7 @@ const theme: ThemeType = {
       border: "rgba(255,255,255,0.33)",
       brand: "#eaaf2a",
       control: "#6AB2E0",
-      focus: "#6AB2E0",
+      focus: "#eaaf2a",
       text: "#0a0a27",
       "accent-1": "#DA8455",
       "accent-2": "#60EB9F",

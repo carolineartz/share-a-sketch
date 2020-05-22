@@ -3,7 +3,7 @@ import times from "lodash.times"
 import range from "lodash.range"
 import zipObject from "lodash.zipobject"
 import constant from "lodash.constant"
-import firebase from "../Firebase"
+import firebase from "../../Firebase"
 
 const shapesRef = firebase.database().ref("shapes_new")
 
@@ -30,7 +30,7 @@ export const createShapes = (): Promise<ShapeData> =>
 export const loadShapes = (onLoadShapes: React.Dispatch<React.SetStateAction<ShapeData>>): Promise<void> =>
   shapesRef
     .orderByKey()
-    .limitToFirst(200)
+    .limitToFirst(192)
     .once("value")
     .then(async (snapshot: any) => {
       let shapes = await snapshot.val()

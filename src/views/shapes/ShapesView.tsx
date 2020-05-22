@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from "react"
 import styled from "styled-components"
 import { Box } from "grommet"
 import * as DesignModeContext from "../DesignModeContext"
-import * as ShapesApi from "../../api/shapesApi"
+import * as ShapesApi from "./shapesApi"
 import { ShapeButton } from "./ShapeButton"
 
 const SHAPE_COLORS: string[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
