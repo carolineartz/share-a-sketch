@@ -42,7 +42,6 @@ export const loadShapes = (onLoadShapes: React.Dispatch<React.SetStateAction<Sha
       }
     })
     .catch(() => {
-      // const foo = createShapes()
       console.error("error fetching shapes")
     })
 
