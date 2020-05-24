@@ -2,22 +2,31 @@
 import * as React from "react"
 import throttle from "lodash.throttle"
 
-import paper, { Path, Group, PathItem, Color, Size, Tool } from "paper"
+import paper, { Path, Color, Size, Tool } from "paper"
 import firebase from "../../Firebase"
 import * as DrawSettingsContext from "./DrawSettingsContext"
+
+type LoadType = "initial" | "added" | "updated"
+
+// random.ts
+function generateLocalId(): string {
+  const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
+  return uint32.toString(16)
+}
 
 export type RemotePath = {
   id?: string
   definition: string
   strokeWidth: number
   color: string // covers strokeColor and fill
+  localId: string
 }
 
 type CreatPaperHookType = {
   setCanvas: (canvas: HTMLCanvasElement) => void
 }
 
-const pathsRef = firebase.database().ref("paths_new")
+const pathsRef = firebase.database().ref("paths_new1")
 
 type LocalState = {
   color: DesignColor
@@ -25,11 +34,53 @@ type LocalState = {
   shape: DrawShape
   tool: DrawTool
   toolState: "active" | "inactive"
-  activePath?: paper.Item
+  currentLocalId?: string
+  localPathIds: string[]
+  activePath?: paper.Path
   localPathCache: Record<string, paper.Item>
+  remotePathCache: Record<string, paper.Path>
   paperScope: paper.PaperScope
-  paperTool: paper.Tool
+  paperTool?: PaperTool
 }
+
+// ONLY HAPPENING FROM DRAWERS MACHINE
+const broadcastCreate = (path: paper.Path, tool: DrawTool) => {
+  console.log("BROADCASTING CREATE", path)
+  return firebase
+    .database()
+    .ref("paths_new1")
+    .push({
+      definition: path.pathData,
+      strokeWidth: tool === "paint" ? path.strokeWidth : 0,
+      color: path.data.color,
+      localId: path.data.localId,
+    })
+}
+
+// if (key) {
+//   onAdded(key)
+// } else {
+//   debugger
+// }
+// function syncer(ref: firebase.database.Reference, data: any) {
+//   return throttle(() => {
+//     ref.set(data)
+//   }, 300)
+// }
+// ONLY HAPPENING FROM DRAWERS MACHINE
+const broadcastUpdates = (path: paper.Path) =>
+  throttle(() => {
+    console.log("BROADCASTING UPDATE", path)
+    firebase
+      .database()
+      .ref(`paths_new1/${path.data.id}`)
+      .set({
+        definition: path.pathData,
+        strokeWidth: path.closed ? 0 : path.strokeWidth,
+        color: path.data.color,
+        localId: path.data.localId,
+      })
+  })
 
 export const usePaperJs = (): CreatPaperHookType => {
   const [canvas, setCanvas] = React.useState<HTMLCanvasElement | null>(null)
@@ -38,13 +89,22 @@ export const usePaperJs = (): CreatPaperHookType => {
   const localState = React.useRef<LocalState>({
     tool,
     toolState: "inactive",
+    localPathIds: [],
     shape,
     strokeWidth,
     color,
     paperScope: paper,
     localPathCache: {} as Record<string, paper.Item>,
-    paperTool: new Tool(),
+    remotePathCache: {} as Record<string, paper.Path>,
   })
+  ;(window as any).localState = localState
+
+  React.useEffect(() => {
+    localState.current.tool = tool
+    localState.current.shape = shape
+    localState.current.strokeWidth = strokeWidth
+    localState.current.color = color
+  }, [tool, shape, strokeWidth, color])
 
   React.useEffect(() => {
     if (canvas) {
@@ -55,23 +115,36 @@ export const usePaperJs = (): CreatPaperHookType => {
       scope.project.view.onMouseDown = handleMouseDown
       scope.project.view.onMouseDrag = handleMouseDrag
 
-      pathsRef.orderByKey().once("value", (snapshot: any) => {
-        try {
-          const paths = snapshot.val()
-          if (paths) {
-            Object.entries(paths).forEach(([pathId, pathVal]: [string, unknown]) => {
-              loadPath({ id: pathId, ...(pathVal as RemotePath) })
-            })
+      pathsRef
+        .orderByKey()
+        .once("value", (snapshot: any) => {
+          try {
+            const paths = snapshot.val()
+            if (paths) {
+              Object.entries(paths).forEach(([pathId, pathVal]: [string, unknown]) => {
+                loadPath({ id: pathId, ...(pathVal as RemotePath), loadType: "initial" })
+              })
+            }
+          } catch (e) {
+            console.error(e)
           }
-        } catch (e) {
-          console.error(e)
-        }
-      })
+        })
+        .then(() => {
+          pathsRef.on("child_added", (addedSnapshot: any) => {
+            console.log("CHILD ADDED")
+            loadPath({ id: addedSnapshot.key, ...addedSnapshot.val(), loadType: "added" })
+          })
 
-      pathsRef.on("child_added", (addedSnapshot: any) => {
-        console.log("CHILD ADDED")
-        loadPath({ id: addedSnapshot.key, ...addedSnapshot.val() })
-      })
+          pathsRef.on("child_removed", (removedSnapshot: any) => {
+            console.log("CHILD REMOVED")
+            const existingPath = (paper.project.activeLayer.children as paper.Path[]).find(
+              p => p.data.id === removedSnapshot.key
+            )
+            if (existingPath) {
+              existingPath.remove()
+            }
+          })
+        })
     }
 
     return () => {
@@ -79,170 +152,218 @@ export const usePaperJs = (): CreatPaperHookType => {
     }
   }, [canvas])
 
-  React.useEffect(() => {
-    localState.current.tool = tool
-    localState.current.shape = shape
-    localState.current.strokeWidth = strokeWidth
-    localState.current.color = color
-  }, [tool, shape, strokeWidth, color])
+  const createPathFromRemote = ({
+    id,
+    definition,
+    color,
+    stroke,
+    localId,
+  }: {
+    id: string
+    definition: string
+    color: string
+    stroke: number
+    localId: string
+  }) => {
+    const newPath = new Path()
+    newPath.data.localId = localId
+    newPath.pathData = definition
+    newPath.data.id = id
+
+    if (newPath.closed) {
+      newPath.fillColor = new Color(color)
+      newPath.strokeWidth = 0
+    } else {
+      newPath.strokeCap = "round"
+      newPath.strokeColor = new Color(color)
+      newPath.strokeWidth = stroke
+    }
+    return newPath
+  }
 
   function loadPath({
     id,
     definition,
     color: loadColor,
-    strokeWidth: stroke,
+    strokeWidth: loadStroke,
+    localId,
+    loadType,
   }: {
     id: string
     definition: string
     color: string
     strokeWidth: number
+    loadType: LoadType
+    localId: string
   }) {
-    const existingPath = (paper.project.activeLayer.children as paper.Item[]).find(item => item.data.id === id)
+    // let path
+    // none of these can be drawn during this session on the local device
+    if (loadType === "initial") {
+      // debugger
+      const initialPath = createPathFromRemote({ localId, id, definition, stroke: loadStroke, color: loadColor })
+      // localState.current.remotePathCache[id] = path
+      setLocalPathEventHandlers(initialPath) // hover color
+    }
 
-    if (existingPath) {
-      const path = existingPath as any
-      path.pathData = definition
-    } else {
-      const newPath = new Path({
-        strokeColor: new Color(loadColor),
-        strokeWidth: stroke,
-        strokeCap: "round",
-        fillColor: stroke === 0 ? new Color(loadColor) : new Color("transparent"),
-        fill: stroke === 0 ? new Color(loadColor) : "none",
-      }) as any
+    // remote from child_added -- could be either from another user creating a path or from a path that was crated locally
+    else if (loadType === "added") {
+      if (localState.current.currentLocalId === localId || localState.current.localPathIds.includes(localId)) {
+        console.log("don't watch the path because its created/updated locally", localId, id)
+        return
+      } else {
+        // this is a path received actively drawn from aonther device, create it locally and listen for changes and update the data
+        const remotelyAddedPath = createPathFromRemote({
+          localId,
+          id,
+          definition,
+          stroke: loadStroke,
+          color: loadColor,
+        })
+        setLocalPathEventHandlers(remotelyAddedPath)
+        const pathRef = firebase.database().ref(`/paths_new1/${id}`)
 
-      newPath.pathData = definition
-      newPath.data.id = id
-      setPathEventHandlers(newPath)
+        pathRef.on("value", (updatedSnapshot: any) => {
+          console.log("REMOTE PATH CHANGED", updatedSnapshot.val(), { originPath: remotelyAddedPath })
+          loadPath({ id: updatedSnapshot.key, ...updatedSnapshot.val(), loadType: "updated" })
+        })
+      }
+    } else if (loadType === "updated") {
+      const existingPath = (paper.project.activeLayer.children as paper.Path[]).find(p => p.data.id === id)
+      console.log("updated an existing path", existingPath)
 
-      const newPathRef = firebase.database().ref(`/paths_new/${id}`)
+      if (existingPath) {
+        existingPath.pathData = definition
+        existingPath.data.color = loadColor
 
-      newPathRef.on("value", (updatedSnapshot: any) => {
-        console.log("REMOTE PATH CHANGED")
-        loadPath({ id: updatedSnapshot.key, ...updatedSnapshot.val() })
-      })
+        if (loadStroke && loadStroke > 1) {
+          existingPath.strokeColor = new Color(loadColor)
+          existingPath.strokeWidth = loadStroke
+        } else {
+          existingPath.fillColor = new Color(loadColor)
+        }
+      }
     }
   }
 
   function handleMouseDown(event: paper.MouseEvent) {
+    console.log("PAPER MOUSE DOWN")
     const { tool, color, strokeWidth } = localState.current
     localState.current.toolState = "active"
 
-    // we have to create a new path and sync with Firebase
-    if (tool !== "erase") {
-      const key = firebase.database().ref("paths_new").push().key // prettier-ignore
-
-      if (key) {
-        let path
-        if (tool === "paint") {
-          path = new Path({
-            segments: [event.point],
-            strokeWidth,
-            strokeCap: "round",
-            strokeColor: new Color(color),
-          })
-        } else {
-          path = new Group()
-        }
-        path.data.id = key // local link to remote path
-        localState.current.activePath = path
-
-        localState.current.paperTool = new PaperTool({
-          activePath: path,
-          shape,
-          tool,
-          color,
-        })
-
-        localState.current.paperTool.activate()
-
-        setPathEventHandlers(path)
-        const ref = firebase.database().ref(`/paths_new/${key}`)
-
-        ref.set({
-          color: color,
-          definition: path instanceof paper.Path ? path.pathData : (path as any)._asPathItem().pathData,
-          strokeWidth: path.strokeWidth,
-        })
-      }
-    } else {
-      console.log("erasing")
+    if (tool === "erase") {
+      return
     }
+
+    let path, key
+    const localId = generateLocalId()
+    localState.current.localPathIds.push(localId)
+    localState.current.currentLocalId = localId
+
+    localState.current.activePath = path
+
+    if (tool === "paint") {
+      localState.current.activePath = path = new Path({
+        segments: [event.point],
+        strokeWidth,
+        strokeCap: "round",
+        strokeColor: new Color(color),
+        fillColor: "transparent",
+      })
+      path.data.color = color
+      path.data.localId = localId
+      key = broadcastCreate(path, "paint").key
+      path.data.id = key
+    } else {
+      localState.current.activePath = path = new Path()
+      path.data.color = color
+      path.fillColor = new Color(color)
+      path.data.localId = localId
+      key = broadcastCreate(path, "shape").key
+      path.data.id = key
+    }
+
+    if (!localState.current.paperTool) {
+      localState.current.paperTool = new PaperTool({
+        currentState: localState.current,
+      })
+    } else {
+      localState.current.paperTool.currentState = localState.current
+    }
+    setLocalPathEventHandlers(path)
   }
 
   function handleMouseUp(_evt: paper.MouseEvent) {
     localState.current.toolState = "inactive"
-    // localState.current.paperTool.remove()
+    const path = localState.current.activePath
+    if (!path || localState.current.tool === "erase") return
 
     if (localState.current.tool === "paint") {
-      const path = localState.current.activePath
-
-      if (path && path instanceof paper.Path) {
-        path.simplify()
-      }
+      path.simplify()
     }
 
     localState.current.activePath = undefined
+
+    if (path && path.area !== 0) {
+      broadcastUpdates(path)()
+    }
   }
 
   function handleMouseDrag(evt: paper.MouseEvent) {
-    console.log("drawing")
+    console.log("PAPER MOUSE DRAG")
     localState.current.toolState = "active"
 
     if (localState.current.tool === "erase") {
+      // evt.stopPropagation()
+      console.log("erasing")
       const target = evt.target
+      // debugger
       if (target && target instanceof Path) {
-        target.remove() // locally remove -- not listening to external event for this.
-
         if (target.data.id) {
           // this is not the currently drawn path, this is any path that is being removed.
-          firebase.database().ref(`/paths_new/${target.data.id}`).remove() // prettier-ignore
+          firebase.database().ref(`/paths_new1/${target.data.id}`).remove() // prettier-ignore
         }
-      }
-    } else {
-      let syncData: string = ""
 
-      try {
-        syncData = (localState.current.activePath as any).pathData
-      } catch (e) {
-        try {
-          syncData = (localState.current.activePath as any)._asPathItem().pathData
-        } catch (e) {
-          console.log("couldn't set sync data")
-        }
+        target.remove() // locally remove -- not listening to external event for this.
       }
-
-      if (syncData && localState.current.activePath) {
-        syncer(firebase.database().ref(`/paths_new/${localState.current.activePath.data.id}`), {
-          strokeWidth: localState.current.strokeWidth,
-          color: localState.current.color,
-          definition: syncData,
-        })()
+    } else if (localState.current.tool === "paint") {
+      console.log("drawing")
+      // let syncData: string = ""
+      const path = localState.current.activePath
+      if (path) {
+        broadcastUpdates(path)()
       }
     }
   }
 
-  function syncer(ref: firebase.database.Reference, data: any) {
-    return throttle(() => {
-      ref.set(data)
-    }, 300)
-  }
-
-  const setPathEventHandlers = (path: paper.Item): void => {
-    path.onMouseEnter = (_evt: paper.MouseEvent): void => {
+  const setLocalPathEventHandlers = (path: paper.Path): void => {
+    const handleEnter = (path: paper.Path) => {
+      if (path.closed) {
+        path.data.color = path.fillColor
+        path.fillColor = new Color("#A9FF4D")
+      } else {
+        path.data.color = path.strokeColor
+        path.strokeColor = new Color("#A9FF4D")
+      }
+    }
+    const handleLeave = (path: paper.Path) => {
+      if (path.closed) {
+        path.fillColor = path.data.color
+      } else {
+        path.strokeColor = path.data.color
+      }
+    }
+    path.onMouseEnter = function(_evt: paper.MouseEvent): void {
       if (localState.current.tool === "erase") {
-        // highlight the path about to be removed
-        path.strokeColor = new Color("#B85642")
-        path.fillColor = new Color("#B85642")
+        handleEnter(this)
       }
     }
 
     path.onMouseLeave = (_evt: paper.MouseEvent): void => {
+      // console.log("PATH MOUSE LEAVE")
       const { tool, toolState } = localState.current
       // on non-mobile we have to reset from the highlighted color
       if (tool === "erase" && toolState === "inactive") {
-        path.strokeColor = new Color(color)
-        path.fillColor = new Color(color)
+        handleLeave(path)
       }
     }
   }
@@ -251,54 +372,43 @@ export const usePaperJs = (): CreatPaperHookType => {
 }
 
 class PaperTool extends Tool {
-  activePath: paper.Item
-  shape: DrawShape
-  tool: DrawTool
-  color: DesignColor
+  currentState: LocalState
 
-  constructor({
-    activePath,
-    shape,
-    tool,
-    color,
-  }: {
-    activePath: paper.Item
-    tool: DrawTool
-    shape: DrawShape
-    color: DesignColor
-  }) {
+  constructor({ currentState }: { currentState: LocalState }) {
     super()
-    this.activePath = activePath
-    this.tool = tool
-    this.color = color
-    this.shape = shape
+    this.currentState = currentState
+    this.onMouseDown = (event: paper.ToolEvent) => {
+      let p
+      if (this.currentState.tool === "shape" && this.currentState.activePath) {
+        switch (this.currentState.shape) {
+          case "square":
+            p = new Path.Rectangle(event.point, new Size(60, 60))
+            // path = new Path.Rectangle(event.point, new Size(30, 30))
+            break
+          case "circle":
+            p = new Path.Circle(event.point, 40)
+            break
+          case "star":
+            p = new Path.Star(event.point, 5, 30, 60)
+        }
+
+        p.fillColor = new Color(this.currentState.color)
+        p.data.localId = this.currentState.activePath.data.localId
+        p.data.id = this.currentState.activePath.data.id
+        p.data.color = this.currentState.color
+        this.currentState.activePath.pathData = p.pathData
+        this.currentState.activePath.fillColor = new Color(this.currentState.color)
+        this.currentState.activePath.data.color = this.currentState.color
+      }
+    }
 
     this.onMouseDrag = (event: paper.ToolEvent) => {
-      switch (this.tool) {
-        case "paint":
-          ;(this.activePath as paper.Path).add(event.point)
-          break
-        case "shape":
-          let path
-          const rad = event.delta.length / 2
+      if (!this.currentState.activePath) {
+        return
+      }
 
-          switch (this.shape) {
-            case "circle":
-              path = new Path.Circle(event.point, rad)
-              break
-            case "square":
-              path = new Path.Rectangle(event.point, new Size(rad, rad))
-              break
-            case "star":
-              path = new Path.Star(event.point, 5, rad / 2, rad)
-          }
-
-          path.fillColor = new Color(this.color)
-
-          this.activePath.addChild(path)
-          break
-        case "erase":
-          console.log("erasing")
+      if (this.currentState.tool === "paint") {
+        this.currentState.activePath.add(event.point)
       }
     }
   }

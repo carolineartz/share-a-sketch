@@ -79,7 +79,7 @@ export const DrawTools = (): JSX.Element => {
               onClick={() => setTool("shape")}
             />
           }
-          key="draw-design-shape"
+          // key="draw-design-shape"
           content={
             <Box pad="small" direction="row" gap="xsmall">
               {shapes.map((shapeTool: DrawShape, i: number) => (
