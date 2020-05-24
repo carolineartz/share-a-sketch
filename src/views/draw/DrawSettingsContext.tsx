@@ -4,7 +4,7 @@ import * as React from "react"
 export const DrawSettingsContext = React.createContext<DrawSettingsContextType>({
   tool: "paint",
   setTool: _tool => {},
-  shape: "circle",
+  shape: "star",
   setShape: _shape => {},
   strokeWidth: 8,
   setStrokeWidth: _width => {},

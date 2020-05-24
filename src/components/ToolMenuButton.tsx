@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import * as React from "react"
 
-import { Button, DropButton } from "grommet"
+import { Button, DropButton, Box } from "grommet"
 
 type ToolMenuButtonProps = {
   title?: string
@@ -20,13 +20,24 @@ export const ToolMenuButton = ({ title, icon: Icon, isActive, onClick }: ToolMen
   />
 )
 
-export const ToolMenuDropButton = ({ button, content }: { button: JSX.Element; content: JSX.Element }): JSX.Element => (
+export const ToolMenuDropButton = ({
+  button,
+  content,
+  active,
+}: {
+  button: JSX.Element
+  active?: boolean
+  content: JSX.Element
+}): JSX.Element => (
   <DropButton
     alignSelf="center"
-    margin={{ vertical: "small" }}
+    // margin={{ vertical: "small" }
+    // pad="small"
     dropContent={content}
     dropProps={{ align: { top: "top", left: "left" } }}
   >
-    {button}
+    <Box pad="small" background={active ? "active" : "white"}>
+      {button}
+    </Box>
   </DropButton>
 )
