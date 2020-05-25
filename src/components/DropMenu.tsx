@@ -14,10 +14,9 @@ export type DropSelectProps<T> = {
 
 export function DropMenu<T>({ options, value, onClick }: DropSelectProps<T>): JSX.Element {
   return (
-    <Box direction="row" flex={false} gap="medium">
+    <Box direction="row" flex={false}>
       {options.map((option: DropOption<T>, i: number) => (
         <Button
-          title="foo"
           key={`${value}-${i}`}
           icon={option.icon}
           active={value === option.value}

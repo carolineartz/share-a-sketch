@@ -1,6 +1,8 @@
 import { deepFreeze } from "grommet/utils"
 import { ThemeType } from "grommet"
 
+export type DesignColor = "#42b8a4" | "#4291b8" | "#4256b8" | "#6942b8" | "#a442b8"
+
 const theme: ThemeType = {
   button: {
     extend: "font-weight: bold; border-width: 5px ;",

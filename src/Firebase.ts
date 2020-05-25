@@ -1,6 +1,8 @@
 import firebase from "firebase/app"
 import "firebase/database"
 
+export type DatabaseStatus = "connected" | "disconnected"
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,

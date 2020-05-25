@@ -5,9 +5,10 @@ import { DropMenu, DropOption, DropSelectProps } from "../../components/DropMenu
 import { ToolMenu } from "../../components/ToolMenu"
 import * as DrawSettingsContext from "./DrawSettingsContext"
 import { ColorDrop, ShapeSquare, ShapeCircle } from "../../components/Icon"
+import { DesignColor } from "../../theme"
 
 const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
-const shapes: DrawShape[] = ["circle", "square", "star"]
+const shapes: DrawSettingsContext.DrawShape[] = ["circle", "square", "star"]
 
 export const DrawTools = (): JSX.Element => {
   const { tool, setTool, color, setColor, shape, setShape } = DrawSettingsContext.useDrawSettings()
@@ -17,8 +18,8 @@ export const DrawTools = (): JSX.Element => {
   const colorMenuItemRef = React.useRef() as any
   const shapeMenuItemRef = React.useRef() as any
 
-  const closeColorOptions = () => setShowColorOptions(false)
-  const closeShapeOptions = () => setShowShapeOptions(false)
+  const closeColorOptions = (): void => setShowColorOptions(false)
+  const closeShapeOptions = (): void => setShowShapeOptions(false)
 
   const colorOptions: DropOption<DesignColor>[] = colors.map((c: DesignColor) => ({
     value: c,
@@ -35,7 +36,7 @@ export const DrawTools = (): JSX.Element => {
     options: colorOptions,
   }
 
-  const shapeIcon = (s: DrawShape): JSX.Element =>
+  const shapeIcon = (s: DrawSettingsContext.DrawShape): JSX.Element =>
     s === "circle" ? (
       <ShapeCircle size="large" color={color} />
     ) : s === "square" ? (
@@ -44,13 +45,13 @@ export const DrawTools = (): JSX.Element => {
       <Star size="large" color={color} />
     )
 
-  const shapeOptions: DropOption<DrawShape>[] = shapes.map((s: DrawShape) => ({
+  const shapeOptions: DropOption<DrawSettingsContext.DrawShape>[] = shapes.map((s: DrawSettingsContext.DrawShape) => ({
     value: s,
     icon: shapeIcon(s),
   }))
 
-  const shapeSelectProps: DropSelectProps<DrawShape> = {
-    onClick: (s: DrawShape) => {
+  const shapeSelectProps: DropSelectProps<DrawSettingsContext.DrawShape> = {
+    onClick: (s: DrawSettingsContext.DrawShape) => {
       setShape(s)
       closeShapeOptions()
       closeColorOptions()

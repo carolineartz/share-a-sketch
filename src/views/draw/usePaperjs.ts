@@ -5,6 +5,7 @@ import throttle from "lodash.throttle"
 import paper, { Path, Color, Size, Tool } from "paper"
 import firebase from "../../Firebase"
 import * as DrawSettingsContext from "./DrawSettingsContext"
+import { DesignColor } from "../../theme"
 
 type LoadType = "initial" | "added" | "updated"
 
@@ -30,9 +31,9 @@ const pathsRef = firebase.database().ref("paths_new3")
 
 type LocalState = {
   color: DesignColor
-  strokeWidth: DrawStrokeWidth
-  shape: DrawShape
-  tool: DrawTool
+  strokeWidth: DrawSettingsContext.DrawStrokeWidth
+  shape: DrawSettingsContext.DrawShape
+  tool: DrawSettingsContext.DrawTool
   toolState: "active" | "inactive"
   currentLocalId?: string
   localPathIds: string[]
@@ -44,7 +45,7 @@ type LocalState = {
 }
 
 // ONLY HAPPENING FROM DRAWERS MACHINE
-const broadcastCreate = (path: paper.Path, tool: DrawTool) => {
+const broadcastCreate = (path: paper.Path, tool: DrawSettingsContext.DrawTool) => {
   console.log("BROADCASTING CREATE", path)
   return firebase
     .database()
@@ -246,7 +247,7 @@ export const usePaperJs = (): CreatPaperHookType => {
     }
   }
 
-  function handleMouseDown(event: paper.MouseEvent) {
+  function handleMouseDown(_event: paper.MouseEvent) {
     console.log("PAPER MOUSE DOWN")
     const { tool, color, strokeWidth } = localState.current
     localState.current.toolState = "active"

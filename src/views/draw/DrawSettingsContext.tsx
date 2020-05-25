@@ -1,5 +1,21 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import * as React from "react"
+import { DesignColor } from "../../theme"
+
+export type DrawTool = "erase" | "paint" | "shape"
+export type DrawShape = "circle" | "square" | "star"
+export type DrawStrokeWidth = 0 | 4 | 6 | 8 | 14 | 18
+
+type DrawSettingsContextType = {
+  tool: DrawTool
+  setTool: (tool: DrawTool) => void
+  shape: DrawShape
+  setShape: (shape: DrawShape) => void
+  strokeWidth: DrawStrokeWidth
+  setStrokeWidth: (strokeWidth: DrawStrokeWidth) => void
+  color: DesignColor
+  setColor: (color: DesignColor) => void
+}
 
 export const DrawSettingsContext = React.createContext<DrawSettingsContextType>({
   tool: "paint",

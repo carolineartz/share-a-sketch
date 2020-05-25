@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from "react"
 
+export type ShapeMode = "rotate" | "color"
+
+type ShapeSettingsContextType = {
+  mode: ShapeMode
+  setMode: (mode: ShapeMode) => void
+}
+
 export const ShapeSettingsContext = React.createContext<ShapeSettingsContextType>({
   mode: "rotate",
   setMode: _mode => {},

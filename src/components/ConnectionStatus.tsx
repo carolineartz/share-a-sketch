@@ -1,15 +1,14 @@
 import * as React from "react"
 
+import "styled-components/macro"
 import { Stack, Box, BoxProps, ResponsiveContext } from "grommet"
 import { StatusGood, StatusCritical, StatusGoodSmall, StatusCriticalSmall } from "grommet-icons"
 import { ReactComponent as CloudDisconnected } from "../images/disconnected.svg"
 import { ReactComponent as Cloud } from "../images/cloud.svg"
-import { connection } from "../Firebase"
+import { connection, DatabaseStatus } from "../Firebase"
 
 export const ConnectionStatus = (): JSX.Element => {
-  const [status, setStatus]: [DatabaseStatus, React.Dispatch<React.SetStateAction<DatabaseStatus>>] = React.useState(
-    "connected" as DatabaseStatus
-  )
+  const [status, setStatus] = React.useState<DatabaseStatus>("connected")
 
   React.useEffect(() => {
     connection.listen(setStatus)
@@ -20,18 +19,17 @@ export const ConnectionStatus = (): JSX.Element => {
 
   return (
     <Box
-      id="foo"
       round={{ corner: "left", size: "large" }}
       direction="row"
       margin={{ top: "xlarge" }}
       pad="small"
       background="rgba(10, 11, 37, 0.6)"
-      style={{
-        top: "0",
-        right: "0",
-        transformOrigin: "right",
-        transform: screenWidth === "small" ? "scale(0.8)" : "none",
-      }}
+      css={`
+        top: 0;
+        right: 0;
+        transform-origin: right;
+        transform: ${screenWidth === "small" ? "scale(0.8)" : "none"};
+      `}
     >
       <StatusIcon isConnected={status === "connected"} />
       <Box width="10px" />

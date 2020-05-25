@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from "react"
-import styled from "styled-components"
+
+import "styled-components/macro"
 import { Box } from "grommet"
 import * as ShapeSettingsContext from "./ShapeSettingsContext"
 import * as ShapesApi from "./shapesApi"
@@ -10,10 +11,7 @@ const SHAPE_COLORS: string[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a4
 
 export const ShapesView = (): JSX.Element => {
   const { mode } = ShapeSettingsContext.useShapeSettings()
-  const [shapes, setShapes]: [
-    ShapesApi.ShapeData,
-    React.Dispatch<React.SetStateAction<ShapesApi.ShapeData>>
-  ] = React.useState({} as ShapesApi.ShapeData)
+  const [shapes, setShapes] = React.useState<ShapesApi.ShapeData>({} as ShapesApi.ShapeData)
 
   React.useEffect(() => {
     if (!Object.values(shapes).length) {
@@ -27,7 +25,19 @@ export const ShapesView = (): JSX.Element => {
   }, [])
 
   return (
-    <Shapes fill>
+    <Box
+      fill
+      css={`
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: repeat(12, minmax(6.25vh, 8.33333vw));
+        grid-auto-rows: minmax(8.33333vw, 6.25vh);
+      `}
+    >
       {Object.entries(shapes).map(([id, { rotationIndex, color }]) => (
         <ShapeButton
           key={id}
@@ -46,12 +56,6 @@ export const ShapesView = (): JSX.Element => {
           <Box />
         </ShapeButton>
       ))}
-    </Shapes>
+    </Box>
   )
 }
-
-const Shapes = styled(Box)`
-  display: grid;
-  grid-template-columns: repeat(12, minmax(6.25vh, 8.33333vw));
-  grid-auto-rows: minmax(8.33333vw, 6.25vh);
-`
