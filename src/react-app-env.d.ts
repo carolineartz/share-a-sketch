@@ -1,5 +1,4 @@
 /// <reference types="react-scripts" />
-// / <reference types="styled-components/cssprop" />
 
 import "styled-components/macro"
 import {} from "react"

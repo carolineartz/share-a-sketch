@@ -3,6 +3,7 @@ import React from "react"
 
 // import { Keyboard } from "grommet"
 import { usePaperJs } from "./usePaperjs"
+import { Main } from "../../components/Main"
 
 export const DrawView = (): JSX.Element => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
@@ -16,7 +17,11 @@ export const DrawView = (): JSX.Element => {
     return () => {}
   }, [canvasRef, setCanvas])
 
-  return <canvas ref={canvasRef} style={{ width: "100vw", height: "100vh" }} width="100%" height="100%" />
+  return (
+    <Main>
+      <canvas ref={canvasRef} style={{ width: "100vw", height: "100vh" }} width="100%" height="100%" />
+    </Main>
+  )
 }
 
 // <Keyboard target="document" onKeyDown={handleKeyPress}>

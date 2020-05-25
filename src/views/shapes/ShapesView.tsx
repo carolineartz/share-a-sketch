@@ -6,6 +6,7 @@ import { Box } from "grommet"
 import * as ShapeSettingsContext from "./ShapeSettingsContext"
 import * as ShapesApi from "./shapesApi"
 import { ShapeButton } from "./ShapeButton"
+import { Main } from "../../components/Main"
 
 const SHAPE_COLORS: string[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 
@@ -25,14 +26,8 @@ export const ShapesView = (): JSX.Element => {
   }, [])
 
   return (
-    <Box
-      fill
+    <Main
       css={`
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 0;
-        overflow: hidden;
         display: grid;
         grid-template-columns: repeat(12, minmax(6.25vh, 8.33333vw));
         grid-auto-rows: minmax(8.33333vw, 6.25vh);
@@ -56,6 +51,6 @@ export const ShapesView = (): JSX.Element => {
           <Box />
         </ShapeButton>
       ))}
-    </Box>
+    </Main>
   )
 }

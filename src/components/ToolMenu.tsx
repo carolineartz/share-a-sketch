@@ -26,15 +26,11 @@ type StyledToolMenuProps = BoxProps & {
 }
 
 const StyledToolMenu = styled(Box)<StyledToolMenuProps>`
-  /* background: white; */
   transition: all 0.5s ease;
   display: inline-block;
-  /* position: absolute; */
   position: relative;
   top: 10vh;
   z-index: 1;
-  /* height: 100%; */
-  /* top: 30%; */
   left: ${props => (props.visible ? "0" : "-" + props.theme.global.size.xsmall)};
   div {
     div {
