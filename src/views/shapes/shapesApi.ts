@@ -47,10 +47,11 @@ export const loadShapes = (onLoadShapes: React.Dispatch<React.SetStateAction<Sha
 
 export const connect = (onChange: React.Dispatch<React.SetStateAction<ShapeData>>): void => {
   shapesRef.on("child_changed", (snapshot: any) => {
-    onChange((shapes: ShapeData) => ({
-      ...shapes,
-      ...{ [snapshot.key]: { rotationIndex: snapshot.val().rotationIndex, color: snapshot.val().color } },
-    }))
+    onChange((shapes: ShapeData) => {
+      const updatedShapes = { ...shapes }
+      updatedShapes[snapshot.key] = { rotationIndex: snapshot.val().rotationIndex, color: snapshot.val().color }
+      return updatedShapes
+    })
   })
 }
 
