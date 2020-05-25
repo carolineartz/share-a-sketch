@@ -12,7 +12,9 @@ export const ToolMenu = ({ children }: { children: React.ReactChild }): JSX.Elem
   return (
     <StyledToolMenu visible={visible} round={{ size: "xsmall", corner: "right" }} elevation="large">
       <Box direction="row" height={{ min: "small" }} align="center">
-        <Nav>{children}</Nav>
+        <Nav width="xsmall" height={{ min: "small" }}>
+          {children}
+        </Nav>
         <Box
           height={{ min: "small" }}
           fill
@@ -37,7 +39,7 @@ const StyledToolMenu = styled(Box)<StyledToolMenuProps>`
   background: white;
   transition: all 0.5s ease;
   top: 30%;
-  left: ${props => (props.visible ? "0" : "-" + props.theme.global.size.xxsmall)};
+  left: ${props => (props.visible ? "0" : "-" + props.theme.global.size.xsmall)};
   div {
     div {
       &:active,

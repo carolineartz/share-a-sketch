@@ -9,8 +9,8 @@ type ShapeButtonProps = {
 export const ShapeButton = styled(Box)<ShapeButtonProps>`
   background: #0a0b27;
   max-width: none;
-  height: 101.5%;
-  width: 101.5%;
+  height: 101%;
+  width: 101%;
   display: flex;
   max-width: none !important;
   max-height: none !important;

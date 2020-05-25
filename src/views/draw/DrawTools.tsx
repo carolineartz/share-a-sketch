@@ -1,102 +1,117 @@
-/* eslint-disable indent */
 import * as React from "react"
 import { Edit, Erase, Star } from "grommet-icons"
-import { Box, Text, BoxProps } from "grommet"
-import { ToolMenuButton, ToolMenuDropButton } from "../../components/ToolMenuButton"
+import { Drop, Button } from "grommet"
+import { DropMenu, DropOption, DropSelectProps } from "../../components/DropMenu"
 import { ToolMenu } from "../../components/ToolMenu"
 import * as DrawSettingsContext from "./DrawSettingsContext"
-import { ColorDrop } from "../../components/Icon"
+import { ColorDrop, ShapeSquare, ShapeCircle } from "../../components/Icon"
 
 const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 const shapes: DrawShape[] = ["circle", "square", "star"]
 
-const Shape = ({
-  shapeTool,
-  color,
-  ...restProps
-}: BoxProps & { color: DesignColor; shapeTool: DrawShape }): JSX.Element => {
-  switch (shapeTool) {
-    case "circle":
-      return <Box round width="24px" height="24px" background={color} style={{ cursor: "pointer" }} {...restProps} />
-    case "square":
-      return <Box width="24px" height="24px" background={color} style={{ cursor: "pointer" }} {...restProps} />
-    case "star":
-      return <Star color={color} />
-  }
-}
-
 export const DrawTools = (): JSX.Element => {
   const { tool, setTool, color, setColor, shape, setShape } = DrawSettingsContext.useDrawSettings()
+  const [showColorOptions, setShowColorOptions] = React.useState<boolean>(false)
+  const [showShapeOptions, setShowShapeOptions] = React.useState<boolean>(false)
+
+  const colorMenuItemRef = React.useRef() as any
+  const shapeMenuItemRef = React.useRef() as any
+
+  const closeColorOptions = () => setShowColorOptions(false)
+  const closeShapeOptions = () => setShowShapeOptions(false)
+
+  const colorOptions: DropOption<DesignColor>[] = colors.map((c: DesignColor) => ({
+    value: c,
+    icon: <ShapeCircle size="large" color={c} />,
+  }))
+
+  const colorSelectProps: DropSelectProps<DesignColor> = {
+    onClick: (c: DesignColor) => {
+      setColor(c)
+      closeShapeOptions()
+      closeColorOptions()
+    },
+    value: color,
+    options: colorOptions,
+  }
+
+  const shapeIcon = (s: DrawShape): JSX.Element =>
+    s === "circle" ? (
+      <ShapeCircle size="large" color={color} />
+    ) : s === "square" ? (
+      <ShapeSquare size="large" color={color} />
+    ) : (
+      <Star size="large" color={color} />
+    )
+
+  const shapeOptions: DropOption<DrawShape>[] = shapes.map((s: DrawShape) => ({
+    value: s,
+    icon: shapeIcon(s),
+  }))
+
+  const shapeSelectProps: DropSelectProps<DrawShape> = {
+    onClick: (s: DrawShape) => {
+      setShape(s)
+      closeShapeOptions()
+      closeColorOptions()
+    },
+    value: shape,
+    options: shapeOptions,
+  }
 
   return (
     <ToolMenu>
       <>
-        <ToolMenuDropButton
-          key="draw-design-color"
-          button={<ColorDrop color={color} />}
-          content={
-            <Box pad="small" direction="row" gap="xsmall">
-              {colors.map((bg: DesignColor, i: number) => (
-                <Box
-                  key={`draw-color-button-${i}`}
-                  align="center"
-                  pad="small"
-                  style={{ cursor: "pointer" }}
-                  background={bg === color ? "active" : "white"}
-                  onClick={() => setColor(bg)}
-                >
-                  <Box round width="24px" height="24px" background={bg} />
-                </Box>
-              ))}
-            </Box>
-          }
+        <Button
+          onClick={() => setShowColorOptions(!showColorOptions)}
+          title="Color"
+          ref={colorMenuItemRef}
+          key="draw-color"
+          icon={<ColorDrop size="large" color={color} />}
         />
-        <ToolMenuDropButton
-          key="draw-design-shape"
-          active={tool == "shape"}
-          button={
-            <Box
-              fill
-              pad="none"
-              margin="0"
-              height={{ min: "24px" }}
-              align="center"
-              onClick={() => setTool("shape")}
-              justify="center"
-              background={tool === "shape" ? "active" : "white"}
-            >
-              <Shape shapeTool={shape} color={color} />
-            </Box>
-          }
-          content={
-            <Box pad="small" direction="row" gap="xsmall">
-              {shapes.map((shapeTool: DrawShape, i: number) => (
-                <Box
-                  key={`draw-color-button-${i}`}
-                  align="center"
-                  pad="small"
-                  style={{ cursor: "pointer" }}
-                  background={shape === shapeTool ? "active" : "white"}
-                  onClick={() => setShape(shapeTool)}
-                >
-                  <Shape shapeTool={shapeTool} color={color} />
-                </Box>
-              ))}
-            </Box>
-          }
+        {showColorOptions && colorMenuItemRef && colorMenuItemRef.current && (
+          <Drop
+            align={{ top: "top", left: "right" }}
+            target={colorMenuItemRef.current}
+            onClickOutside={closeColorOptions}
+            onEsc={closeColorOptions}
+          >
+            <DropMenu {...colorSelectProps} />
+          </Drop>
+        )}
+        <Button
+          onClick={() => {
+            setTool("shape")
+            setShowShapeOptions(!showShapeOptions)
+          }}
+          title="Shape"
+          active={tool === "shape"}
+          ref={shapeMenuItemRef}
+          key="draw-shape"
+          icon={shapeIcon(shape)}
         />
-        <ToolMenuButton
+        {showShapeOptions && shapeMenuItemRef && shapeMenuItemRef.current && (
+          <Drop
+            align={{ top: "top", left: "right" }}
+            target={shapeMenuItemRef.current}
+            onClickOutside={closeShapeOptions}
+            onEsc={closeShapeOptions}
+          >
+            <DropMenu {...shapeSelectProps} />
+          </Drop>
+        )}
+        <Button
           title="Draw"
           key="draw-design-paint"
-          icon={Edit}
-          isActive={tool === "paint"}
+          icon={<Edit size="large" color={tool === "paint" ? "white" : "text"} />}
+          active={tool === "paint"}
           onClick={() => setTool("paint")}
         />
-        <ToolMenuButton
+        <Button
           title="Draw"
           key="draw-design-erase"
-          icon={Erase}
-          isActive={tool === "erase"}
+          icon={<Erase size="large" color={tool === "erase" ? "white" : "text"} />}
+          active={tool === "erase"}
           onClick={() => setTool("erase")}
         />
       </>

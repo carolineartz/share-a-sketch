@@ -16,7 +16,7 @@ import { customTheme } from "./theme"
 
 const App = (): JSX.Element => {
   const [view, setView]: [DesignView, React.Dispatch<React.SetStateAction<DesignView>>] = React.useState(
-    "draw" as DesignView
+    "shapes" as DesignView
   )
 
   return (
@@ -65,7 +65,6 @@ const Container = styled(Box)`
   overflow: hidden;
   position: relative;
   > * {
-    /* background: white; */
     position: absolute;
   }
 `

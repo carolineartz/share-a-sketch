@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Slice</title>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="check-box" fill="#000000" fill-rule="nonzero">
-            <path d="M23.1428483,0 L0.857151744,0 C0.383361777,0 0,0.383361777 0,0.857151744 L0,23.1428483 C0,23.6166382 0.383361777,24 0.857151744,24 L23.1428483,24 C23.6166382,24 24,23.6166382 24,23.1428483 L24,0.857151744 C24,0.383361777 23.6166382,0 23.1428483,0 Z M22.2857463,22.2856965 L1.71430349,22.2856965 L1.71430349,1.71430349 L22.2857463,1.71430349 L22.2857463,22.2856965 L22.2857463,22.2856965 Z" id="Shape"></path>
-        </g>
-    </g>
-</svg>

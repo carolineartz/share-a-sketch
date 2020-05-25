@@ -2,7 +2,7 @@
 import React from "react"
 
 export const ShapeSettingsContext = React.createContext<ShapeSettingsContextType>({
-  mode: "color",
+  mode: "rotate",
   setMode: _mode => {},
 })
 
@@ -11,7 +11,7 @@ type Props = {
 }
 
 export const Provider = ({ children }: Props): JSX.Element => {
-  const [mode, setMode] = React.useState<ShapeMode>("color") // prettier-ignore
+  const [mode, setMode] = React.useState<ShapeMode>("rotate") // prettier-ignore
 
   return <ShapeSettingsContext.Provider value={{ mode, setMode }}>{children}</ShapeSettingsContext.Provider>
 }

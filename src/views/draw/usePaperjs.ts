@@ -26,7 +26,7 @@ type CreatPaperHookType = {
   setCanvas: (canvas: HTMLCanvasElement) => void
 }
 
-const pathsRef = firebase.database().ref("paths_new1")
+const pathsRef = firebase.database().ref("paths_new3")
 
 type LocalState = {
   color: DesignColor
@@ -48,7 +48,7 @@ const broadcastCreate = (path: paper.Path, tool: DrawTool) => {
   console.log("BROADCASTING CREATE", path)
   return firebase
     .database()
-    .ref("paths_new1")
+    .ref("paths_new3")
     .push({
       definition: path.pathData,
       strokeWidth: tool === "paint" ? path.strokeWidth : 0,
@@ -73,7 +73,7 @@ const broadcastUpdates = (path: paper.Path) =>
     console.log("BROADCASTING UPDATE", path)
     firebase
       .database()
-      .ref(`paths_new1/${path.data.id}`)
+      .ref(`paths_new3/${path.data.id}`)
       .set({
         definition: path.pathData,
         strokeWidth: path.closed ? 0 : path.strokeWidth,
@@ -104,6 +104,7 @@ export const usePaperJs = (): CreatPaperHookType => {
     localState.current.shape = shape
     localState.current.strokeWidth = strokeWidth
     localState.current.color = color
+    console.log(tool)
   }, [tool, shape, strokeWidth, color])
 
   React.useEffect(() => {
@@ -220,7 +221,7 @@ export const usePaperJs = (): CreatPaperHookType => {
           color: loadColor,
         })
         setLocalPathEventHandlers(remotelyAddedPath)
-        const pathRef = firebase.database().ref(`/paths_new1/${id}`)
+        const pathRef = firebase.database().ref(`/paths_new3/${id}`)
 
         pathRef.on("value", (updatedSnapshot: any) => {
           console.log("REMOTE PATH CHANGED", updatedSnapshot.val(), { originPath: remotelyAddedPath })
@@ -263,11 +264,10 @@ export const usePaperJs = (): CreatPaperHookType => {
 
     if (tool === "paint") {
       localState.current.activePath = path = new Path({
-        segments: [event.point],
+        // segments: [event.point],
         strokeWidth,
         strokeCap: "round",
         strokeColor: new Color(color),
-        fillColor: "transparent",
       })
       path.data.color = color
       path.data.localId = localId
@@ -286,6 +286,7 @@ export const usePaperJs = (): CreatPaperHookType => {
       localState.current.paperTool = new PaperTool({
         currentState: localState.current,
       })
+      localState.current.paperTool.activate()
     } else {
       localState.current.paperTool.currentState = localState.current
     }
@@ -320,7 +321,7 @@ export const usePaperJs = (): CreatPaperHookType => {
       if (target && target instanceof Path) {
         if (target.data.id) {
           // this is not the currently drawn path, this is any path that is being removed.
-          firebase.database().ref(`/paths_new1/${target.data.id}`).remove() // prettier-ignore
+          firebase.database().ref(`/paths_new3/${target.data.id}`).remove() // prettier-ignore
         }
 
         target.remove() // locally remove -- not listening to external event for this.

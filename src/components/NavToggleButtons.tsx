@@ -13,10 +13,18 @@ type NavToggleButtonProps = BoxProps & {
 }
 
 export const NavToggleButtons = ({ left, right, active, ...restProps }: NavToggleButtonProps): JSX.Element => (
-  <Box direction="row" round="large" elevation="large" {...restProps} style={{ alignSelf: "center" }} margin="medium">
+  <Box
+    direction="row"
+    round="large"
+    elevation="large"
+    {...restProps}
+    style={{ position: "relative", alignSelf: "center" }}
+    margin="medium"
+  >
     <ButtonToggle
       color="white"
       size="large"
+      // width="small"
       icon={left.icon}
       active={active === "left"}
       side="left"
@@ -25,6 +33,7 @@ export const NavToggleButtons = ({ left, right, active, ...restProps }: NavToggl
     />
     <ButtonToggle
       icon={right.icon}
+      // width="small"
       size="large"
       color="white"
       active={active === "right"}
@@ -40,6 +49,8 @@ type ButtonToggleProps = ButtonProps & {
 }
 
 const ButtonToggle = styled(Button)<ButtonToggleProps>`
+    /* width: 10em; */
+  /* width: ${props => props.theme.global} */
   ${props =>
     props.active
       ? css`

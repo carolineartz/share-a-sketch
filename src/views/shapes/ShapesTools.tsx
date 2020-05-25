@@ -13,7 +13,7 @@ export const ShapesTools = (): JSX.Element => {
         <Button
           title="Rotate Shape"
           key="shapes-design-rotate"
-          icon={<Cycle color={mode === "rotate" ? "white" : "text"} />}
+          icon={<Cycle size="large" color={mode === "rotate" ? "white" : "text"} />}
           hoverIndicator
           active={mode === "rotate"}
           onClick={() => setMode("rotate")}
@@ -21,7 +21,7 @@ export const ShapesTools = (): JSX.Element => {
         <Button
           title="Color Shape"
           key="shapes-design-color"
-          icon={<ClearOption color={mode === "color" ? "white" : "text"} />}
+          icon={<ClearOption size="large" color={mode === "color" ? "white" : "text"} />}
           hoverIndicator
           active={mode === "color"}
           onClick={() => setMode("color")}
