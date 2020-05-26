@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable indent */
 import * as React from "react"
 
@@ -5,10 +6,9 @@ import "styled-components/macro"
 import { Stack, Box, Text, ThemeContext, ResponsiveContext } from "grommet"
 import { StatusGood, StatusCritical, StatusGoodSmall, StatusCriticalSmall } from "grommet-icons"
 import { Spinning } from "grommet-controls"
-import { connection, DatabaseStatus } from "../Firebase"
-
-import { Cloud, CrossLarge, CrossSmall } from "../components/Icon"
-import { colorStatusCritical, colorStatusUnknown } from "../theme"
+import { Cloud, CrossLarge, CrossSmall } from "@components/Icon"
+import { connection, DatabaseStatus } from "~/Firebase"
+import { colorStatusCritical, colorStatusUnknown } from "~/theme"
 
 export const ConnectionStatus = (): JSX.Element => {
   const [status, setStatus] = React.useState<DatabaseStatus>("unknown")

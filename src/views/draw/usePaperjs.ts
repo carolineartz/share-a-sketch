@@ -1,11 +1,10 @@
-/* eslint-disable no-shadow, no-case-declarations, @typescript-eslint/no-explicit-any, indent, @typescript-eslint/explicit-function-return-type */
+/* eslint-disable import/no-unresolved, no-shadow, no-case-declarations, @typescript-eslint/no-explicit-any, indent, @typescript-eslint/explicit-function-return-type */
 import * as React from "react"
-import throttle from "lodash.throttle"
-
+import * as DrawSettingsContext from "@draw/DrawSettingsContext"
 import paper, { Point, Path, Color, Size, Tool } from "paper"
-import firebase from "../../Firebase"
-import * as DrawSettingsContext from "./DrawSettingsContext"
-import { DesignColor } from "../../theme"
+import throttle from "lodash.throttle"
+import firebase from "~/Firebase"
+import { DesignColor } from "~/theme"
 
 type LoadType = "initial" | "added" | "updated"
 

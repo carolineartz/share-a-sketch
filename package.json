@@ -18,13 +18,14 @@
     "@types/react-dom": "^16.9.0",
     "@types/styled-components": "^5.1.0",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
-    "@typescript-eslint/parser": "^2.11.0",
+    "@typescript-eslint/parser": "^3.0.1",
     "babel-eslint": "^10.0.3",
     "concurrently": "^5.2.0",
     "eslint": "5.x",
     "eslint-config-airbnb": "^18.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-config-sarpik": "0.2.7",
+    "eslint-import-resolver-typescript": "^2.0.0",
     "eslint-plugin-flowtype": "^4.5.2",
     "eslint-plugin-html": "^6.0.0",
     "eslint-plugin-import": "^2.18.0",
@@ -51,19 +52,21 @@
     "polished": "^3.6.3",
     "prettier": "^1.16.4",
     "react": "^16.13.1",
+    "react-app-rewire-alias": "^0.1.4",
+    "react-app-rewired": "^2.1.6",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "styled-components": "^5.1.0",
     "typescript": "^3.7.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "dev": "concurrently \"yarn:dev:firebase\" \"yarn:dev:react\"",
     "dev:firebase": "firebase serve -p 4000",
-    "dev:react": "react-scripts start",
+    "dev:react": "react-app-rewired start",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ./"
   },
@@ -81,6 +84,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {}
+  }
 }

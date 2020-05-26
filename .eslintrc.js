@@ -1,8 +1,6 @@
 module.exports = {
-  "extends": [
-    "sarpik"
-  ],
-    "rules": {
+  "extends": ["sarpik"],
+  "rules": {
     "no-console": "off",
     "no-unused-vars": "off",
     "indent": ["error", 2],
@@ -23,6 +21,9 @@ module.exports = {
         "printWidth": 120,
         "semi": false
       }
-    ]
+    ],
+  },
+  "settings": {
+    "import/ignore": ["component", "\\@", ".ts", ".tsx"]
   }
 }

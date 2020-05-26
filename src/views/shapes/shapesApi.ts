@@ -1,9 +1,10 @@
+/* eslint-disable import/no-unresolved */
 import * as React from "react"
 import times from "lodash.times"
 import range from "lodash.range"
 import zipObject from "lodash.zipobject"
 import constant from "lodash.constant"
-import firebase from "../../Firebase"
+import firebase from "~/Firebase"
 
 const shapesRef = firebase.database().ref("shapes_new")
 

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@draw/*": ["src/views/draw/*"],
+      "@shapes/*": ["src/views/shapes/*"],
+      "~/*": ["src/*"]
+    }
+  }
+}

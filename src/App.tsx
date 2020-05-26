@@ -1,17 +1,18 @@
+/* eslint-disable import/no-unresolved */
 import React from "react"
 
 import "styled-components/macro"
 
 import { Grommet, Box, ResponsiveContext } from "grommet"
 import { Cube, Brush } from "grommet-icons"
-import { ShapesTools } from "./views/shapes/ShapesTools"
-import { DrawTools } from "./views/draw/DrawTools"
-import * as ShapeSettingsContext from "./views/shapes/ShapeSettingsContext"
-import { ShapesView } from "./views/shapes/ShapesView"
-import { DrawView } from "./views/draw/DrawView"
-import { ConnectionStatus } from "./views/ConnectionStatus"
-import * as DrawSettingsContext from "./views/draw/DrawSettingsContext"
-import { EndButton } from "./components/ButtonGroup"
+import { EndButton } from "@components/ButtonGroup"
+import * as ShapeSettingsContext from "@shapes/ShapeSettingsContext"
+import { ShapesView } from "@shapes/ShapesView"
+import { ShapesTools } from "@shapes/ShapesTools"
+import { DrawView } from "@draw/DrawView"
+import * as DrawSettingsContext from "@draw/DrawSettingsContext"
+import { DrawTools } from "@draw/DrawTools"
+import { ConnectionStatus } from "~/views/ConnectionStatus"
 
 import { customTheme } from "./theme"
 

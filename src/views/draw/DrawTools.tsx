@@ -1,12 +1,12 @@
+/* eslint-disable import/no-unresolved */
 import * as React from "react"
 import { Edit, Erase, Star, StopFill } from "grommet-icons"
 import { Drop, Button, ResponsiveContext } from "grommet"
-import { DropMenu, DropOption, DropSelectProps } from "../../components/DropMenu"
-import { ToolMenu } from "../../components/ToolMenu"
-import * as DrawSettingsContext from "./DrawSettingsContext"
-import { ColorDrop, ShapeCircle } from "../../components/Icon"
-
-import { DesignColor } from "../../theme"
+import { DropMenu, DropOption, DropSelectProps } from "@components/DropMenu"
+import { ToolMenu } from "@components/ToolMenu"
+import { ColorDrop, ShapeCircle } from "@components/Icon"
+import * as DrawSettingsContext from "@draw/DrawSettingsContext"
+import { DesignColor } from "~/theme"
 
 const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 const shapes: DrawSettingsContext.DrawShape[] = ["circle", "square", "star"]
