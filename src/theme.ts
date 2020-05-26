@@ -27,7 +27,6 @@ const theme: ThemeType = {
       background: {
         opacity: 1,
       },
-      // border:
     },
     colors: {
       active: "brand",
@@ -52,27 +51,7 @@ const theme: ThemeType = {
       "status-unknown": colorStatusUnknown,
       "status-disabled": colorStatusUnknown,
     },
-    // drop: {
-    //   background: "#333333",
-    // },
-    // focus: {
-    //   border: {
-    //     color: [null, ";"],
-    //   },
-    // },
-    // input: {
-    //   weight: 700,
-    // },
   },
-  // anchor: {
-  //   color: "#FFCA58",
-  // },
-  // layer: {
-  //   background: "#111111",
-  //   overlay: {
-  //     background: "rgba(48,48,48,0.5)",
-  //   },
-  // },
 }
 
 export const customTheme = deepFreeze(theme)
