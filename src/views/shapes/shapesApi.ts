@@ -25,7 +25,7 @@ const DEFAULT_SHAPE: Shape = {
 
 export const createShapes = (): Promise<ShapeData> =>
   Promise.all(range(200).map(() => shapesRef.push(DEFAULT_SHAPE).key)).then(
-    foo => zipObject(foo as string[], times(200, constant(DEFAULT_SHAPE))) as ShapeData
+    n => zipObject(n as string[], times(200, constant(DEFAULT_SHAPE))) as ShapeData
   )
 
 export const loadShapes = (onLoadShapes: React.Dispatch<React.SetStateAction<ShapeData>>): Promise<void> =>

@@ -24,20 +24,24 @@ const App = (): JSX.Element => {
   return (
     <Grommet full theme={customTheme}>
       <ShapeSettingsContext.Provider>
+        <DrawSettingsContext.Provider>
         {view === "draw" && (
-          <DrawSettingsContext.Provider>
+          <>
             <DrawView />
             <DrawTools />
-          </DrawSettingsContext.Provider>
-        )}
+            </>
+            )}
         {view === "shapes" && (
-          <ShapeSettingsContext.Provider>
+          <>
+
             <ShapesView />
             <ShapesTools />
-          </ShapeSettingsContext.Provider>
+            </>
+
         )}
         <NavButtons view={view} setView={setView} />
         <ConnectionStatus />
+        </DrawSettingsContext.Provider>
       </ShapeSettingsContext.Provider>
     </Grommet>
   )
@@ -52,7 +56,6 @@ type NavButtonProps = {
 
 const NavButtons = ({ view, setView }: NavButtonProps): JSX.Element => {
   const screenWidth = React.useContext(ResponsiveContext)
-  console.log(screenWidth)
 
   return (
     <Box

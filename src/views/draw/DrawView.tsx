@@ -8,8 +8,8 @@ import { usePaperJs } from "@draw/usePaperjs"
 
 export const DrawView = (): JSX.Element => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
-  const { setCanvas } = usePaperJs()
   const { setTool } = DrawSettingsContext.useDrawSettings()
+  const { setCanvas } = usePaperJs()
 
   React.useEffect(() => {
     const canvas = canvasRef.current

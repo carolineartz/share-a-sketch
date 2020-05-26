@@ -22,8 +22,6 @@ export const connection = {
   ref: firebase.database().ref(".info/connected"),
   listen: (onChange: (status: DatabaseStatus) => any) => {
     connection.ref.on("value", (snapshot: any) => {
-      // snap.val() => boolean
-      console.log("foo")
       if (snapshot.val()) {
         onChange("connected")
       } else {

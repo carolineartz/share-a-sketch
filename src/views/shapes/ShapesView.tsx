@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved, indent */
 import * as React from "react"
 
 import "styled-components/macro"
