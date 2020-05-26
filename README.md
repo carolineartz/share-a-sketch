@@ -28,9 +28,17 @@ yarn
 
 4. Copy `.env.example` to `.env` and fill in the configuration values.
 
-5. Run the local development servers
+5. Log in to Firebase service
 
-The following command should open a tab in your default browser running the app.
+The following command should open (or prompt you to open) a browser window so you can log into Firebase with the email you provided.
+
+```
+yarn firebase login
+```
+
+6. Run the local development servers
+
+The following command should open a tab in your default browser running the app!
 
 ```
 yarn dev
