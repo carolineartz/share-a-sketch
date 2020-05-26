@@ -1,7 +1,7 @@
 import firebase from "firebase/app"
 import "firebase/database"
 
-export type DatabaseStatus = "connected" | "disconnected"
+export type DatabaseStatus = "connected" | "disconnected" | "unknown"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -23,6 +23,7 @@ export const connection = {
   listen: (onChange: (status: DatabaseStatus) => any) => {
     connection.ref.on("value", (snapshot: any) => {
       // snap.val() => boolean
+      console.log("foo")
       if (snapshot.val()) {
         onChange("connected")
       } else {

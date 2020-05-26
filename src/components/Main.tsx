@@ -1,6 +1,4 @@
-// import { Box } from "grommet"
 import styled from "styled-components"
-// import "styled-components/macro"
 
 export const Main = styled.main`
   position: absolute;
@@ -8,4 +6,6 @@ export const Main = styled.main`
   left: 0;
   z-index: 0;
   overflow: hidden;
+  height: 100vh;
+  width: 100vw;
 `

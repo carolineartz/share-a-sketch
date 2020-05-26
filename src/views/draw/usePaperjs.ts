@@ -2,14 +2,13 @@
 import * as React from "react"
 import throttle from "lodash.throttle"
 
-import paper, { Path, Color, Size, Tool } from "paper"
+import paper, { Point, Path, Color, Size, Tool } from "paper"
 import firebase from "../../Firebase"
 import * as DrawSettingsContext from "./DrawSettingsContext"
 import { DesignColor } from "../../theme"
 
 type LoadType = "initial" | "added" | "updated"
 
-// random.ts
 function generateLocalId(): string {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
   return uint32.toString(16)
@@ -58,16 +57,6 @@ const broadcastCreate = (path: paper.Path, tool: DrawSettingsContext.DrawTool) =
     })
 }
 
-// if (key) {
-//   onAdded(key)
-// } else {
-//   debugger
-// }
-// function syncer(ref: firebase.database.Reference, data: any) {
-//   return throttle(() => {
-//     ref.set(data)
-//   }, 300)
-// }
 // ONLY HAPPENING FROM DRAWERS MACHINE
 const broadcastUpdates = (path: paper.Path) =>
   throttle(() => {
@@ -384,7 +373,7 @@ class PaperTool extends Tool {
       if (this.currentState.tool === "shape" && this.currentState.activePath) {
         switch (this.currentState.shape) {
           case "square":
-            p = new Path.Rectangle(event.point, new Size(60, 60))
+            p = new Path.Rectangle(new Point(event.point.x - 40, event.point.y - 40), new Size(80, 80))
             // path = new Path.Rectangle(event.point, new Size(30, 30))
             break
           case "circle":

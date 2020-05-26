@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Button } from "grommet"
+import { Button, ResponsiveContext } from "grommet"
 import { Cycle, ClearOption } from "grommet-icons"
 import * as ShapeSettingsContext from "./ShapeSettingsContext"
 import { ToolMenu } from "../../components/ToolMenu"
@@ -7,13 +7,15 @@ import { ToolMenu } from "../../components/ToolMenu"
 export const ShapesTools = (): JSX.Element => {
   const { mode, setMode } = ShapeSettingsContext.useShapeSettings()
 
+  const screenWidth = React.useContext(ResponsiveContext)
+  const iconSize = screenWidth === "small" ? "medium" : "large"
   return (
-    <ToolMenu>
+    <ToolMenu size={screenWidth === "small" ? "small" : "medium"}>
       <>
         <Button
           title="Rotate Shape"
           key="shapes-design-rotate"
-          icon={<Cycle size="large" color={mode === "rotate" ? "white" : "text"} />}
+          icon={<Cycle size={iconSize} color={mode === "rotate" ? "white" : "text"} />}
           hoverIndicator
           active={mode === "rotate"}
           onClick={() => setMode("rotate")}
@@ -21,7 +23,7 @@ export const ShapesTools = (): JSX.Element => {
         <Button
           title="Color Shape"
           key="shapes-design-color"
-          icon={<ClearOption size="large" color={mode === "color" ? "white" : "text"} />}
+          icon={<ClearOption size={iconSize} color={mode === "color" ? "white" : "text"} />}
           hoverIndicator
           active={mode === "color"}
           onClick={() => setMode("color")}

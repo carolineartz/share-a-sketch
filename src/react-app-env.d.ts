@@ -9,3 +9,5 @@ declare module "react" {
     css?: CSSProp
   }
 }
+
+declare module "grommet-controls"

@@ -1,18 +1,35 @@
+/* eslint-disable indent */
 import * as React from "react"
+import "styled-components/macro"
 
 import { Box, Nav, BoxProps, Button } from "grommet"
 import { FormPrevious, FormNext } from "grommet-icons"
 import styled from "styled-components"
 
-export const ToolMenu = ({ children }: { children: React.ReactChild }): JSX.Element => {
+type ToolMenuProps = {
+  children: React.ReactChild
+  size: "small" | "medium"
+}
+
+export const ToolMenu = ({ children, size }: ToolMenuProps): JSX.Element => {
   const [visible, setVisible] = React.useState<boolean>(true)
 
   return (
-    <StyledToolMenu visible={visible}>
-      <Box background="white" direction="row" round={{ size: "xsmall", corner: "right" }} elevation="large">
-        <Nav width="xsmall">{children}</Nav>
+    <StyledToolMenu visible={visible} size={size}>
+      <Box
+        background="white"
+        direction="row"
+        border="all"
+        round={{ size: "xsmall", corner: "right" }}
+        elevation="large"
+      >
+        <Nav>{children}</Nav>
         <Button
           hoverIndicator
+          css={`
+            padding-left: 6px;
+            padding-right: ${size === "medium" ? "6px" : "3px"};
+          `}
           icon={visible ? <FormPrevious color="text" /> : <FormNext color="text" />}
           onClick={() => setVisible(!visible)}
         />
@@ -23,6 +40,7 @@ export const ToolMenu = ({ children }: { children: React.ReactChild }): JSX.Elem
 
 type StyledToolMenuProps = BoxProps & {
   visible: boolean
+  size: ToolMenuProps["size"]
 }
 
 const StyledToolMenu = styled(Box)<StyledToolMenuProps>`
@@ -31,8 +49,10 @@ const StyledToolMenu = styled(Box)<StyledToolMenuProps>`
   position: relative;
   top: 10vh;
   z-index: 1;
-  left: ${props => (props.visible ? "0" : "-" + props.theme.global.size.xsmall)};
+  left: ${props => (props.visible ? 0 : props.size === "small" ? "-54px" : "-78px")};
+
   div {
+    border: 6px solid white;
     div {
       &:active,
       &:focus {
@@ -41,3 +61,12 @@ const StyledToolMenu = styled(Box)<StyledToolMenuProps>`
     }
   }
 `
+
+/* div { */
+/* props.visible
+      ? "0"
+      : props.size === "small"
+      ? "-" + props.theme.global.size["xxsmall"]
+      : props.size === "medium"
+      ? "-" + props.theme.global.size["medium"]
+      : "-" + props.theme.global.size["xsmall"]}; */

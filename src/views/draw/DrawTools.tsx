@@ -1,10 +1,11 @@
 import * as React from "react"
-import { Edit, Erase, Star } from "grommet-icons"
-import { Drop, Button } from "grommet"
+import { Edit, Erase, Star, StopFill } from "grommet-icons"
+import { Drop, Button, ResponsiveContext } from "grommet"
 import { DropMenu, DropOption, DropSelectProps } from "../../components/DropMenu"
 import { ToolMenu } from "../../components/ToolMenu"
 import * as DrawSettingsContext from "./DrawSettingsContext"
-import { ColorDrop, ShapeSquare, ShapeCircle } from "../../components/Icon"
+import { ColorDrop, ShapeCircle } from "../../components/Icon"
+
 import { DesignColor } from "../../theme"
 
 const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
@@ -20,10 +21,13 @@ export const DrawTools = (): JSX.Element => {
 
   const closeColorOptions = (): void => setShowColorOptions(false)
   const closeShapeOptions = (): void => setShowShapeOptions(false)
+  const screenWidth = React.useContext(ResponsiveContext)
+
+  const iconSize = screenWidth === "small" ? "medium" : "large"
 
   const colorOptions: DropOption<DesignColor>[] = colors.map((c: DesignColor) => ({
     value: c,
-    icon: <ShapeCircle size="large" color={c} />,
+    icon: <ShapeCircle size={iconSize} color={c} />,
   }))
 
   const colorSelectProps: DropSelectProps<DesignColor> = {
@@ -38,11 +42,11 @@ export const DrawTools = (): JSX.Element => {
 
   const shapeIcon = (s: DrawSettingsContext.DrawShape): JSX.Element =>
     s === "circle" ? (
-      <ShapeCircle size="large" color={color} />
+      <ShapeCircle size={iconSize} color={color} />
     ) : s === "square" ? (
-      <ShapeSquare size="large" color={color} />
+      <StopFill size={iconSize} color={color} />
     ) : (
-      <Star size="large" color={color} />
+      <Star size={iconSize} color={color} />
     )
 
   const shapeOptions: DropOption<DrawSettingsContext.DrawShape>[] = shapes.map((s: DrawSettingsContext.DrawShape) => ({
@@ -61,14 +65,14 @@ export const DrawTools = (): JSX.Element => {
   }
 
   return (
-    <ToolMenu>
+    <ToolMenu size={screenWidth === "small" ? "small" : "medium"}>
       <>
         <Button
           onClick={() => setShowColorOptions(!showColorOptions)}
           title="Color"
           ref={colorMenuItemRef}
           key="draw-color"
-          icon={<ColorDrop size="large" color={color} />}
+          icon={<ColorDrop size={iconSize} color={color} />}
         />
         {showColorOptions && colorMenuItemRef && colorMenuItemRef.current && (
           <Drop
@@ -104,14 +108,14 @@ export const DrawTools = (): JSX.Element => {
         <Button
           title="Draw"
           key="draw-design-paint"
-          icon={<Edit size="large" color={tool === "paint" ? "white" : "text"} />}
+          icon={<Edit size={iconSize} color={tool === "paint" ? "white" : "text"} />}
           active={tool === "paint"}
           onClick={() => setTool("paint")}
         />
         <Button
           title="Draw"
           key="draw-design-erase"
-          icon={<Erase size="large" color={tool === "erase" ? "white" : "text"} />}
+          icon={<Erase size={iconSize} color={tool === "erase" ? "white" : "text"} />}
           active={tool === "erase"}
           onClick={() => setTool("erase")}
         />

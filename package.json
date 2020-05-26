@@ -14,13 +14,14 @@
     "@types/lodash.times": "^4.3.6",
     "@types/lodash.zipobject": "^4.1.6",
     "@types/node": "^12.0.0",
-    "@types/react-dom": "^16.9.0",
     "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
     "@types/styled-components": "^5.1.0",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
     "babel-eslint": "^10.0.3",
     "concurrently": "^5.2.0",
+    "eslint": "5.x",
     "eslint-config-airbnb": "^18.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-config-sarpik": "0.2.7",
@@ -30,14 +31,14 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-monorepo": "^0.2.1",
     "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react-hooks": "^2.3.0",
     "eslint-plugin-react": "^7.14.2",
-    "eslint": "5.x",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "esprima": "^4.0.1",
-    "firebase-tools": "^8.2.0",
     "firebase": "^7.14.4",
-    "grommet-icons": "^4.4.0",
+    "firebase-tools": "^8.2.0",
     "grommet": "^2.13.0",
+    "grommet-controls": "^2.0.4",
+    "grommet-icons": "^4.4.0",
     "lodash.constant": "^3.0.0",
     "lodash.debounce": "^4.0.8",
     "lodash.find": "^4.6.0",
@@ -49,9 +50,9 @@
     "paper": "^0.12.4",
     "polished": "^3.6.3",
     "prettier": "^1.16.4",
+    "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "react": "^16.13.1",
     "styled-components": "^5.1.0",
     "typescript": "^3.7.3"
   },
@@ -81,7 +82,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-
-  }
+  "devDependencies": {}
 }
