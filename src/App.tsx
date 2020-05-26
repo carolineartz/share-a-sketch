@@ -2,7 +2,7 @@
 import React from "react"
 
 import "styled-components/macro"
-
+import { createGlobalStyle }  from "styled-components"
 import { Grommet, Box, ResponsiveContext } from "grommet"
 import { Cube, Brush } from "grommet-icons"
 import { EndButton } from "@components/ButtonGroup"
@@ -23,6 +23,7 @@ const App = (): JSX.Element => {
 
   return (
     <Grommet full theme={customTheme}>
+      <GlobalStyle />
       <ShapeSettingsContext.Provider>
         <DrawSettingsContext.Provider>
         {view === "draw" && (
@@ -108,3 +109,9 @@ const NavButtons = ({ view, setView }: NavButtonProps): JSX.Element => {
     </Box>
   )
 }
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    overflow: hidden;
+  }
+`
