@@ -19,7 +19,7 @@ import { customTheme } from "./theme"
 type DesignView = "shapes" | "draw"
 
 const App = (): JSX.Element => {
-  const [view, setView] = React.useState<DesignView>("draw")
+  const [view, setView] = React.useState<DesignView>("shapes")
 
   return (
     <Grommet full theme={customTheme}>
