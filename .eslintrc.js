@@ -1,29 +1,60 @@
 module.exports = {
-  "extends": ["sarpik"],
-  "rules": {
-    "no-console": "off",
-    "no-unused-vars": "off",
-    "indent": ["error", 2],
-    "semi": ["error", "never"],
-    "react/jsx-props-no-spreading": "off",
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "@typescript-eslint/explicit-function-return-type": ["error", {
-      "allowExpressions": true,
-      "allowTypedFunctionExpressions": true,
-      "allowHigherOrderFunctions": true,
-      "allowConciseArrowFunctionExpressionsStartingWithVoid": true,
-    }],
-    "prettier/prettier": [
-      "error",
-      {
-        "trailingComma": "es5",
-        "singleQuote": false,
-        "printWidth": 120,
-        "semi": false
-      }
-    ],
+  plugins: [
+    "@typescript-eslint",
+    "eslint-comments",
+    "jest",
+    "promise",
+  ],
+  extends: [
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:eslint-comments/recommended",
+    "plugin:jest/recommended",
+    "plugin:promise/recommended",
+    "prettier",
+    "prettier/react",
+    "prettier/@typescript-eslint",
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: "./tsconfig.json",
+    tsconfigRootDir: __dirname,
   },
-  "settings": {
-    "import/ignore": ["component", "\\@", ".ts", ".tsx"]
-  }
+  env: {
+    node: true,
+    browser: true,
+    jest: true,
+  },
+  rules: {
+    // let typescript handle exhausive options
+    "default-case": "off",
+    "no-nested-ternary": "off",
+    "react/no-array-index-key": "off",
+    "react/jsx-props-no-spreading": "off",
+    // Too restrictive, writing ugly code to defend against a very unlikely scenario: https://eslint.org/docs/rules/no-prototype-builtins
+    "no-prototype-builtins": "off",
+    // https://basarat.gitbooks.io/typescript/docs/tips/defaultIsBad.html
+    "import/prefer-default-export": "off",
+    "import/no-default-export": "error",
+    // Too restrictive: https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/destructuring-assignment.md
+    "react/destructuring-assignment": "off",
+    // No jsx extension: https://github.com/facebook/create-react-app/issues/87#issuecomment-234627904
+    "react/jsx-filename-extension": "off",
+    // Use function hoisting to improve code readability
+    "no-use-before-define": [
+      "error",
+      { functions: false, classes: true, variables: true },
+    ],
+    // Makes no sense to allow type inferrence for expression parameters, but require typing the response
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      { allowExpressions: true, allowTypedFunctionExpressions: true },
+    ],
+    "@typescript-eslint/no-use-before-define": [
+      "error",
+      { functions: false, classes: false, variables: false, typedefs: false },
+    ],
+    // Common abbreviations are known and readable
+    "unicorn/prevent-abbreviations": "off",
+  },
 }

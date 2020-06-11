@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import * as React from "react"
-import { DesignColor } from "~/theme"
+import { DesignColor } from "../../theme"
 
 export type DrawTool = "erase" | "paint" | "shape"
 export type DrawShape = "circle" | "square" | "star"

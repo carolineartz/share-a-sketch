@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import * as React from "react"
 import "styled-components/macro"
 
@@ -61,12 +60,3 @@ const StyledToolMenu = styled(Box)<StyledToolMenuProps>`
     }
   }
 `
-
-/* div { */
-/* props.visible
-      ? "0"
-      : props.size === "small"
-      ? "-" + props.theme.global.size["xxsmall"]
-      : props.size === "medium"
-      ? "-" + props.theme.global.size["medium"]
-      : "-" + props.theme.global.size["xsmall"]}; */

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars, indent, import/no-unresolved  */
 import React from "react"
 
 import { Keyboard } from "grommet"

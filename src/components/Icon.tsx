@@ -122,10 +122,10 @@ IconInner.displayName = "Icon"
 const parseMetricToNum = (string: string): number => {
   const match = string.match(/\d+(\.\d+)?/)
   if (match) {
-    return parseFloat(match[0])
-  } else {
-    return 24.0
+    return Number.parseFloat(match[0])
   }
+    return 24
+
 }
 
 export const Icon = styled(IconInner)<IconProps & { viewBox: string }>`
@@ -133,7 +133,7 @@ export const Icon = styled(IconInner)<IconProps & { viewBox: string }>`
   flex: 0 0 auto;
   ${({ size = "medium", theme, viewBox }) => {
     const [, , w, h] = (viewBox || "0 0 24 24").split(" ")
-    const scale = (parseInt(w) || 24) / (parseInt(h) || 24)
+    const scale = (Number.parseInt(w, 2) || 24) / (Number.parseInt(h, 2) || 24)
     const dimension = parseMetricToNum(theme.icon.size[size] || size)
     if (w < h) {
       return `

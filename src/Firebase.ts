@@ -1,7 +1,7 @@
-import firebase from "firebase/app"
-import "firebase/database"
+import firebase from "firebase/app";
+import "firebase/database";
 
-export type DatabaseStatus = "connected" | "disconnected" | "unknown"
+export type DatabaseStatus = "connected" | "disconnected" | "unknown";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -12,26 +12,27 @@ const firebaseConfig = {
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
-}
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID
+};
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig)
+firebase.initializeApp(firebaseConfig);
 
 export const connection = {
   ref: firebase.database().ref(".info/connected"),
   listen: (onChange: (status: DatabaseStatus) => any) => {
     connection.ref.on("value", (snapshot: any) => {
       if (snapshot.val()) {
-        onChange("connected")
+        onChange("connected");
       } else {
-        onChange("disconnected")
+        onChange("disconnected");
       }
-    })
+    });
   },
   disconnect: () => {
-    connection.ref.off()
-  },
-}
+    connection.ref.off();
+  }
+};
 
-export default firebase
+// eslint-disable-next-line import/no-default-export
+export default firebase;
