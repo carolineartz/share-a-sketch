@@ -42,9 +42,6 @@ class Firebase {
 
   shape = (id: string) =>  this.db.ref(`shapes_new/${id}`)
   shapes = () => this.db.ref("shapes_new").orderByKey().limitToFirst(192)
-  // onShapeChanged = (handleChange: Function) => this.shapes().on("child_changed", (snapshot: firebase.database.DataSnapshot) => {
-  //   handleChange(snapshot)
-  // })
   onShapeChanged = (handleShapeChanged: (data: any) => void) => this.shapes().on("child_changed", (snapshot: firebase.database.DataSnapshot) => {
     handleShapeChanged((shapes: any) => {
       const updatingShapes = {...shapes}
