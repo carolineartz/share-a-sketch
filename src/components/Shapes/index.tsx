@@ -19,23 +19,16 @@ type ShapeData = Record<string, {
 
 const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
   const { mode, setMode } = ShapeSettingsContext.useShapeSettings()
-  const [shapes, setShapes] = React.useState<ShapeData | undefined>()
+  const [shapes, setShapes] = React.useState<ShapeData>({} as ShapeData)
   const [loading, setLoading] = React.useState<LoadingState>("loading")
 
   React.useEffect(() => {
-    if (!shapes) {
-      firebase.shapes().orderByKey().limitToFirst(192).once("value", async (snapshot: firebase.database.DataSnapshot) => {
+    if (!Object.entries(shapes).length) {
+      firebase.shapes().once("value", async (snapshot: firebase.database.DataSnapshot) => {
         try {
           const loadedShapes = await snapshot.val()
           setShapes(loadedShapes)
           setLoading("loaded")
-
-          firebase.onShapeChanged((snapshot: firebase.database.DataSnapshot) => {
-            if (snapshot.key) {
-              const s = shapes as any
-              setShapes({...s, [snapshot.key]: { rotationIndex: snapshot.val().rotationIndex, color: snapshot.val().color }})
-            }
-          })
 
         } catch (e) {
           setLoading("error")
@@ -43,10 +36,14 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
       })
     }
 
+    if (loading === "loaded") {
+      firebase.onShapeChanged(setShapes)
+    }
+
     return () => {
       firebase.shapes().off()
     }
-  }, [shapes, firebase])
+  }, [shapes, loading, firebase])
 
   const handleKeyDown = (evt: React.KeyboardEvent): void => {
     switch (evt.key) {
@@ -68,9 +65,9 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
           grid-auto-rows: minmax(8.33333vw, 6.25vh);
         `}
       >
-        {shapes && Object.entries(shapes).map(([id, { rotationIndex, color }]) => (
+        {Object.entries(shapes).map(([id, { rotationIndex, color }]) => (
           <ShapeButton
-            key={id}
+            key={`${id}-${color}-${rotationIndex}`}
             color={color}
             rotation={(rotationIndex % 4) * 90}
             onClick={() =>

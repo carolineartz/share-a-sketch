@@ -41,9 +41,19 @@ class Firebase {
   // *** Shapes API ***
 
   shape = (id: string) =>  this.db.ref(`shapes_new/${id}`)
-  shapes = () => this.db.ref("shapes_new")
-  onShapeChanged = (handleChange: Function) => this.shapes().on("child_changed", (snapshot: firebase.database.DataSnapshot) => {
-    handleChange(snapshot)
+  shapes = () => this.db.ref("shapes_new").orderByKey().limitToFirst(192)
+  // onShapeChanged = (handleChange: Function) => this.shapes().on("child_changed", (snapshot: firebase.database.DataSnapshot) => {
+  //   handleChange(snapshot)
+  // })
+  onShapeChanged = (handleShapeChanged: (data: any) => void) => this.shapes().on("child_changed", (snapshot: firebase.database.DataSnapshot) => {
+    handleShapeChanged((shapes: any) => {
+      const updatingShapes = {...shapes}
+      if (snapshot.key) {
+        updatingShapes[snapshot.key] = { rotationIndex: snapshot.val().rotationIndex, color: snapshot.val().color}
+      }
+
+      return updatingShapes
+    })
   })
 
   // *** Draw API ***
