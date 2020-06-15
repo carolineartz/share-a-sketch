@@ -6,15 +6,13 @@ import { createGlobalStyle }  from "styled-components"
 import { Grommet, Box, ResponsiveContext } from "grommet"
 import { Cube, Brush } from "grommet-icons"
 import { EndButton } from "@components/ButtonGroup"
-import * as ShapeSettingsContext from "@shapes/ShapeSettingsContext"
-import { ShapesView } from "@shapes/ShapesView"
-import { ShapesTools } from "@shapes/ShapesTools"
-import { DrawView } from "@draw/DrawView"
-import * as DrawSettingsContext from "@draw/DrawSettingsContext"
-import { DrawTools } from "@draw/DrawTools"
-import { ConnectionStatus } from "~/views/ConnectionStatus"
+import * as ShapeSettingsContext from "@components/Shapes/context"
+import ShapeView from "@components/Shapes"
+import DrawView, { DrawSettingsContext } from "@components/Draw"
+import ConnectionStatus from "./connectionStatus"
 
-import { customTheme } from "./theme"
+
+import { customTheme } from "../../theme"
 
 type DesignView = "shapes" | "draw"
 
@@ -26,20 +24,8 @@ const App = (): JSX.Element => {
       <GlobalStyle />
       <ShapeSettingsContext.Provider>
         <DrawSettingsContext.Provider>
-        {view === "draw" && (
-          <>
-            <DrawView />
-            <DrawTools />
-            </>
-            )}
-        {view === "shapes" && (
-          <>
-
-            <ShapesView />
-            <ShapesTools />
-            </>
-
-        )}
+        {view === "draw" && <DrawView /> }
+        {view === "shapes" && <ShapeView />}
         <NavButtons view={view} setView={setView} />
         <ConnectionStatus />
         </DrawSettingsContext.Provider>

@@ -18,7 +18,7 @@ type Props = {
 }
 
 export const Provider = ({ children }: Props): JSX.Element => {
-  const [mode, setMode] = React.useState<ShapeMode>("rotate") // prettier-ignore
+  const [mode, setMode] = React.useState<ShapeMode>("rotate")
 
   return <ShapeSettingsContext.Provider value={{ mode, setMode }}>{children}</ShapeSettingsContext.Provider>
 }

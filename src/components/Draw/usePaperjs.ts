@@ -2,11 +2,12 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-multi-assign */
 import * as React from "react";
-import * as DrawSettingsContext from "@draw/DrawSettingsContext";
+import * as DrawSettingsContext from "@components/Draw/context";
 import paper, { Point, Path, Color, Size, Tool } from "paper";
 import throttle from "lodash.throttle";
-import firebase from "~/Firebase";
 import { DesignColor } from "~/theme";
+
+import { WithFirebaseProps } from "../Firebase";
 
 type LoadType = "initial" | "added" | "updated";
 
@@ -36,7 +37,7 @@ type LocalState = {
   paperTool?: PaperTool;
 };
 
-const pathsRef = firebase.database().ref("paths_new5");
+// const pathsRef = firebase.database().ref("paths_new5");
 
 const generateLocalId = (): string => {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0];
@@ -44,12 +45,11 @@ const generateLocalId = (): string => {
 };
 
 const broadcastCreate = (
+  firebase: any,
   path: paper.Path,
   tool: DrawSettingsContext.DrawTool
 ) => {
-  return firebase
-    .database()
-    .ref("paths_new5")
+  return firebase.paths()
     .push({
       definition: path.pathData,
       strokeWidth: tool === "paint" ? path.strokeWidth : 0,
@@ -58,11 +58,9 @@ const broadcastCreate = (
     });
 };
 
-const broadcastUpdates = (path: paper.Path) =>
+const broadcastUpdates = (firebase: any, path: paper.Path) =>
   throttle(() => {
-    firebase
-      .database()
-      .ref(`paths_new5/${path.data.id}`)
+    firebase.path(path.data.id)
       .set({
         definition: path.pathData,
         strokeWidth: path.closed ? 0 : path.strokeWidth,
@@ -71,7 +69,7 @@ const broadcastUpdates = (path: paper.Path) =>
       });
   });
 
-export const usePaperJs = (): CreatPaperHookType => {
+export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType => {
   const [canvas, setCanvas] = React.useState<HTMLCanvasElement | null>(null);
   const {
     tool,
@@ -108,7 +106,7 @@ export const usePaperJs = (): CreatPaperHookType => {
       scope.project.view.onMouseDown = handleMouseDown;
       scope.project.view.onMouseDrag = handleMouseDrag;
 
-      pathsRef
+      firebase.paths()
         .orderByKey()
         .once("value", (snapshot: any) => {
           try {
@@ -129,7 +127,7 @@ export const usePaperJs = (): CreatPaperHookType => {
           }
         })
         .then(() => {
-          pathsRef.on("child_added", (addedSnapshot: any) => {
+          firebase.paths().on("child_added", (addedSnapshot: any) => {
             loadPath({
               id: addedSnapshot.key,
               ...addedSnapshot.val(),
@@ -137,7 +135,7 @@ export const usePaperJs = (): CreatPaperHookType => {
             });
           });
 
-          pathsRef.on("child_removed", (removedSnapshot: any) => {
+          firebase.paths().on("child_removed", (removedSnapshot: any) => {
             const existingPath = (paper.project.activeLayer
               .children as paper.Path[]).find(
               p => p.data.id === removedSnapshot.key
@@ -150,7 +148,7 @@ export const usePaperJs = (): CreatPaperHookType => {
     }
 
     return () => {
-      pathsRef.off();
+      firebase.paths().off();
     };
   }, [canvas]);
 
@@ -227,8 +225,7 @@ export const usePaperJs = (): CreatPaperHookType => {
         });
         setLocalPathEventHandlers(remotelyAddedPath);
 
-        const pathRef = firebase.database().ref(`/paths_new5/${id}`);
-        pathRef.on("value", (updatedSnapshot: any) => {
+        firebase.path(id).on("value", (updatedSnapshot: any) => {
           loadPath({
             id: updatedSnapshot.key,
             ...updatedSnapshot.val(),
@@ -293,7 +290,7 @@ export const usePaperJs = (): CreatPaperHookType => {
     }
 
     localState.current.paperTool.onCreate = (path, tool) => {
-      const { key } = broadcastCreate(path, tool);
+      const { key } = broadcastCreate(firebase, path, tool);
       path.data.id = key;
     };
 
@@ -312,7 +309,7 @@ export const usePaperJs = (): CreatPaperHookType => {
     localState.current.activePath = undefined;
 
     if (path && path.area !== 0) {
-      broadcastUpdates(path)();
+      broadcastUpdates(firebase, path)();
     }
   }
 
@@ -323,14 +320,14 @@ export const usePaperJs = (): CreatPaperHookType => {
       if (target && target instanceof Path) {
         if (target.data.id) {
           // this is not the currently drawn path, this is any path that is being removed.
-          firebase.database().ref(`/paths_new5/${target.data.id}`).remove() // prettier-ignore
+          firebase.path(target.data.id).remove()
         }
         target.remove(); // locally remove -- not listening to external event for this.
       }
     } else if (localState.current.tool === "paint") {
       const path = localState.current.activePath;
       if (path) {
-        broadcastUpdates(path)();
+        broadcastUpdates(firebase, path)();
       }
     }
   }

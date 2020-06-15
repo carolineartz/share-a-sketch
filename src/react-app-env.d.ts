@@ -11,3 +11,9 @@ declare module "react" {
 }
 
 declare module "grommet-controls"
+
+
+export type Shape = {
+  rotationIndex: number
+  color: string
+}

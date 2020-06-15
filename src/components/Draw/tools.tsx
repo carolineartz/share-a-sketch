@@ -4,13 +4,15 @@ import { Drop, Button, ResponsiveContext } from "grommet"
 import { DropMenu, DropOption, DropSelectProps } from "@components/DropMenu"
 import { ToolMenu } from "@components/ToolMenu"
 import { ColorDrop, ShapeCircle } from "@components/Icon"
-import * as DrawSettingsContext from "@draw/DrawSettingsContext"
+import * as DrawSettingsContext from "@components/Draw/context"
 import { DesignColor } from "../../theme"
 
 const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 const shapes: DrawSettingsContext.DrawShape[] = ["circle", "square", "star"]
 
-export const DrawTools = (): JSX.Element => {
+export { DrawSettingsContext }
+
+const DrawTools = (): JSX.Element => {
   const { tool, setTool, color, setColor, shape, setShape } = DrawSettingsContext.useDrawSettings()
   const [showColorOptions, setShowColorOptions] = React.useState<boolean>(false)
   const [showShapeOptions, setShowShapeOptions] = React.useState<boolean>(false)
@@ -122,3 +124,5 @@ export const DrawTools = (): JSX.Element => {
     </ToolMenu>
   )
 }
+
+export default DrawTools

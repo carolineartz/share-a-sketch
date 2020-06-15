@@ -1,10 +1,10 @@
 import * as React from "react"
 import { Button, ResponsiveContext } from "grommet"
 import { Cycle, ClearOption } from "grommet-icons"
-import * as ShapeSettingsContext from "./ShapeSettingsContext"
-import { ToolMenu } from "../../components/ToolMenu"
+import * as ShapeSettingsContext from "./context"
+import { ToolMenu } from "../ToolMenu"
 
-export const ShapesTools = (): JSX.Element => {
+const ShapeTools = (): JSX.Element => {
   const { mode, setMode } = ShapeSettingsContext.useShapeSettings()
 
   const screenWidth = React.useContext(ResponsiveContext)
@@ -32,3 +32,5 @@ export const ShapesTools = (): JSX.Element => {
     </ToolMenu>
   )
 }
+
+export default ShapeTools

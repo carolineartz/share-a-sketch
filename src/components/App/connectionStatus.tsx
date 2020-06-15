@@ -7,10 +7,10 @@ import { Stack, Box, Text, ThemeContext, ResponsiveContext } from "grommet"
 import { StatusGood, StatusCritical, StatusGoodSmall, StatusCriticalSmall } from "grommet-icons"
 import { Spinning } from "grommet-controls"
 import { Cloud, CrossLarge, CrossSmall } from "@components/Icon"
-import { connection, DatabaseStatus } from "~/Firebase"
 import { colorStatusCritical, colorStatusUnknown } from "~/theme"
+import { withFirebase, WithFirebaseProps, DatabaseStatus } from '../Firebase';
 
-export const ConnectionStatus = (): JSX.Element => {
+const ConnectionStatus = ({firebase}: WithFirebaseProps): JSX.Element => {
   const [status, setStatus] = React.useState<DatabaseStatus>("unknown")
   const [listening, setListening] = React.useState<boolean>(false)
   const [loading, setLoading] = React.useState<boolean>(true)
@@ -20,7 +20,7 @@ export const ConnectionStatus = (): JSX.Element => {
   const screenWidth = React.useContext(ResponsiveContext)
 
   React.useEffect(() => {
-    connection.listen(setStatus)
+    firebase.onConnectionChanged(setStatus)
     setListening(true)
 
     if (status !== "connected") {
@@ -35,8 +35,10 @@ export const ConnectionStatus = (): JSX.Element => {
       clearTimeout(timeoutId.current)
     }
 
-    return connection.disconnect
-  }, [status, setStatus, showWarning, setShowWarning, listening, setListening, loading, setLoading])
+    return () => {
+      firebase.connection().off()
+    }
+  }, [status, setStatus, showWarning, setShowWarning, listening, setListening, loading, setLoading, firebase])
 
   const theme: any = React.useContext(ThemeContext)
   return (
@@ -115,3 +117,5 @@ const WarningMessage = (): JSX.Element => (
     </Text>
   </Box>
 )
+
+export default withFirebase(ConnectionStatus)
