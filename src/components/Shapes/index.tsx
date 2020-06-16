@@ -3,7 +3,7 @@ import * as React from "react"
 import "styled-components/macro"
 import { Box, Keyboard } from "grommet"
 import { ShapeButton } from "@components/Shapes/button"
-import { Main } from "@components/main"
+import { Main } from "@components/mains"
 import * as ShapeSettingsContext from "./context"
 import ShapeTools from "./tools"
 import { withFirebase, WithFirebaseProps } from '../Firebase';

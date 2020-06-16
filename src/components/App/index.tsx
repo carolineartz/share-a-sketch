@@ -5,14 +5,14 @@ import "styled-components/macro"
 import { createGlobalStyle }  from "styled-components"
 import { Grommet, Box, ResponsiveContext } from "grommet"
 import { Cube, Brush } from "grommet-icons"
-import { EndButton } from "@components/buttonGroup"
+import { EndButton } from "@components/buttonGroups"
 import * as ShapeSettingsContext from "@components/Shapes/context"
 import ShapeView from "@components/Shapes"
 import DrawView, { DrawSettingsContext } from "@components/Draw"
 import ConnectionStatus from "./connectionStatus"
 
 import { customTheme, brand } from "../../theme"
-import { CursorStyle } from './cursors';
+import { CursorStyle } from './cursorss';
 
 type DesignView = "shapes" | "draw"
 

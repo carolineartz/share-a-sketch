@@ -2,7 +2,7 @@ import * as React from "react"
 import { Button, ResponsiveContext } from "grommet"
 import { Cycle, ClearOption } from "grommet-icons"
 import * as ShapeSettingsContext from "./context"
-import { ToolMenu } from "../toolMenu"
+import { ToolMenu } from "../toolMenus"
 
 const ShapeTools = (): JSX.Element => {
   const { mode, setMode } = ShapeSettingsContext.useShapeSettings()

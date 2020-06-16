@@ -1,9 +1,9 @@
 import * as React from "react"
 import { Edit, Erase, Star, StopFill } from "grommet-icons"
 import { Drop, Button, ResponsiveContext } from "grommet"
-import { DropMenu, DropOption, DropSelectProps } from "@components/dropMenu"
-import { ToolMenu } from "@components/toolMenu"
-import { ColorDrop, ShapeCircle } from "@components/icon"
+import { DropMenu, DropOption, DropSelectProps } from "@components/dropMenus"
+import { ToolMenu } from "@components/toolMenus"
+import { ColorDrop, ShapeCircle } from "@components/icons"
 import * as DrawSettingsContext from "@components/Draw/context"
 import { DesignColor } from "../../theme"
 

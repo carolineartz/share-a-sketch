@@ -1,7 +1,7 @@
 import React from "react"
 
 import { Keyboard } from "grommet"
-import { Main } from "@components/main"
+import { Main } from "@components/mains"
 import * as DrawSettingsContext from "./context"
 import DrawTools from "./tools"
 import { usePaperJs } from "./usePaperjs"
