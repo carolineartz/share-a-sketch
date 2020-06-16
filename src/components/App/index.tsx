@@ -101,7 +101,12 @@ const NavButtons = ({ view, setView }: NavButtonProps): JSX.Element => {
 }
 
 const GlobalStyle = createGlobalStyle`
+  html {
+    overflow: hidden;
+  }
+
   body {
+    position: absolute;
     overflow: hidden;
   }
 `
