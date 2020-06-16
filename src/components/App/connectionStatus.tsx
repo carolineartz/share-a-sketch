@@ -6,7 +6,7 @@ import "styled-components/macro"
 import { Stack, Box, Text, ThemeContext, ResponsiveContext } from "grommet"
 import { StatusGood, StatusCritical, StatusGoodSmall, StatusCriticalSmall } from "grommet-icons"
 import { Spinning } from "grommet-controls"
-import { Cloud, CrossLarge, CrossSmall } from "@components/icons"
+import { Cloud, CrossLarge, CrossSmall } from "@components/icon"
 import { colorStatusCritical, colorStatusUnknown } from "~/theme"
 import { withFirebase, WithFirebaseProps, DatabaseStatus } from '../Firebase';
 
