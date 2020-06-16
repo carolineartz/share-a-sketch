@@ -427,6 +427,8 @@ class PaperTool extends Tool {
           this.cursorShape = createShape(event.point, this.currentState.shape)
           this.cursorShape.fillColor = new Color(this.currentState.color);
           this.cursorShape.opacity = 0.5;
+        } else if (this.currentState.shape === "star") {
+          this.cursorShape.position = new Point(event.point.x, event.point.y + 6)
         } else {
           this.cursorShape.position = event.point
         }
