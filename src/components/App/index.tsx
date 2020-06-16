@@ -11,8 +11,8 @@ import ShapeView from "@components/Shapes"
 import DrawView, { DrawSettingsContext } from "@components/Draw"
 import ConnectionStatus from "./connectionStatus"
 
-
 import { customTheme } from "../../theme"
+import { CursorStyle } from './Cursors';
 
 type DesignView = "shapes" | "draw"
 
@@ -21,6 +21,7 @@ const App = (): JSX.Element => {
 
   return (
     <Grommet full theme={customTheme}>
+      <CursorStyle />
       <GlobalStyle />
       <ShapeSettingsContext.Provider>
         <DrawSettingsContext.Provider>

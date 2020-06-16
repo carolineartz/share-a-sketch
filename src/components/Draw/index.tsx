@@ -11,7 +11,7 @@ export { DrawSettingsContext }
 
 const DrawView = ({firebase}: WithFirebaseProps): JSX.Element => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
-  const { setTool } = DrawSettingsContext.useDrawSettings()
+  const { setTool, color, tool } = DrawSettingsContext.useDrawSettings()
   const { setCanvas } = usePaperJs({firebase})
 
   React.useEffect(() => {
@@ -36,10 +36,12 @@ const DrawView = ({firebase}: WithFirebaseProps): JSX.Element => {
     }
   }
 
+  const cursorClass = tool === "erase" ? "cursor-erase" : tool === "paint" ? `cursor-brush--${color.substr(1, 6).toUpperCase()}` : `cursor-shape`
+
   return (
     <Keyboard target="document" onKeyDown={handleKeyDown}>
       <DrawTools />
-      <Main>
+      <Main className={cursorClass}>
         <canvas ref={canvasRef} style={{ width: "100vw", height: "100vh" }} width="100%" height="100%" />
       </Main>
     </Keyboard>
