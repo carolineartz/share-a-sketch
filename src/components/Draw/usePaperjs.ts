@@ -37,8 +37,6 @@ type LocalState = {
   paperTool?: PaperTool;
 };
 
-// const pathsRef = firebase.database().ref("paths_new5");
-
 const generateLocalId = (): string => {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0];
   return uint32.toString(16);
@@ -96,6 +94,20 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     localState.current.strokeWidth = strokeWidth;
     localState.current.color = color;
   }, [tool, shape, strokeWidth, color]);
+
+  React.useEffect(() => {
+    if (!localState.current.paperTool) {
+      localState.current.paperTool = new PaperTool({
+        currentState: localState.current
+      });
+      localState.current.paperTool.activate();
+    }
+
+    localState.current.paperTool.clearCursorShape()
+    // if (tool !== "shape") {
+    // }
+
+  }, [tool, shape, color])
 
   React.useEffect(() => {
     if (canvas) {
@@ -332,6 +344,15 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     }
   }
 
+  // function handleMouseMove(evt: paper.MouseEvent) {
+  //   if (localState.current.toolState === "active") return;
+
+  //   if (localState.current.tool === "shape") {
+
+  //   }
+
+  // }
+
   const setLocalPathEventHandlers = (path: paper.Path): void => {
     const handleEnter = (path: paper.Path): void => {
       if (path.closed) {
@@ -369,34 +390,23 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
 
 class PaperTool extends Tool {
   currentState: LocalState;
+  cursorShape: undefined | paper.Path
 
   onCreate?: (path: paper.Path, tool: DrawSettingsContext.DrawTool) => void;
+  clearCursorShape: () => void
 
   constructor({ currentState }: { currentState: LocalState }) {
     super();
     this.currentState = currentState;
     this.onMouseDown = (event: paper.ToolEvent) => {
-      let p;
       if (this.currentState.tool === "shape" && this.currentState.activePath) {
-        switch (this.currentState.shape) {
-          case "square":
-            p = new Path.Rectangle(
-              new Point(event.point.x - 40, event.point.y - 40),
-              new Size(80, 80)
-            );
-            break;
-          case "circle":
-            p = new Path.Circle(event.point, 40);
-            break;
-          case "star":
-            p = new Path.Star(event.point, 5, 30, 60);
-        }
+        const path = createShape(event.point, this.currentState.shape)
 
-        p.fillColor = new Color(this.currentState.color);
-        p.data.localId = this.currentState.activePath.data.localId;
-        p.data.color = this.currentState.color;
+        path.fillColor = new Color(this.currentState.color);
+        path.data.localId = this.currentState.activePath.data.localId;
+        path.data.color = this.currentState.color;
 
-        this.currentState.activePath.pathData = p.pathData;
+        this.currentState.activePath.pathData = path.pathData;
         this.currentState.activePath.fillColor = new Color(
           this.currentState.color
         );
@@ -408,6 +418,29 @@ class PaperTool extends Tool {
         }
       }
     };
+
+    this.clearCursorShape = () => {
+      if (this.cursorShape) {
+        this.cursorShape.remove()
+        this.cursorShape = undefined
+      }
+    }
+
+    this.onMouseMove = (event: paper.ToolEvent) => {
+      if (this.currentState.tool !== "shape" && this.cursorShape) {
+        this.clearCursorShape()
+      }
+
+      if (this.currentState.tool === "shape" && this.currentState.toolState === "inactive") {
+        if (!this.cursorShape) {
+          this.cursorShape = createShape(event.point, this.currentState.shape)
+          this.cursorShape.fillColor = new Color(this.currentState.color);
+          this.cursorShape.opacity = 0.5;
+        } else {
+          this.cursorShape.position = event.point
+        }
+      }
+    }
 
     this.onMouseDrag = (event: paper.ToolEvent) => {
       if (!this.currentState.activePath) {
@@ -424,4 +457,22 @@ class PaperTool extends Tool {
       }
     };
   }
+}
+
+function createShape(point: paper.Point, shape: "circle" | "square" | "star"): paper.Path {
+  let p
+  switch (shape) {
+    case "square":
+      p = new Path.Rectangle(
+        new Point(point.x - 40, point.y - 40),
+        new Size(80, 80)
+      );
+      break;
+    case "circle":
+      p = new Path.Circle(point, 40);
+      break;
+    case "star":
+      p = new Path.Star(point, 5, 30, 60);
+  }
+  return p
 }
