@@ -344,15 +344,6 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     }
   }
 
-  // function handleMouseMove(evt: paper.MouseEvent) {
-  //   if (localState.current.toolState === "active") return;
-
-  //   if (localState.current.tool === "shape") {
-
-  //   }
-
-  // }
-
   const setLocalPathEventHandlers = (path: paper.Path): void => {
     const handleEnter = (path: paper.Path): void => {
       if (path.closed) {

@@ -11,7 +11,7 @@ import ShapeView from "@components/Shapes"
 import DrawView, { DrawSettingsContext } from "@components/Draw"
 import ConnectionStatus from "./connectionStatus"
 
-import { customTheme } from "../../theme"
+import { customTheme, brand } from "../../theme"
 import { CursorStyle } from './Cursors';
 
 type DesignView = "shapes" | "draw"
@@ -72,9 +72,11 @@ const NavButtons = ({ view, setView }: NavButtonProps): JSX.Element => {
         onClick={() => setView("shapes")}
         css={`
           width: 8em;
+          border-color: ${brand};
           &:focus {
             box-shadow: none;
           }
+
         `}
       />
       <EndButton
@@ -88,6 +90,7 @@ const NavButtons = ({ view, setView }: NavButtonProps): JSX.Element => {
         onClick={() => setView("draw")}
         css={`
           width: 8em;
+          border-color: ${brand};
           &:focus {
             box-shadow: none;
           }
