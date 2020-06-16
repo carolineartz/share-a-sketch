@@ -1,7 +1,5 @@
 # Share-a-Sketch
 
-Classkick Project https://share-a-sketch.web.app/
-
 ### Develop
 
 1. Clone the repository from gitub
