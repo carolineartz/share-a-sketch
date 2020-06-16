@@ -5,14 +5,14 @@ import "styled-components/macro"
 import { createGlobalStyle }  from "styled-components"
 import { Grommet, Box, ResponsiveContext } from "grommet"
 import { Cube, Brush } from "grommet-icons"
-import { EndButton } from "@components/ButtonGroup"
+import { EndButton } from "@components/buttonGroup"
 import * as ShapeSettingsContext from "@components/Shapes/context"
 import ShapeView from "@components/Shapes"
 import DrawView, { DrawSettingsContext } from "@components/Draw"
 import ConnectionStatus from "./connectionStatus"
 
 import { customTheme, brand } from "../../theme"
-import { CursorStyle } from './Cursors';
+import { CursorStyle } from './cursors';
 
 type DesignView = "shapes" | "draw"
 
@@ -59,6 +59,7 @@ const NavButtons = ({ view, setView }: NavButtonProps): JSX.Element => {
         display: inline-flex;
         left: 50%;
         transform: translateX(-50%);
+        user-select: none;
       `}
     >
       <EndButton
