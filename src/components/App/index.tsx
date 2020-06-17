@@ -15,6 +15,7 @@ import DrawView, { DrawSettingsContext } from "@components/Draw"
 
 const App = (): JSX.Element => {
   const [view, setView] = React.useState<DesignView>("shapes")
+  const GlobalStyle = style(view)
 
   return (
     <Grommet full theme={customTheme}>
@@ -34,10 +35,10 @@ const App = (): JSX.Element => {
 
 export default App
 
-const GlobalStyle = createGlobalStyle`
+const style = (view: "shapes" | "draw") => createGlobalStyle`
   html {
     overflow: hidden;
-    background: #0a0b27;
+    background: ${view === 'shapes' ? '#0a0b27' : 'white'};
   }
 
   body {

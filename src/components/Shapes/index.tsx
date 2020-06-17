@@ -8,11 +8,13 @@ import * as ShapeSettingsContext from "./context"
 import ShapeTools from "./tools"
 import { withFirebase, WithFirebaseProps } from '../Firebase';
 import {Loading} from "./loading"
+import random from "lodash.random"
 export { ShapeSettingsContext }
 
 const SHAPE_COLORS: string[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 
 type LoadingState = "loading" | "loaded" | "error"
+type EnteredState = "in" | "out"
 
 type ShapeData = Record<string, {
   rotationIndex: number
@@ -23,6 +25,7 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
   const { mode, setMode } = ShapeSettingsContext.useShapeSettings()
   const [shapes, setShapes] = React.useState<ShapeData>({} as ShapeData)
   const [loading, setLoading] = React.useState<LoadingState>("loading")
+  const [entered, setEntered] = React.useState<EnteredState>("out")
 
   React.useEffect(() => {
     if (!Object.entries(shapes).length) {
@@ -40,6 +43,7 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
 
     if (loading === "loaded") {
       firebase.onShapeChanged(setShapes)
+      setTimeout(setEntered, 3000, "in")
     }
 
     return () => {
@@ -57,20 +61,11 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
     }
   }
 
+  console.log("entered", entered)
   return (
     <Keyboard target="document" onKeyDown={handleKeyDown}>
       <ShapeTools />
-      { loading === "loading" &&
-        <Main css={`
-          display: flex;
-          background: #0a0b27;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-        `}>
-          <Loading />
-        </Main>
-      }
+      <Loading show={loading === "loading"} />
       { loading !== "loading" &&
         <Main
           css={`
@@ -83,6 +78,10 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
             <ShapeButton
               key={`${id}-${color}-${rotationIndex}`}
               color={color}
+              animation={entered === "out" ? {
+                type: "fadeIn",
+                delay: random(500, 1000)
+              } : undefined}
               rotation={(rotationIndex % 4) * 90}
               onClick={() =>
                 firebase.shape(id).set({

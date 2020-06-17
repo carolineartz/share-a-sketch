@@ -1,7 +1,7 @@
-import { Box } from "grommet"
+import { Box, BoxProps } from "grommet"
 import styled from "styled-components"
 
-type ShapeButtonProps = {
+type ShapeButtonProps = BoxProps & {
   color: string
   rotation: number
 }
