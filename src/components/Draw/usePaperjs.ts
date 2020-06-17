@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-shadow */
-/* eslint-disable no-multi-assign */
 import * as React from "react";
 import * as DrawSettingsContext from "@components/Draw/context";
 import paper, { Point, Path, Color, Size, Tool } from "paper";

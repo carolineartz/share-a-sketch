@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable indent */
 import * as React from "react"
 
 import "styled-components/macro"

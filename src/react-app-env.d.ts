@@ -12,6 +12,7 @@ declare module "react" {
 
 declare module "grommet-controls"
 
+declare type DesignView = "shapes" | "draw"
 
 export type Shape = {
   rotationIndex: number
