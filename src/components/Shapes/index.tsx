@@ -41,9 +41,9 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
         }
       })
     }
-    let timeoutId: number
+    let timeoutId: number | undefined = undefined;
 
-    if (loading === "loaded") {
+    if (loading === "loaded" && !timeoutId) {
       firebase.onShapeChanged(setShapes)
       timeoutId = setTimeout(setEntered, 3000, "in")
     }
@@ -78,7 +78,8 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
         >
           {Object.entries(shapes).map(([id, { rotationIndex, color }]) => (
             <ShapeButton
-              key={`${id}-${color}-${rotationIndex}`}
+              key={`${entered}-${id}-${color}-${rotationIndex}`}
+              id={`${entered}-${id}-${color}-${rotationIndex}`}
               color={color}
               animation={entered === "out" ? {
                 type: "fadeIn",
