@@ -387,7 +387,7 @@ class PaperTool extends Tool {
     this.currentState = currentState;
     this.onMouseDown = (event: paper.ToolEvent) => {
       if (this.currentState.tool === "shape" && this.currentState.activePath) {
-        const path = createShape(event.point, this.currentState.shape)
+        const path = createShape({point: event.point, shape: this.currentState.shape, size: this.currentState.size})
 
         path.fillColor = new Color(this.currentState.color);
         path.data.localId = this.currentState.activePath.data.localId;
@@ -420,11 +420,12 @@ class PaperTool extends Tool {
 
       if (this.currentState.tool === "shape" && this.currentState.toolState === "inactive") {
         if (!this.cursorShape) {
-          this.cursorShape = createShape(event.point, this.currentState.shape)
+          this.cursorShape = createShape({point: event.point, shape: this.currentState.shape, size: this.currentState.size})
           this.cursorShape.fillColor = new Color(this.currentState.color);
           this.cursorShape.opacity = 0.5;
         } else if (this.currentState.shape === "star") {
-          this.cursorShape.position = new Point(event.point.x, event.point.y + 6)
+          // i have no idea why the position of the star specifically is slightly off from the event point, but this adjustment seems to work...
+          this.cursorShape.position = new Point(event.point.x, event.point.y + (this.currentState.size/5))
         } else {
           this.cursorShape.position = event.point
         }
@@ -448,20 +449,31 @@ class PaperTool extends Tool {
   }
 }
 
-function createShape(point: paper.Point, shape: "circle" | "square" | "star"): paper.Path {
-  let p
+function createShape({
+  size,
+  point,
+  shape,
+  }:{
+  size: number
+  point: paper.Point
+  shape: DrawSettingsContext.DrawShape
+}): paper.Path {
+  let p, sizeFactor
   switch (shape) {
     case "square":
+      sizeFactor = size / 2 * 3
       p = new Path.Rectangle(
-        new Point(point.x - 40, point.y - 40),
-        new Size(80, 80)
+        new Point(point.x - sizeFactor, point.y - sizeFactor),
+        new Size(sizeFactor * 2, sizeFactor * 2)
       );
       break;
     case "circle":
-      p = new Path.Circle(point, 40);
+      sizeFactor = size / 2 * 3
+      p = new Path.Circle(point, sizeFactor);
       break;
     case "star":
-      p = new Path.Star(point, 5, 30, 60);
+      sizeFactor = (size - (size / 4)) * 3
+      p = new Path.Star(point, 5, sizeFactor/2, sizeFactor);
   }
   return p
 }
