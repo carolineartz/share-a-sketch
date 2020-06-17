@@ -4,14 +4,15 @@ import "styled-components/macro"
 import { Box, Keyboard } from "grommet"
 import { ShapeButton } from "@components/Shapes/button"
 import { Main } from "@components/main"
+import { withFirebase, WithFirebaseProps } from '@components/Firebase';
 import * as ShapeSettingsContext from "./context"
 import ShapeTools from "./tools"
-import { withFirebase, WithFirebaseProps } from '../Firebase';
-import {Loading} from "./loading"
+import { Loading } from "./loading"
 import random from "lodash.random"
+
 export { ShapeSettingsContext }
 
-const SHAPE_COLORS: string[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
+const SHAPE_COLORS: string[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"] // TODO: get from theme palette
 
 type LoadingState = "loading" | "loaded" | "error"
 type EnteredState = "in" | "out"
@@ -40,16 +41,18 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
         }
       })
     }
+    let timeoutId: number
 
     if (loading === "loaded") {
       firebase.onShapeChanged(setShapes)
-      setTimeout(setEntered, 3000, "in")
+      timeoutId = setTimeout(setEntered, 3000, "in")
     }
 
     return () => {
       firebase.shapes().off()
+      clearTimeout(timeoutId)
     }
-  }, [shapes, loading, firebase])
+  }, [shapes, loading, setEntered, setShapes, setLoading, firebase])
 
   const handleKeyDown = (evt: React.KeyboardEvent): void => {
     switch (evt.key) {
@@ -61,7 +64,6 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
     }
   }
 
-  console.log("entered", entered)
   return (
     <Keyboard target="document" onKeyDown={handleKeyDown}>
       <ShapeTools />

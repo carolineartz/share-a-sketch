@@ -46,7 +46,7 @@ const DrawView = ({firebase}: WithFirebaseProps): JSX.Element => {
     <Keyboard target="document" onKeyDown={handleKeyDown}>
       <DrawTools />
       <Main className={cursorClass}>
-        <canvas ref={canvasRef} style={{ width: "100vw", height: "100vh" }} width="100%" height="100%" />
+        <canvas ref={canvasRef} style={{ background: "white", width: "100vw", height: "100vh" }} width="100%" height="100%" />
       </Main>
     </Keyboard>
   )

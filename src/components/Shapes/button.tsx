@@ -9,24 +9,24 @@ type ShapeButtonProps = BoxProps & {
 export const ShapeButton = styled(Box)<ShapeButtonProps>`
   background: #0a0b27;
   max-width: none;
-  height: 101.5%;
-  width: 101.5%;
+  height: 100%;
+  width: 100%;
   display: flex;
   max-width: none !important;
   max-height: none !important;
+  overflow: hidden;
+
   &:active,
   &:focus {
     box-shadow: none;
   }
   &:hover {
-    box-shadow: 3px 3px white inset, -3px -3px white inset;
-    div {
-      box-shadow: 3px 3px white inset, -3px -3px white inset;
-    }
+    border: 3px solid white;
+
   }
 
   div {
-    transform: ${props => `rotate(${props.rotation}deg)`};
+    transform: ${props => `scale(1.1) rotate(${props.rotation}deg)`};
     background: ${props => props.color};
     clip-path: polygon(0 0, 100% 0, 100% 100%);
     height: 100%;

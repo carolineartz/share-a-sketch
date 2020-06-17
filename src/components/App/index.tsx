@@ -5,7 +5,7 @@ import { createGlobalStyle }  from "styled-components"
 import { Grommet } from "grommet"
 
 import ConnectionStatus from "./connectionStatus"
-import { customTheme } from "./theme"
+import { customTheme, dark } from "./theme"
 import { Nav } from "./nav"
 import { CursorStyle } from './cursors';
 import { DesignView } from "~/react-app-env"
@@ -15,7 +15,6 @@ import DrawView, { DrawSettingsContext } from "@components/Draw"
 
 const App = (): JSX.Element => {
   const [view, setView] = React.useState<DesignView>("shapes")
-  const GlobalStyle = style(view)
 
   return (
     <Grommet full theme={customTheme}>
@@ -35,10 +34,10 @@ const App = (): JSX.Element => {
 
 export default App
 
-const style = (view: "shapes" | "draw") => createGlobalStyle`
+const GlobalStyle = createGlobalStyle`
   html {
     overflow: hidden;
-    background: ${view === 'shapes' ? '#0a0b27' : 'white'};
+    background: ${dark};
   }
 
   body {

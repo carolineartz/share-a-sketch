@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Edit, Erase, Star, StopFill } from "grommet-icons"
-import { Drop, Button, ResponsiveContext, RangeInput, Box } from "grommet"
+import { Drop, Button, ResponsiveContext, RangeInput, Box, ThemeContext } from "grommet"
+import { normalizeColor } from "grommet/utils"
 import { DropMenu, DropOption, DropSelectProps } from "@components/dropMenu"
 import { ToolMenu } from "@components/toolMenu"
 import { ColorDrop, ShapeCircle, Ruler } from "@components/icon"
@@ -24,6 +25,7 @@ const DrawTools = (): JSX.Element => {
   const closeShapeOptions = (): void => setShowShapeOptions(false)
   const closeSizeOptions = (): void => setShowSizeOptions(false)
   const screenWidth = React.useContext(ResponsiveContext)
+  const theme = React.useContext(ThemeContext)
 
   const iconSize = screenWidth === "small" ? "medium" : "large"
 
@@ -112,7 +114,7 @@ const DrawTools = (): JSX.Element => {
           title="Size"
           ref={sizeMenuItemRef}
           key="draw-size"
-          icon={<Ruler size={iconSize} color="text" />}
+          icon={<Ruler size={iconSize} color={normalizeColor("text", theme)} />}
         />
         {showSizeOptions && sizeMenuItemRef && sizeMenuItemRef.current && (
           <Drop

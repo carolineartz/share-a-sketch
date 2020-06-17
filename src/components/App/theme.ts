@@ -5,6 +5,7 @@ export type DesignColor = "#42b8a4" | "#4291b8" | "#4256b8" | "#6942b8" | "#a442
 export const colorStatusCritical = "#FF3333"
 export const colorStatusUnknown = "#a8a8a8"
 export const brand = "#eaaf2a"
+export const dark = "#0a0b27"
 
 type DesignPalette = {
   name: string
@@ -34,8 +35,8 @@ const colors: Record<string, ColorType> = {
   brand: brand,
   control: "#6AB2E0",
   focus: brand,
-  text: "#0a0a27",
-  "dark-1": "#0a0b27",
+  text: dark,
+  "dark-1": dark,
   "accent-1": "#DA8455",
   "accent-2": "#60EB9F",
   "accent-3": brand,
