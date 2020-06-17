@@ -5,8 +5,8 @@ import { Stack, Box, Text, ThemeContext, ResponsiveContext } from "grommet"
 import { StatusGood, StatusCritical, StatusGoodSmall, StatusCriticalSmall } from "grommet-icons"
 import { Spinning } from "grommet-controls"
 import { Cloud, CrossLarge, CrossSmall } from "@components/icon"
-import { colorStatusCritical, colorStatusUnknown } from "~/theme"
-import { withFirebase, WithFirebaseProps, DatabaseStatus } from '../Firebase';
+import { colorStatusCritical, colorStatusUnknown } from "@components/App/theme"
+import { withFirebase, WithFirebaseProps, DatabaseStatus } from '@components/Firebase';
 
 const ConnectionStatus = ({firebase}: WithFirebaseProps): JSX.Element => {
   const [status, setStatus] = React.useState<DatabaseStatus>("unknown")

@@ -8,6 +8,7 @@ import * as ShapeSettingsContext from "./context"
 import ShapeTools from "./tools"
 import { withFirebase, WithFirebaseProps } from '../Firebase';
 import {Loading} from "./loading"
+export { ShapeSettingsContext }
 
 const SHAPE_COLORS: string[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 

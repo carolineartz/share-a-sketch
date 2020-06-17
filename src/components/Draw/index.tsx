@@ -36,7 +36,11 @@ const DrawView = ({firebase}: WithFirebaseProps): JSX.Element => {
     }
   }
 
-  const cursorClass = tool === "erase" ? "cursor-erase" : tool === "paint" ? `cursor-brush--${color.substr(1, 6).toUpperCase()}` : `cursor-shape`
+  const cursorClass = tool === "erase" ?
+    "cursor-erase" :
+    tool === "paint" ?
+      `cursor-brush--${color.substr(1, 6).toUpperCase()}` :
+      `cursor-shape`
 
   return (
     <Keyboard target="document" onKeyDown={handleKeyDown}>

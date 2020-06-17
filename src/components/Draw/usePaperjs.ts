@@ -2,7 +2,7 @@ import * as React from "react";
 import * as DrawSettingsContext from "@components/Draw/context";
 import paper, { Point, Path, Color, Size, Tool } from "paper";
 import throttle from "lodash.throttle";
-import { DesignColor } from "~/theme";
+import { DesignColor } from "@components/App/theme";
 
 import { WithFirebaseProps } from "../Firebase";
 

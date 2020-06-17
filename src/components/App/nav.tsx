@@ -4,7 +4,7 @@ import "styled-components/macro"
 import { Box, ResponsiveContext } from "grommet"
 import { Cube, Brush } from "grommet-icons"
 import { EndButton } from "@components/buttonGroup"
-import { brand } from "../../theme"
+import { brand } from "./theme"
 import { DesignView } from "~/react-app-env"
 
 type NavProps = {

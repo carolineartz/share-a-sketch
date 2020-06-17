@@ -1,5 +1,5 @@
 import * as React from "react"
-import { DesignColor } from "../../theme"
+import { DesignColor } from "../App/theme"
 
 export type DrawTool = "erase" | "paint" | "shape"
 export type DrawShape = "circle" | "square" | "star"

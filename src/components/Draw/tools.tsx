@@ -5,7 +5,7 @@ import { DropMenu, DropOption, DropSelectProps } from "@components/dropMenu"
 import { ToolMenu } from "@components/toolMenu"
 import { ColorDrop, ShapeCircle, Ruler } from "@components/icon"
 import * as DrawSettingsContext from "@components/Draw/context"
-import { DesignColor } from "../../theme"
+import { DesignColor } from "../App/theme"
 
 const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 const shapes: DrawSettingsContext.DrawShape[] = ["circle", "square", "star"]

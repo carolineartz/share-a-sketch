@@ -3,18 +3,18 @@ import React from "react"
 import "styled-components/macro"
 import { createGlobalStyle }  from "styled-components"
 import { Grommet } from "grommet"
-import { Nav } from "./nav"
-import * as ShapeSettingsContext from "@components/Shapes/context"
-import ShapeView from "@components/Shapes"
-import DrawView, { DrawSettingsContext } from "@components/Draw"
-import ConnectionStatus from "./connectionStatus"
 
-import { customTheme, brand } from "../../theme"
+import ConnectionStatus from "./connectionStatus"
+import { customTheme } from "./theme"
+import { Nav } from "./nav"
 import { CursorStyle } from './cursors';
 import { DesignView } from "~/react-app-env"
 
+import ShapeView, { ShapeSettingsContext } from "@components/Shapes"
+import DrawView, { DrawSettingsContext } from "@components/Draw"
+
 const App = (): JSX.Element => {
-  const [view, setView] = React.useState<DesignView>("draw")
+  const [view, setView] = React.useState<DesignView>("shapes")
 
   return (
     <Grommet full theme={customTheme}>
@@ -37,6 +37,7 @@ export default App
 const GlobalStyle = createGlobalStyle`
   html {
     overflow: hidden;
+    background: #0a0b27;
   }
 
   body {
