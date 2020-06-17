@@ -28,6 +28,8 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
   const [loading, setLoading] = React.useState<LoadingState>("loading")
   const [entered, setEntered] = React.useState<EnteredState>("out")
 
+  const timeoutId = React.useRef<number | undefined>()
+
   React.useEffect(() => {
     if (!Object.entries(shapes).length) {
       firebase.shapes().once("value", async (snapshot: firebase.database.DataSnapshot) => {
@@ -41,18 +43,20 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
         }
       })
     }
-    let timeoutId: number | undefined = undefined;
 
-    if (loading === "loaded" && !timeoutId) {
+    if (loading === "loaded" && !timeoutId.current) {
       firebase.onShapeChanged(setShapes)
-      timeoutId = setTimeout(setEntered, 3000, "in")
+      timeoutId.current = setTimeout(() => {
+        setEntered("in")
+      }, 3000)
+      console.log(timeoutId, loading)
     }
 
     return () => {
       firebase.shapes().off()
-      clearTimeout(timeoutId)
+      clearTimeout(timeoutId.current)
     }
-  }, [shapes, loading, setEntered, setShapes, setLoading, firebase])
+  }, [loading, firebase])
 
   const handleKeyDown = (evt: React.KeyboardEvent): void => {
     switch (evt.key) {
