@@ -17,7 +17,7 @@ import { CursorStyle } from './cursors';
 type DesignView = "shapes" | "draw"
 
 const App = (): JSX.Element => {
-  const [view, setView] = React.useState<DesignView>("shapes")
+  const [view, setView] = React.useState<DesignView>("draw")
 
   return (
     <Grommet full theme={customTheme}>

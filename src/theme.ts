@@ -5,6 +5,7 @@ export type DesignColor = "#42b8a4" | "#4291b8" | "#4256b8" | "#6942b8" | "#a442
 export const colorStatusCritical = "#FF3333"
 export const colorStatusUnknown = "#a8a8a8"
 export const brand = "#eaaf2a"
+// export const dark =
 
 const theme: ThemeType = {
   button: {
@@ -12,6 +13,11 @@ const theme: ThemeType = {
   },
   icon: {
     size: {},
+  },
+  rangeInput: {
+    track: {
+      color: "text"
+    }
   },
   global: {
     font: {

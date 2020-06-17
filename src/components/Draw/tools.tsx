@@ -1,27 +1,28 @@
 import * as React from "react"
 import { Edit, Erase, Star, StopFill } from "grommet-icons"
-import { Drop, Button, ResponsiveContext } from "grommet"
+import { Drop, Button, ResponsiveContext, RangeInput, Box } from "grommet"
 import { DropMenu, DropOption, DropSelectProps } from "@components/dropMenu"
 import { ToolMenu } from "@components/toolMenu"
-import { ColorDrop, ShapeCircle } from "@components/icon"
+import { ColorDrop, ShapeCircle, Ruler } from "@components/icon"
 import * as DrawSettingsContext from "@components/Draw/context"
 import { DesignColor } from "../../theme"
 
 const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 const shapes: DrawSettingsContext.DrawShape[] = ["circle", "square", "star"]
 
-export { DrawSettingsContext }
-
 const DrawTools = (): JSX.Element => {
-  const { tool, setTool, color, setColor, shape, setShape } = DrawSettingsContext.useDrawSettings()
+  const { tool, setTool, color, setColor, shape, setShape, size, setSize } = DrawSettingsContext.useDrawSettings()
   const [showColorOptions, setShowColorOptions] = React.useState<boolean>(false)
   const [showShapeOptions, setShowShapeOptions] = React.useState<boolean>(false)
+  const [showSizeOptions, setShowSizeOptions] = React.useState<boolean>(false)
 
   const colorMenuItemRef = React.useRef() as any
   const shapeMenuItemRef = React.useRef() as any
+  const sizeMenuItemRef = React.useRef() as any
 
   const closeColorOptions = (): void => setShowColorOptions(false)
   const closeShapeOptions = (): void => setShowShapeOptions(false)
+  const closeSizeOptions = (): void => setShowSizeOptions(false)
   const screenWidth = React.useContext(ResponsiveContext)
 
   const iconSize = screenWidth === "small" ? "medium" : "large"
@@ -107,6 +108,30 @@ const DrawTools = (): JSX.Element => {
           </Drop>
         )}
         <Button
+          onClick={() => setShowSizeOptions(!showSizeOptions)}
+          title="Size"
+          ref={sizeMenuItemRef}
+          key="draw-size"
+          icon={<Ruler size={iconSize} color="text" />}
+        />
+        {showSizeOptions && sizeMenuItemRef && sizeMenuItemRef.current && (
+          <Drop
+            align={{ top: "top", left: "right" }}
+            target={sizeMenuItemRef.current}
+            onClickOutside={closeSizeOptions}
+            onEsc={closeSizeOptions}
+          >
+            <Box pad={{vertical: "medium", horizontal: "small"}}>
+              <RangeInput
+                value={size}
+                min={3}
+                max={60}
+                onChange={(event: any) => setSize(event.target.value)}
+              />
+            </Box>
+          </Drop>
+        )}
+        <Button
           title="Draw"
           key="draw-design-paint"
           icon={<Edit size={iconSize} color={tool === "paint" ? "white" : "text"} />}
@@ -114,7 +139,7 @@ const DrawTools = (): JSX.Element => {
           onClick={() => setTool("paint")}
         />
         <Button
-          title="Draw"
+          title="Erase"
           key="draw-design-erase"
           icon={<Erase size={iconSize} color={tool === "erase" ? "white" : "text"} />}
           active={tool === "erase"}

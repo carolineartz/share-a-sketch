@@ -27,6 +27,7 @@ type LocalState = {
   color: DesignColor;
   strokeWidth: DrawSettingsContext.DrawStrokeWidth;
   shape: DrawSettingsContext.DrawShape;
+  size: number,
   tool: DrawSettingsContext.DrawTool;
   toolState: "active" | "inactive";
   currentLocalId?: string;
@@ -73,7 +74,8 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     tool,
     shape,
     strokeWidth,
-    color
+    color,
+    size
   } = DrawSettingsContext.useDrawSettings();
 
   const localState = React.useRef<LocalState>({
@@ -81,6 +83,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     toolState: "inactive",
     localPathIds: [],
     shape,
+    size,
     strokeWidth,
     color,
     paperScope: paper,
@@ -93,7 +96,8 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     localState.current.shape = shape;
     localState.current.strokeWidth = strokeWidth;
     localState.current.color = color;
-  }, [tool, shape, strokeWidth, color]);
+    localState.current.size = size
+  }, [tool, shape, strokeWidth, color, size]);
 
   React.useEffect(() => {
     if (!localState.current.paperTool) {
@@ -104,10 +108,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     }
 
     localState.current.paperTool.clearCursorShape()
-    // if (tool !== "shape") {
-    // }
-
-  }, [tool, shape, color])
+  }, [tool, shape, color, size])
 
   React.useEffect(() => {
     if (canvas) {
@@ -167,14 +168,14 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
   const createPathFromRemote = ({
     id,
     definition,
-    color,
-    stroke,
+    color: createColor,
+    strokeWidth: createStrokeWidth,
     localId
   }: {
     id: string;
     definition: string;
     color: string;
-    stroke: number;
+    strokeWidth: number;
     localId: string;
   }) => {
     const newPath = new Path();
@@ -183,12 +184,12 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     newPath.data.id = id;
 
     if (newPath.closed) {
-      newPath.fillColor = new Color(color);
+      newPath.fillColor = new Color(createColor);
       newPath.strokeWidth = 0;
     } else {
       newPath.strokeCap = "round";
-      newPath.strokeColor = new Color(color);
-      newPath.strokeWidth = stroke;
+      newPath.strokeColor = new Color(createColor);
+      newPath.strokeWidth = createStrokeWidth;
     }
     return newPath;
   };
@@ -197,7 +198,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     id,
     definition,
     color: loadColor,
-    strokeWidth: loadStroke,
+    strokeWidth: loadStrokeWidth,
     localId,
     loadType
   }: {
@@ -214,7 +215,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
         localId,
         id,
         definition,
-        stroke: loadStroke,
+        strokeWidth: loadStrokeWidth,
         color: loadColor
       });
       setLocalPathEventHandlers(initialPath); // hover color
@@ -222,29 +223,24 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
 
     // remote from child_added -- could be either from another user creating a path or from a path that was crated locally
     else if (loadType === "added") {
-      if (
-        localState.current.currentLocalId === localId ||
-        localState.current.localPathIds.includes(localId)
-      ) {
-      } else {
-        // this is a path received actively drawn from aonther device, create it locally and listen for changes and update the data
-        const remotelyAddedPath = createPathFromRemote({
-          localId,
-          id,
-          definition,
-          stroke: loadStroke,
-          color: loadColor
-        });
-        setLocalPathEventHandlers(remotelyAddedPath);
+      // this is a path received actively drawn from aonther device, create it locally and listen for changes and update the data
+      const remotelyAddedPath = createPathFromRemote({
+        localId,
+        id,
+        definition,
+        strokeWidth: loadStrokeWidth,
+        color: loadColor
+      });
+      setLocalPathEventHandlers(remotelyAddedPath);
 
-        firebase.path(id).on("value", (updatedSnapshot: any) => {
-          loadPath({
-            id: updatedSnapshot.key,
-            ...updatedSnapshot.val(),
-            loadType: "updated"
-          });
+      firebase.path(id).on("value", (updatedSnapshot: any) => {
+        loadPath({
+          id: updatedSnapshot.key,
+          ...updatedSnapshot.val(),
+          loadType: "updated"
         });
-      }
+      });
+
     } else if (loadType === "updated") {
       const existingPath = (paper.project.activeLayer
         .children as paper.Path[]).find(p => p.data.id === id);
@@ -253,9 +249,9 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
         existingPath.pathData = definition;
         existingPath.data.color = loadColor;
 
-        if (loadStroke && loadStroke > 1) {
+        if (loadStrokeWidth && loadStrokeWidth > 1) {
           existingPath.strokeColor = new Color(loadColor);
-          existingPath.strokeWidth = loadStroke;
+          existingPath.strokeWidth = loadStrokeWidth;
         } else {
           existingPath.fillColor = new Color(loadColor);
         }
@@ -264,7 +260,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
   }
 
   function handleMouseDown(_event: paper.MouseEvent) {
-    const { tool, color, strokeWidth } = localState.current;
+    const { tool, color, strokeWidth, size } = localState.current;
     localState.current.toolState = "active";
 
     if (tool === "erase") {
@@ -279,7 +275,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
 
     if (tool === "paint") {
       localState.current.activePath = path = new Path({
-        strokeWidth,
+        strokeWidth: size,
         strokeCap: "round",
         strokeColor: new Color(color)
       });
