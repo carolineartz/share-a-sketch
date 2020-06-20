@@ -2,13 +2,14 @@ import * as React from "react"
 
 import "styled-components/macro"
 import { Box, Keyboard } from "grommet"
+import random from "lodash.random"
+
 import { ShapeButton } from "@components/Shapes/button"
 import { Main } from "@components/main"
 import { withFirebase, WithFirebaseProps } from '@components/Firebase';
 import * as ShapeSettingsContext from "./context"
 import ShapeTools from "./tools"
 import { Loading } from "./loading"
-import random from "lodash.random"
 
 export { ShapeSettingsContext }
 

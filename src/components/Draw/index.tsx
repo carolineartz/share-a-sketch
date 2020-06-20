@@ -9,17 +9,16 @@ import { withFirebase, WithFirebaseProps } from '../Firebase';
 
 export { DrawSettingsContext }
 
-const DrawView = ({firebase}: WithFirebaseProps): JSX.Element => {
+const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
-  const { setTool, color, tool } = DrawSettingsContext.useDrawSettings()
-  const { setCanvas } = usePaperJs({firebase})
+  const { setTool, color, tool, setSize, size } = DrawSettingsContext.useDrawSettings()
+  const { setCanvas } = usePaperJs({ firebase })
 
   React.useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
       setCanvas(canvas)
     }
-    return () => {}
   }, [canvasRef, setCanvas])
 
   const handleKeyDown = (evt: React.KeyboardEvent): void => {
@@ -33,6 +32,14 @@ const DrawView = ({firebase}: WithFirebaseProps): JSX.Element => {
         break
       case "s":
         setTool("shape")
+        break
+      case "=":
+      case "+":
+        size < 60 && setSize(size + 1)
+        break
+      case "-":
+      case "_":
+        size > 3 && setSize(size - 1)
     }
   }
 

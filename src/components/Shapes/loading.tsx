@@ -5,7 +5,7 @@ import random from "lodash.random"
 import times from "lodash.times"
 
 import { Box, ThemeContext, Layer, BoxProps } from "grommet"
-import {activePalette} from "@components/App/theme"
+import { activePalette } from "@components/App/theme"
 
 const defaultClip = "0 0, 100% 0, 0 100%"
 const clips = [
@@ -15,7 +15,7 @@ const clips = [
   "100% 0, 100% 100%, 0 100%",
 ]
 
-const RandomLoadingSquare = ({colors, transitionOut}: {colors: string[], transitionOut: boolean}) =>
+const RandomLoadingSquare = ({ colors, transitionOut }: { colors: string[], transitionOut: boolean }) =>
   <LoadingShapeSquare color={sample(colors) || "text"} clip={sample(clips) || defaultClip} delay={random(1, 4)} drop={transitionOut} />
 
 export const Loading = ({show}: {show: boolean}) => {
@@ -33,14 +33,13 @@ export const Loading = ({show}: {show: boolean}) => {
 
   return (
     <>
-      { visible && <Layer full animation={false}>
+      {visible && <Layer full animation={false}>
         <Box fill background="text" align="center" justify="center">
           <LoadingShapesContainer background="text">
             {times(9, (index: number) => <RandomLoadingSquare transitionOut={!show} colors={colors} key={`loading-square-${index}`} />)}
           </LoadingShapesContainer>
         </Box>
-      </Layer>
-      }
+      </Layer>}
     </>
   )
 }
@@ -86,7 +85,7 @@ const LoadingShapeInner = styled(Box)<LoadingShapeProps>`
   height: 60px;
   width: 60px;
   background: ${props => props.color};
-  clip-path: ${props => "polygon( " + props.clip + ")"};
+  clip-path: ${props => "polygon(" + props.clip + ")"};
   animation: ${rotate} 4s steps(4, end) infinite;
   animation-delay: ${props => `${props.delay}s`};
 `
