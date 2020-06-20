@@ -1,6 +1,7 @@
 import firebase from "firebase";
 import app from "firebase/app";
 import 'firebase/database';
+import 'firebase/analytics';
 
 
 export type DatabaseStatus = "connected" | "disconnected" | "unknown";
@@ -21,7 +22,12 @@ class Firebase {
   db: firebase.database.Database
 
   constructor() {
-    !firebase.apps.length ? firebase.initializeApp(config) : firebase.app()
+    if (!firebase.apps.length) {
+      firebase.initializeApp(config)
+      firebase.analytics();
+    } else {
+      firebase.app()
+    }
 
     this.db = app.database();
   }
