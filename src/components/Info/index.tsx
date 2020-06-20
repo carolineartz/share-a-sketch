@@ -2,7 +2,7 @@ import * as React from "react"
 import "styled-components/macro"
 
 import { Box, Layer, ResponsiveContext, Button, Text, Anchor } from 'grommet';
-import { Help, Github } from "grommet-icons"
+import { Help, Github, Close } from "grommet-icons"
 import { Shortcut, Shortcuts } from './shortcuts';
 
 export { Shortcut, Shortcuts }
@@ -32,8 +32,11 @@ const Info = ({ children }: InfoProps): JSX.Element => {
           onClickOutside={() => setShowInfo(false)}
           onEsc={() => setShowInfo(false)}
         >
-          <Box fill background="white" pad={{bottom: "medium", horizontal: "medium"}}>
-            <Box border="bottom">
+          <Box fill background="white" pad={{bottom: "medium", horizontal: "medium"}} css="position: relative">
+            <Box css="position: absolute; top: 1em; right: 1em;">
+              <Button plain icon={<Close color="text" />} onClick={() => setShowInfo(false)} />
+            </Box>
+            <Box>
               {children}
             </Box>
             <AppInfo />
