@@ -1,7 +1,11 @@
 import * as React from "react"
-import { Box, Layer, ResponsiveContext, Button, Text, Anchor, Paragraph } from 'grommet';
-import { Help, Github, Reactjs, Grommet } from "grommet-icons"
 import "styled-components/macro"
+
+import { Box, Layer, ResponsiveContext, Button, Text, Anchor } from 'grommet';
+import { Help, Github } from "grommet-icons"
+import { Shortcut, Shortcuts } from './shortcuts';
+
+export { Shortcut, Shortcuts }
 
 type InfoProps = {
   children: React.ReactChild

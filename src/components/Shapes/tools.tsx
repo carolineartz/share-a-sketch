@@ -1,10 +1,9 @@
 import * as React from "react"
-import { Button, ResponsiveContext, Box, Paragraph, Text, Heading, List } from "grommet"
+import { Button, ResponsiveContext, Box, Text, Heading } from "grommet"
 import { Cycle, ClearOption } from "grommet-icons"
 import * as ShapeSettingsContext from "./context"
 import { ToolMenu } from "@components/toolMenu"
-import Info from "@components/Info"
-import { KeyboardText } from '@components/keyboardText';
+import Info, { Shortcut, Shortcuts } from "@components/Info"
 
 const ShapeTools = (): JSX.Element => {
   const { mode, setMode } = ShapeSettingsContext.useShapeSettings()
@@ -35,18 +34,16 @@ const ShapeTools = (): JSX.Element => {
             <Heading level="3">Shapes!</Heading>
             <Text>Make designs by rotating tiles and changing colors. Clicking on the tiles will cycle through the possible options.</Text>
             <Heading level="4">Shortcuts</Heading>
-            <List
-              border={{
-                color: "text",
-                side: "horizontal"
-              }}
-              primaryKey={(data) => <KeyboardText>{data.key}</KeyboardText>}
-              secondaryKey={(data) => <><Text>{data.description.text}</Text>{data.description.icon}</>}
-              data={[
-                {key: 'r', description: {text: 'Switch to rotation mode', icon: <Cycle color="text" />}},
-                {key: 'c', description: {text: 'Switch to color mode', icon: <ClearOption color="text" />}},
-              ]}
-            />
+            <Shortcuts>
+              <Shortcut
+                keys={["r"]}
+                description={<Box direction="row" gap="small"><Text>Switch to rotation mode</Text><Cycle color="text" /></Box>}
+              />
+              <Shortcut
+                keys={["c"]}
+                description={<Box direction="row" gap="small"><Text>Switch to color mode</Text><ClearOption color="text" /></Box>}
+              />
+            </Shortcuts>
           </Box>
         </Info>
       </>
