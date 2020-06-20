@@ -59,13 +59,17 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
     }
   }, [loading, firebase])
 
-  const handleKeyDown = (evt: React.KeyboardEvent): void => {
-    switch (evt.key) {
-      case "c":
+  const handleKeyDown = (evt: any): void => {
+    if (!evt.altKey) { return }
+    switch (evt.code) {
+      case "KeyC":
         setMode("color")
         break
-      case "r":
+      case "KeyR":
         setMode("rotate")
+        break
+      default:
+        // debugger
     }
   }
 

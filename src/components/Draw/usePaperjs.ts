@@ -22,7 +22,6 @@ type CreatPaperHookType = {
 
 type LocalState = {
   color: DesignColor;
-  strokeWidth: DrawSettingsContext.DrawStrokeWidth;
   shape: DrawSettingsContext.DrawShape;
   size: number,
   tool: DrawSettingsContext.DrawTool;
@@ -70,7 +69,6 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
   const {
     tool,
     shape,
-    strokeWidth,
     color,
     size
   } = DrawSettingsContext.useDrawSettings();
@@ -81,7 +79,6 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
     localPathIds: [],
     shape,
     size,
-    strokeWidth,
     color,
     paperScope: paper,
     localPathCache: {} as Record<string, paper.Item>
@@ -91,10 +88,9 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
   React.useEffect(() => {
     localState.current.tool = tool;
     localState.current.shape = shape;
-    localState.current.strokeWidth = strokeWidth;
     localState.current.color = color;
     localState.current.size = size
-  }, [tool, shape, strokeWidth, color, size]);
+  }, [tool, shape, color, size]);
 
   React.useEffect(() => {
     if (!localState.current.paperTool) {
@@ -257,7 +253,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatPaperHookType =>
   }
 
   function handleMouseDown(_event: paper.MouseEvent) {
-    const { tool, color, strokeWidth, size } = localState.current;
+    const { tool, color, size } = localState.current;
     localState.current.toolState = "active";
 
     if (tool === "erase") {

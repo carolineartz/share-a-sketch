@@ -21,16 +21,17 @@ const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
     }
   }, [canvasRef, setCanvas])
 
-  const handleKeyDown = (evt: React.KeyboardEvent): void => {
-    switch (evt.key) {
-      case "e":
+  const handleKeyDown = (evt: any): void => {
+    if (!evt.altKey) { return }
+    switch (evt.code) {
+      case "KeyE":
         setTool("erase")
         break
-      case "p":
-      case "d":
+      case "KeyP":
+      case "KeyD":
         setTool("paint")
         break
-      case "s":
+      case "KeyS":
         setTool("shape")
         break
       case "=":
