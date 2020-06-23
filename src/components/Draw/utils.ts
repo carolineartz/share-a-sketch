@@ -191,10 +191,6 @@ export class PaperItemLoader {
           if (item) {
             item.data.source = "local"
           }
-
-          if (item) {
-            this.paperHelper.setLocalHandlers(item)
-          }
         }
 
         // the child_added event from an externally drawn item's parent
@@ -206,6 +202,10 @@ export class PaperItemLoader {
           if (item) {
             this.firebaseHelper.watchItem(item, this.update)
           }
+        }
+
+        if (item) {
+          this.paperHelper.setLocalHandlers(item)
         }
 
         return item
@@ -382,6 +382,7 @@ export class PaperHelper {
           sizeFactor = (this.context.size - (this.context.size / 4)) * 3
           path = new paper.Path.Star(point, 5, sizeFactor/2, sizeFactor);
       }
+      path.fillColor = new paper.Color(this.context.color)
     } else {
       path = new paper.Path({
         strokeWidth: this.context.size,

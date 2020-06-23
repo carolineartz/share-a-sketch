@@ -195,6 +195,9 @@ class PaperTool extends paper.Tool {
       case "paint":
       case "shape":
         this.activeItem = this.paperHelper.createLocalPath(evt.point)
+        const key = this.firebaseHelper.broadcastCreate(this.activeItem).key
+        this.activeItem.data.id = key
+        this.paperHelper.setLocalHandlers(this.activeItem)
         break
       case "text":
         this.activeItem = this.paperHelper.createLocalText(evt.point)
@@ -208,11 +211,11 @@ class PaperTool extends paper.Tool {
         }
     }
 
-    if (this.activeItem) {
-      const activeItem = this.activeItem
-      const key = this.firebaseHelper.broadcastCreate(this.activeItem).key
-      activeItem.data.id = key
-    }
+    // if (this.activeItem) {
+    //   const activeItem = this.activeItem
+    //   const key = this.firebaseHelper.broadcastCreate(this.activeItem).key
+    //   activeItem.data.id = key
+    // }
   }
 
   onMouseUp = (_evt: paper.ToolEvent) => {
@@ -294,8 +297,17 @@ class PaperTool extends paper.Tool {
     if (this.tool !== "text") { return }
 
     else if (this.activeItem && this.activeItem instanceof paper.PointText) {
+      const isNew = this.activeItem.isEmpty()
+
       this.activeItem.content = this.activeItem.content + evt.character
-      this.firebaseHelper.broadcastUpdate(this.activeItem)()
+
+      if (isNew) {
+        const key = this.firebaseHelper.broadcastCreate(this.activeItem).key
+        this.activeItem.data.id = key
+        this.paperHelper.setLocalHandlers(this.activeItem)
+      } else {
+        this.firebaseHelper.broadcastUpdate(this.activeItem)()
+      }
     }
   }
 
