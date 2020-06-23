@@ -4,7 +4,7 @@ import { DesignColor } from "@components/App/theme"
 export type DrawTool = "erase" | "paint" | "shape" | "text"
 export type DrawShape = "circle" | "square" | "star"
 
-type DrawSettingsContextType = {
+export type DrawSettingsContextType = {
   tool: DrawTool
   setTool: (tool: DrawTool) => void
   shape: DrawShape
