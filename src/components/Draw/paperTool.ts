@@ -4,6 +4,7 @@ import { PaperHelper } from "./paperHelper";
 import { FirebaseHelper } from "./firebaseHelper";
 import { DrawSettingsContext } from ".";
 import { DesignColor } from "@components/App/theme";
+import { CurrentItem } from "./currentItem";
 
 export type LocalState = {
   tool: DrawSettingsContext.DrawTool
@@ -13,8 +14,7 @@ export type LocalState = {
 }
 
 export class PaperTool extends paper.Tool {
-  activeState: "active" | "inactive" = "inactive"
-  activeItem: paper.Item | null = null
+  currentItem: CurrentItem = new CurrentItem()
   cursorShape: paper.Item | null = null
 
   constructor(
@@ -28,7 +28,7 @@ export class PaperTool extends paper.Tool {
   }
 
   get isActive() {
-    return this.activeState === "active"
+    return this.currentItem.isActive
   }
 
   get tool() {
@@ -47,8 +47,8 @@ export class PaperTool extends paper.Tool {
     return this.paperHelper.context.size
   }
 
-  clearActiveItem() {
-    this.activeItem = null
+  clearCurrentItem(): void {
+    this.currentItem.clear()
   }
 
   clearCursorShape() {
@@ -58,31 +58,26 @@ export class PaperTool extends paper.Tool {
     }
   }
 
-  setActive(isActive: boolean) {
-    if (isActive) {
-      this.activeState = "active"
-    } else {
-      this.activeState = "inactive"
-    }
-  }
-
   onMouseDown = (evt: paper.ToolEvent) => {
-    this.setActive(true)
-
     switch (this.tool) {
       case "paint":
+        this.currentItem.set(this.paperHelper.createLocalPath(evt.point), {isActive: true})
+        const key = this.firebaseHelper.broadcastCreate(this.currentItem.get()).key
+
+        if (key) {
+          this.currentItem.id = key
+          this.paperHelper.setLocalHandlers(this.currentItem.get())
+        }
+        break
       case "shape":
-        this.activeItem = this.paperHelper.createLocalPath(evt.point)
-        const key = this.firebaseHelper.broadcastCreate(this.activeItem).key
-        this.activeItem.data.id = key
-        this.paperHelper.setLocalHandlers(this.activeItem)
+        // don't broadcast create until the mouse is up for shapes
+        this.currentItem.set(this.paperHelper.createLocalPath(evt.point), {isActive: true})
         break
       case "text":
-        // don't broadcast create until actual text content is added to the item.
-        this.activeItem = this.paperHelper.createLocalText(evt.point)
+        this.currentItem.set(this.paperHelper.createLocalText(evt.point))
         break
       case "erase":
-        this.clearActiveItem()
+        this.currentItem.clear()
         const target = evt.item
 
         if (target) {
@@ -92,36 +87,43 @@ export class PaperTool extends paper.Tool {
   }
 
   onMouseUp = (_evt: paper.ToolEvent) => {
-    this.setActive(false)
-
     switch (this.tool) {
       case "shape":
-      case "erase":
-        this.clearActiveItem() // i guess shouldn't need this for erase?
+        const key = this.firebaseHelper.broadcastCreate(this.currentItem.get()).key
+
+        if (key) {
+          this.currentItem.id = key
+          this.paperHelper.setLocalHandlers(this.currentItem.get())
+        }
         break
       case "paint":
-        if (this.activeItem instanceof paper.Path && this.activeItem.area !== 0) { // DO I NEED the area check?
-          this.activeItem.simplify()
-          this.firebaseHelper.broadcastUpdate(this.activeItem)()
-          this.clearActiveItem()
+        this.currentItem.simplifyPath()
+
+        if (this.currentItem.isDirty && !this.currentItem.isEmpty) {
+          this.firebaseHelper.broadcastUpdate(this.currentItem.get())()
         }
+    }
+
+    if (this.tool !== "text") {
+      this.currentItem.clear()
     }
   }
 
   onMouseDrag = (evt: paper.ToolEvent) => {
-    this.setActive(true)
-
     switch (this.tool) {
       case "erase":
+        this.currentItem.setActive(true)
         const target = evt.item
         if (target) {
           this.firebaseHelper.broadcastDestroy(target)
         }
         break
       case "paint":
-        if (this.activeItem && this.activeItem instanceof paper.Path) {
-          this.activeItem.add(evt.point)
-          this.firebaseHelper.broadcastUpdate(this.activeItem)()
+        this.currentItem.setActive(true)
+        this.currentItem.addPoint(evt.point)
+
+        if (this.currentItem.isDirty && !this.currentItem.isEmpty) {
+           this.firebaseHelper.broadcastUpdate(this.currentItem.get())()
         }
     }
   }
@@ -134,10 +136,10 @@ export class PaperTool extends paper.Tool {
         if (this.cursorShape) { this.clearCursorShape() }
         break
       case "shape":
-        if (this.isActive) { return }
+        if (this.currentItem.isActive) { return }
 
+        // i have no idea why the position of the star specifically is slightly off from the event point, but this adjustment seems to work...
         else if (this.cursorShape && this.shape === "star") {
-          // i have no idea why the position of the star specifically is slightly off from the event point, but this adjustment seems to work...
           this.cursorShape.position = new paper.Point(evt.point.x, evt.point.y + (this.size / 5))
         }
 
@@ -154,31 +156,27 @@ export class PaperTool extends paper.Tool {
   }
 
   onKeyDown = (evt: paper.KeyEvent) => {
-    this.setActive(true)
-
     if (this.tool !== "text") { return }
 
-    else if (this.activeItem && this.activeItem instanceof paper.PointText) {
-      const isNew = this.activeItem.isEmpty()
+    this.currentItem.setActive(true)
 
-      if (evt.key === "backspace" && !isNew) {
-        this.activeItem.content = this.activeItem.content.substring(0, this.activeItem.content.length - 1)
-      } else {
-        this.activeItem.content = this.activeItem.content + evt.character
-      }
+    if (evt.key === "backspace") {
+      this.currentItem.deleteChar()
+    } else {
+      this.currentItem.addChar(evt.key)
+    }
 
+    if (this.currentItem.isDirty && this.currentItem.isNew) {
+      const key = this.firebaseHelper.broadcastCreate(this.currentItem.get()).key
 
-      if (isNew) {
-        const key = this.firebaseHelper.broadcastCreate(this.activeItem).key
-        this.activeItem.data.id = key
-        this.paperHelper.setLocalHandlers(this.activeItem)
-      } else {
-        this.firebaseHelper.broadcastUpdate(this.activeItem)()
+      if (key) {
+        this.currentItem.id = key
+        this.paperHelper.setLocalHandlers(this.currentItem.get())
       }
     }
-  }
 
-  onKeyUp = (_evt: paper.KeyEvent) => {
-    this.setActive(false)
+    else if (this.currentItem.isDirty) {
+      this.firebaseHelper.broadcastUpdate(this.currentItem.get())()
+    }
   }
 }
