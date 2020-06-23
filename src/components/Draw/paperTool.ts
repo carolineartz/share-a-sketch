@@ -161,7 +161,12 @@ export class PaperTool extends paper.Tool {
     else if (this.activeItem && this.activeItem instanceof paper.PointText) {
       const isNew = this.activeItem.isEmpty()
 
-      this.activeItem.content = this.activeItem.content + evt.character
+      if (evt.key === "backspace" && !isNew) {
+        this.activeItem.content = this.activeItem.content.substring(0, this.activeItem.content.length - 1)
+      } else {
+        this.activeItem.content = this.activeItem.content + evt.character
+      }
+
 
       if (isNew) {
         const key = this.firebaseHelper.broadcastCreate(this.activeItem).key

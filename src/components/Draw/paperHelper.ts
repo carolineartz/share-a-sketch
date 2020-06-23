@@ -82,7 +82,6 @@ export class PaperHelper {
     const highlight = new paper.Color("#A9FF4D");
 
     item.onMouseEnter = () => {
-      console.log("on mouse enter");
       if (this.context.tool !== "erase") { return; }
 
       switch (item.constructor) {
@@ -108,7 +107,6 @@ export class PaperHelper {
     };
 
     item.onMouseLeave = () => {
-      console.log("on mouse leave");
       if (this.context.tool !== "erase") { return; }
 
       switch (item.constructor) {

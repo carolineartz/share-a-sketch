@@ -3,7 +3,6 @@ import throttle from "lodash.throttle";
 import paper from "paper";
 import { ExternalData } from './utils';
 
-
 export class FirebaseHelper {
   constructor(
     public firebase: Firebase) {
