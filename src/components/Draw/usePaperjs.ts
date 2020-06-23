@@ -33,9 +33,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
       firebase.drawings().orderByKey().once("value", (snapshot: firebase.database.DataSnapshot) => {
           try {
             const drawings = snapshot.val();
-            // debugger
             if (drawings && drawings.paths) {
-              // debugger
               Object.entries(drawings.paths).forEach(
                 ([pathId, pathVal]: [string, any]) => {
                   itemLoader.load({
@@ -47,7 +45,6 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
               );
             }
             if (drawings && drawings.texts) {
-              // debugger
              Object.entries(drawings.texts).forEach(
                 ([pathId, pathVal]: [string, any]) => {
                   itemLoader.load({
@@ -63,9 +60,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
           }
         })
         .then(() => {
-
           firebase.paths().on("child_added", (addedSnapshot: firebase.database.DataSnapshot) => {
-            // debugger
             itemLoader.load({
               dataType: "path",
               id: addedSnapshot.key,
@@ -73,9 +68,7 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
             }, "added");
           })
 
-
           firebase.texts().on("child_added", (addedSnapshot: firebase.database.DataSnapshot) => {
-            // debugger
             itemLoader.load({
               dataType: "text",
               id: addedSnapshot.key,
@@ -186,10 +179,11 @@ class PaperTool extends paper.Tool {
 
     if (this.activeItem) {
       const activeItem = this.activeItem
-
-      this.firebaseHelper.broadcastCreate(this.activeItem).then(({ key }) => {
-        activeItem.data.id = key
-      })
+      const key = this.firebaseHelper.broadcastCreate(this.activeItem).key
+      activeItem.data.id = key
+      // this.firebaseHelper.broadcastCreate(this.activeItem).then(({ key }) => {
+      //   activeItem.data.id = key
+      // })
     }
   }
 

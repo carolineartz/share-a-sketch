@@ -56,8 +56,14 @@ export class FirebaseHelper {
         localId: item.data.localId,
         fontFamily: item.fontFamily,
         fontSize: item.fontSize,
-        point: item.point,
-        position: item.position
+        point: {
+          x: item.point.x,
+          y: item.point.y
+        },
+        position: {
+          x: item.position.x,
+          y: item.position.y
+        }
       })
     } else {
       const path = item as paper.Path
@@ -72,6 +78,11 @@ export class FirebaseHelper {
 
   broadcastUpdate(item: paper.Item) {
     return throttle(() => {
+      if (!item.data.id) {
+        console.log("no id!")
+        return
+      }
+
       switch (item.constructor) {
         case paper.Path:
           const path = item as paper.Path
@@ -162,8 +173,6 @@ export class PaperItemLoader {
           item = this.paperHelper.createTextFromRemote(data)
         }
 
-        // debugger
-
         // if (item) {
         //   this.paperHelper.setLocalHandlers(item)
         // }
@@ -173,7 +182,7 @@ export class PaperItemLoader {
       // 'added': when receiving a child_added event
       case "added":
         // the child_added event is from a locally drawn item's parent
-        if (this.paperHelper.isLocalItem(data.id)) {
+        if (this.paperHelper.isLocalItem(data.localId)) {
 
           // item = this.paperHelper.existingItem(data.id)
           // this should always exist
@@ -291,10 +300,6 @@ export class PaperHelper {
     const text = this.existingItem(data.id) as paper.PointText || this.createTextFromRemote(data)
 
     text.content = data.content
-    text.position.x = data.position.x
-    text.position.y = data.position.y
-    text.point.x = data.point.x
-    text.point.y = data.point.y
 
     return text
   }
@@ -376,7 +381,6 @@ export class PaperHelper {
       }
     } else {
       path = new paper.Path({
-        // segments: [point.x, point.y],
         strokeWidth: this.context.size,
         strokeCap: "round",
         strokeColor: new paper.Color(this.context.color)
