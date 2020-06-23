@@ -60,16 +60,12 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
   }, [loading, firebase])
 
   const handleKeyDown = (evt: any): void => {
-    if (!evt.altKey) { return }
-    switch (evt.code) {
-      case "KeyC":
+    switch (evt.key) {
+      case "c":
         setMode("color")
         break
-      case "KeyR":
+      case "r":
         setMode("rotate")
-        break
-      default:
-        // debugger
     }
   }
 
