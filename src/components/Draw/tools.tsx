@@ -4,7 +4,7 @@ import { Drop, Button, ResponsiveContext, RangeInput, Box, ThemeContext, Heading
 import { normalizeColor } from "grommet/utils"
 import { DropMenu, DropOption, DropSelectProps } from "@components/dropMenu"
 import { ToolMenu } from "@components/toolMenu"
-import { ColorDrop, ShapeCircle, Ruler } from "@components/icon"
+import { ColorDrop, ShapeCircle, Ruler, Font } from "@components/icon"
 import * as DrawSettingsContext from "@components/Draw/context"
 import { DesignColor } from "@components/App/theme"
 import Info, { Shortcut, Shortcuts } from "@components/Info"
@@ -21,6 +21,7 @@ const DrawTools = (): JSX.Element => {
   const colorMenuItemRef = React.useRef() as any
   const shapeMenuItemRef = React.useRef() as any
   const sizeMenuItemRef = React.useRef() as any
+  const textMenuItemRef = React.useRef() as any
 
   const closeColorOptions = (): void => setShowColorOptions(false)
   const closeShapeOptions = (): void => setShowShapeOptions(false)
@@ -110,6 +111,15 @@ const DrawTools = (): JSX.Element => {
             <DropMenu {...shapeSelectProps} />
           </Drop>
         )}
+
+        <Button
+          onClick={() => { setTool("text") }}
+          title="Text"
+          active={tool === "text"}
+          ref={textMenuItemRef}
+          key="draw-text"
+          icon={<Font size={iconSize} color={normalizeColor("text", theme)} />}
+        />
         <Button
           onClick={() => setShowSizeOptions(!showSizeOptions)}
           title="Size"

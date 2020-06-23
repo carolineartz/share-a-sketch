@@ -77,6 +77,12 @@ export const CrossLarge = (props: any): JSX.Element => (
   </Icon>
 )
 
+export const Font = (props: any): JSX.Element => (
+  <Icon viewBox="0 0 24 24" a11yTitle="Cross Out Small Line" {...props}>
+    <path d="M21.7831406,20.25 L12.6893906,0 L11.3028281,0 L2.58407813,20.25 L0,20.25 L0,21.65625 L7.5,21.65625 L7.5,20.25 L4.11515625,20.25 L6.35540625,15.046875 L14.6237813,15.046875 L16.9603594,20.25 L14.625,20.25 L14.625,21.65625 L24,21.65625 L24,20.25 L21.7831406,20.25 Z M6.96084375,13.640625 L10.4025469,5.64703125 L13.9922344,13.640625 L6.96084375,13.640625 Z M18.5018906,20.25 L11.1570938,3.8945625 L12.0086719,1.91676563 L20.2416094,20.25 L18.5018906,20.25 Z" />
+  </Icon>
+)
+
 const colorCss = css`
   fill: ${(props: any) => props.color || props.theme.global.colors.icon};
   stroke: ${(props: any) => props.color || props.theme.global.colors.icon};

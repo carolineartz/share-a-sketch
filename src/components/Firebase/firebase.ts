@@ -60,9 +60,12 @@ class Firebase {
   })
 
   // *** Draw API ***
+  drawings = () => this.db.ref("drawings")
+  paths = () => this.db.ref("drawings/paths")
+  path = (id: string) => this.db.ref(`drawings/paths/${id}`)
 
-  paths = () => this.db.ref("paths_new5")
-  path = (id: string) => this.db.ref(`paths_new5/${id}`)
+  texts = () => this.db.ref("drawings/texts/")
+  text = (id: string) => this.db.ref(`drawings/texts/${id}`)
 }
 
 export default Firebase;

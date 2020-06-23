@@ -1,7 +1,7 @@
 import * as React from "react"
 import { DesignColor } from "@components/App/theme"
 
-export type DrawTool = "erase" | "paint" | "shape"
+export type DrawTool = "erase" | "paint" | "shape" | "text"
 export type DrawShape = "circle" | "square" | "star"
 
 type DrawSettingsContextType = {
