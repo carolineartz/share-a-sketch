@@ -24,8 +24,6 @@ const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
   // TODO: Dry this up.
   const handleKeyDown = (evt: any): void => {
     if (tool === "text" && evt.altKey) {
-      evt.stopPropagation();
-
       switch (evt.code) {
         case "KeyE":
           setTool("erase")

@@ -165,7 +165,7 @@ export class PaperTool extends paper.Tool {
     if (evt.key === "backspace") {
       this.currentItem.deleteChar()
     } else {
-      this.currentItem.addChar(evt.key)
+      this.currentItem.addChar(evt.character)
     }
 
     if (this.currentItem.isText && this.currentItem.isDirty && this.currentItem.isNew) {
