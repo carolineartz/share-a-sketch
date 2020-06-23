@@ -37,7 +37,7 @@ interface Context {
   color: DesignColor
   tool: DrawSettingsContext.DrawTool
   shape: DrawSettingsContext.DrawShape
-  toolState: "active" | "inactive"
+  // toolState: "active" | "inactive"
   size: number
 }
 
@@ -173,9 +173,9 @@ export class PaperItemLoader {
           item = this.paperHelper.createTextFromRemote(data)
         }
 
-        // if (item) {
-        //   this.paperHelper.setLocalHandlers(item)
-        // }
+        if (item) {
+          this.paperHelper.setLocalHandlers(item)
+        }
 
         return item
 
@@ -192,9 +192,9 @@ export class PaperItemLoader {
             item.data.source = "local"
           }
 
-          // if (item) {
-          //   this.paperHelper.setLocalHandlers(item)
-          // }
+          if (item) {
+            this.paperHelper.setLocalHandlers(item)
+          }
         }
 
         // the child_added event from an externally drawn item's parent
@@ -244,7 +244,7 @@ export class PaperHelper {
     this.context.color = context.color || this.context.color
     this.context.tool = context.tool || this.context.tool
     this.context.shape = context.shape || this.context.shape
-    this.context.toolState = context.toolState || this.context.toolState
+    // this.context.toolState = context.toolState || this.context.toolState
     this.context.size = context.size || this.context.size
   }
 
@@ -308,6 +308,7 @@ export class PaperHelper {
     const highlight = new paper.Color("#A9FF4D")
 
     item.onMouseEnter = () => {
+      console.log("on mouse enter")
       if (this.context.tool !== "erase") { return }
 
       switch (item.constructor) {
@@ -332,7 +333,9 @@ export class PaperHelper {
     }
 
     item.onMouseLeave = () => {
-      if (this.context.tool !== "erase" || this.context.toolState === "active") {
+      console.log("on mouse leave")
+      if (this.context.tool !== "erase") {
+      // if (this.context.tool !== "erase" || this.context.toolState === "active") {
          return
       }
 
@@ -411,63 +414,63 @@ export class PaperHelper {
   }
 }
 
-type State = {
-  localIds: string[],
-  tool: "active" | "inactive"
-}
+// type State = {
+//   localIds: string[],
+//   tool: "active" | "inactive"
+// }
 
-export const withLocalItemEvents = (context: Context, state: State) => (item: paper.Item): paper.Item => {
-  const highlight = new paper.Color("#A9FF4D")
+// export const withLocalItemEvents = (context: Context, state: State) => (item: paper.Item): paper.Item => {
+//   const highlight = new paper.Color("#A9FF4D")
 
-  item.onMouseEnter = () => {
-    if (context.tool !== "erase") { return }
+//   item.onMouseEnter = () => {
+//     if (context.tool !== "erase") { return }
 
-    switch (item.constructor) {
-      case paper.Path:
-        const path = item as paper.Path
+//     switch (item.constructor) {
+//       case paper.Path:
+//         const path = item as paper.Path
 
-        if (path.closed) {
-          path.data.color = path.fillColor; // save the original color
-          path.fillColor = highlight
-        } else {
-          path.data.color = path.strokeColor; // save the original color
-          path.strokeColor = highlight
-        }
+//         if (path.closed) {
+//           path.data.color = path.fillColor; // save the original color
+//           path.fillColor = highlight
+//         } else {
+//           path.data.color = path.strokeColor; // save the original color
+//           path.strokeColor = highlight
+//         }
 
-        break
-      case paper.PointText:
-        const text = item as paper.PointText
+//         break
+//       case paper.PointText:
+//         const text = item as paper.PointText
 
-        text.data.color = text.fillColor // save the original color
-        text.fillColor = highlight
-    }
-  }
+//         text.data.color = text.fillColor // save the original color
+//         text.fillColor = highlight
+//     }
+//   }
 
-  item.onMouseLeave = () => {
-    if (context.tool !== "erase" || state.tool === "active") {
-        return
-    }
+//   item.onMouseLeave = () => {
+//     if (context.tool !== "erase" || state.tool === "active") {
+//         return
+//     }
 
-    switch (item.constructor) {
-      case paper.Path:
-        const path = item as paper.Path
+//     switch (item.constructor) {
+//       case paper.Path:
+//         const path = item as paper.Path
 
-        if (path.closed) {
-          path.fillColor = path.data.color // revert to original color
-        } else {
-          path.strokeColor = path.data.color // revert to original color
-        }
+//         if (path.closed) {
+//           path.fillColor = path.data.color // revert to original color
+//         } else {
+//           path.strokeColor = path.data.color // revert to original color
+//         }
 
-        break
-      case paper.PointText:
-        const text = item as paper.PointText
+//         break
+//       case paper.PointText:
+//         const text = item as paper.PointText
 
-        text.fillColor = text.data.color // revert to original color
-    }
-  }
+//         text.fillColor = text.data.color // revert to original color
+//     }
+//   }
 
-  return item
-}
+//   return item
+// }
 
 function generateLocalId(): string {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0];

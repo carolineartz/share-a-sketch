@@ -1,34 +1,39 @@
 import * as React from "react";
-import * as DrawSettingsContext from "@components/Draw/context";
+
 import paper from "paper";
 
 import { WithFirebaseProps } from "../Firebase";
 import { PaperHelper, FirebaseHelper, PaperItemLoader } from "./utils";
+import { DrawSettingsContext } from '@components/Draw';
+import { DesignColor } from "@components/App/theme";
 
 type CreatePaperHookType = {
   setCanvas: (canvas: HTMLCanvasElement) => void;
 };
 
+type LocalState = {
+  tool: DrawSettingsContext.DrawTool
+  size: number
+  color: DesignColor
+  shape: DrawSettingsContext.DrawShape
+}
+
 export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType => {
   const [canvas, setCanvas] = React.useState<HTMLCanvasElement | null>(null);
   const { tool, shape, color, size } = DrawSettingsContext.useDrawSettings();
+  const localState = React.useRef<LocalState>({tool, size, color, shape})
   const localIds = React.useRef<string[]>([])
 
-  const paperHelper = new PaperHelper(paper, { tool, shape, color, size, toolState: "inactive" }, localIds.current)
-  const firebaseHelper = new FirebaseHelper(firebase)
-  const itemLoader = new PaperItemLoader(paperHelper, firebaseHelper)
-
-  const paperTool = new PaperTool(paperHelper, firebaseHelper)
-  paperTool.activate()
-
-  React.useEffect(() => {
-    paperHelper.updateContext({ tool, shape, color, size })
-    paperTool.clearCursorShape()
-  }, [tool, shape, color, size, paperTool, paperHelper])
+  const paperTool = React.useRef<PaperTool | undefined>()
 
   React.useEffect(() => {
     if (canvas) {
+      console.log("setting up canvas")
       paper.setup(canvas);
+      const paperHelper = new PaperHelper(paper, localState.current, localIds.current)
+      const firebaseHelper = new FirebaseHelper(firebase)
+      const itemLoader = new PaperItemLoader(paperHelper, firebaseHelper)
+      paperTool.current = new PaperTool(paperHelper, firebaseHelper)
 
       firebase.drawings().orderByKey().once("value", (snapshot: firebase.database.DataSnapshot) => {
           try {
@@ -77,22 +82,26 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
           })
 
           firebase.paths().on("child_removed", (removedSnapshot: firebase.database.DataSnapshot) => {
-            const existingPath = (paper.project.activeLayer
-              .children as paper.Path[]).find(
-              p => p.data.id === removedSnapshot.key
-            );
-            if (existingPath) {
-              existingPath.remove();
+            const existingPaths = (paper.project.activeLayer.children as paper.Path[]).filter(p => {
+              return (
+                p.data.id === removedSnapshot.key || p.data.localId === removedSnapshot.val().localId
+              )
+            });
+
+            if (existingPaths.length) {
+              existingPaths.forEach(p => p.remove());
             }
           })
 
           firebase.texts().on("child_removed", (removedSnapshot: firebase.database.DataSnapshot) => {
-            const existingPath = (paper.project.activeLayer
-              .children as paper.Path[]).find(
-              p => p.data.id === removedSnapshot.key
-            );
-            if (existingPath) {
-              existingPath.remove();
+            const existingPaths = (paper.project.activeLayer.children as paper.Path[]).filter(p => {
+              return (
+                p.data.id === removedSnapshot.key || p.data.localId === removedSnapshot.val().localId
+              )
+            });
+
+            if (existingPaths.length) {
+              existingPaths.forEach(p => p.remove());
             }
           })
         })
@@ -100,8 +109,25 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
 
     return () => {
       firebase.drawings().off();
+      if (paperTool.current) {
+        paperTool.current.remove()
+      }
     };
-  }, [canvas, firebase, itemLoader]);
+  }, [canvas, firebase]);
+
+  React.useEffect(() => {
+    if (paperTool.current) {
+      console.log("activating tool")
+      paperTool.current.activate()
+    }
+  }, [])
+
+  React.useEffect(() => {
+    if (paperTool.current) {
+      paperTool.current.updateContext({ tool, shape, color, size })
+      paperTool.current.clearCursorShape()
+    }
+  }, [tool, shape, color, size, paperTool])
 
   return { setCanvas }
 }
@@ -116,6 +142,10 @@ class PaperTool extends paper.Tool {
     public paperHelper: PaperHelper,
     public firebaseHelper: FirebaseHelper) {
       super()
+  }
+
+  updateContext(context: Partial<LocalState>) {
+    this.paperHelper.updateContext(context)
   }
 
   get isActive() {
@@ -151,13 +181,14 @@ class PaperTool extends paper.Tool {
 
   setActive(isActive: boolean) {
     if (isActive) {
-      this.paperHelper.context.toolState = this.activeState = "active"
+      this.activeState = "active"
     } else {
-      this.paperHelper.context.toolState = this.activeState = "inactive"
+      this.activeState = "inactive"
     }
   }
 
   onMouseDown = (evt: paper.ToolEvent) => {
+    console.log("on mouse down")
     this.setActive(true)
 
     switch (this.tool) {
@@ -181,9 +212,6 @@ class PaperTool extends paper.Tool {
       const activeItem = this.activeItem
       const key = this.firebaseHelper.broadcastCreate(this.activeItem).key
       activeItem.data.id = key
-      // this.firebaseHelper.broadcastCreate(this.activeItem).then(({ key }) => {
-      //   activeItem.data.id = key
-      // })
     }
   }
 
