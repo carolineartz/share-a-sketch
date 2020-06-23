@@ -14,7 +14,7 @@ import ShapeView, { ShapeSettingsContext } from "@components/Shapes"
 import DrawView, { DrawSettingsContext } from "@components/Draw"
 
 const App = (): JSX.Element => {
-  const [view, setView] = React.useState<DesignView>("draw")
+  const [view, setView] = React.useState<DesignView>("shapes")
 
   return (
     <Grommet full theme={customTheme}>

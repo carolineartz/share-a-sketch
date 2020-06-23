@@ -156,7 +156,9 @@ export class PaperTool extends paper.Tool {
   }
 
   onKeyDown = (evt: paper.KeyEvent) => {
-    if (this.tool !== "text") { return }
+    if (this.tool !== "text" || evt.modifiers.alt) {
+      return
+    }
 
     this.currentItem.setActive(true)
 
@@ -166,7 +168,7 @@ export class PaperTool extends paper.Tool {
       this.currentItem.addChar(evt.key)
     }
 
-    if (this.currentItem.isDirty && this.currentItem.isNew) {
+    if (this.currentItem.isText && this.currentItem.isDirty && this.currentItem.isNew) {
       const key = this.firebaseHelper.broadcastCreate(this.currentItem.get()).key
 
       if (key) {

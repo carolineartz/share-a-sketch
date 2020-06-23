@@ -21,26 +21,54 @@ const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
     }
   }, [canvasRef, setCanvas])
 
+  // TODO: Dry this up.
   const handleKeyDown = (evt: any): void => {
-    if (!evt.altKey) { return }
-    switch (evt.code) {
-      case "KeyE":
-        setTool("erase")
-        break
-      case "KeyP":
-      case "KeyD":
-        setTool("paint")
-        break
-      case "KeyS":
-        setTool("shape")
-        break
-      case "=":
-      case "+":
-        size < 60 && setSize(size + 1)
-        break
-      case "-":
-      case "_":
-        size > 3 && setSize(size - 1)
+    if (tool === "text" && evt.altKey) {
+      evt.stopPropagation();
+
+      switch (evt.code) {
+        case "KeyE":
+          setTool("erase")
+          break
+        case "KeyP":
+        case "KeyD":
+          setTool("paint")
+          break
+        case "KeyS":
+          setTool("shape")
+          break
+        case "=":
+        case "+":
+          size < 60 && setSize(size + 1)
+          break
+        case "-":
+        case "_":
+          size > 3 && setSize(size - 1)
+      }
+    }
+
+    else if (tool !== "text") {
+      switch (evt.key) {
+        case "e":
+          setTool("erase")
+          break
+        case "p":
+        case "d":
+          setTool("paint")
+          break
+        case "s":
+          setTool("shape")
+          break
+        case "t":
+          setTool("text")
+        case "=":
+        case "+":
+          size < 60 && setSize(size + 1)
+          break
+        case "-":
+        case "_":
+          size > 3 && setSize(size - 1)
+      }
     }
   }
 
