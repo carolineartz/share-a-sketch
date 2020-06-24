@@ -177,7 +177,8 @@ export class PaperHelper {
       point: [point.x, point.y],
       content: "",
       fillColor: new paper.Color(this.context.color),
-      fontSize: mapToRange(this.context.size, 8, 60, 25, 60)
+      fontSize: mapToRange(this.context.size, 8, 60, 25, 60),
+      fontFamily: "Quicksand"
     });
 
     text.data.localId = localId;
