@@ -8,7 +8,9 @@ export class PaperHelper {
   constructor(
     public paper: paper.PaperScope,
     public context: PaperItemContext,
-    public localItemIds: string[] = []) { }
+    public localItemIds: string[] = []) {
+    this.setupTextInputHack()
+  }
 
   storeLocalItemId(id: string) {
     this.localItemIds.push(id);
@@ -185,5 +187,16 @@ export class PaperHelper {
     text.data.color = this.context.color;
 
     return text;
+  }
+
+  private setupTextInputHack() {
+    const view = this.paper.project.activeLayer.view
+
+    view.onClick = () => {
+      const hiddenInputEl = document.getElementById("draw-tools-hidden-input")
+      if (this.context.tool === "text" && hiddenInputEl) {
+        hiddenInputEl.focus()
+      }
+    }
   }
 }

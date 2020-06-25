@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Edit, Erase, Star, StopFill } from "grommet-icons"
-import { Drop, Button, ResponsiveContext, RangeInput, Box, ThemeContext, Heading, Text } from "grommet"
+import { Drop, Button, ResponsiveContext, RangeInput, Box, ThemeContext, Heading, Text, TextInput } from "grommet"
 import { normalizeColor } from "grommet/utils"
 import { DropMenu, DropOption, DropSelectProps } from "@components/dropMenu"
 import { ToolMenu } from "@components/toolMenu"
@@ -11,12 +11,15 @@ import Info, { Shortcut, Shortcuts } from "@components/Info"
 
 const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 const shapes: DrawSettingsContext.DrawShape[] = ["circle", "square", "star"]
+const HiddenTextInput = TextInput as any
 
 const DrawTools = (): JSX.Element => {
   const { tool, setTool, color, setColor, shape, setShape, size, setSize } = DrawSettingsContext.useDrawSettings()
   const [showColorOptions, setShowColorOptions] = React.useState<boolean>(false)
   const [showShapeOptions, setShowShapeOptions] = React.useState<boolean>(false)
   const [showSizeOptions, setShowSizeOptions] = React.useState<boolean>(false)
+  const [showEmojiOptions, setShowEmojiOptions] = React.useState<boolean>(false)
+  const textInputRef = React.useRef<HTMLInputElement>(null)
 
   const colorMenuItemRef = React.useRef() as any
   const shapeMenuItemRef = React.useRef() as any
@@ -73,6 +76,7 @@ const DrawTools = (): JSX.Element => {
   return (
     <ToolMenu size={screenWidth === "small" ? "small" : "medium"}>
       <>
+        <HiddenTextInput id="draw-tools-hidden-input" ref={textInputRef} css="z-index: -1; position: absolute; width: 0; height: 0; opacity: 0;" />
         <Button
           onClick={() => setShowColorOptions(!showColorOptions)}
           title="Color"

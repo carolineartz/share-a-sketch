@@ -1,5 +1,7 @@
 import React from "react"
 
+import "styled-components/macro"
+
 import { Keyboard } from "grommet"
 import { Main } from "@components/main"
 import * as DrawSettingsContext from "./context"
