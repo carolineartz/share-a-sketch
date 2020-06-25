@@ -24,6 +24,9 @@ export class PaperItemLoader {
         else if (data.dataType === "text") {
           item = this.paperHelper.createTextFromRemote(data);
         }
+        else if (data.dataType === "emoji") {
+          item = this.paperHelper.createEmojiFromRemote(data)
+        }
 
         if (item) {
           this.paperHelper.setLocalHandlers(item);

@@ -61,6 +61,7 @@ const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
           break
         case "t":
           setTool("text")
+          break
         case "=":
         case "+":
           size < 60 && setSize(size + 1)

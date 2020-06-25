@@ -4,17 +4,25 @@ import { Drop, Button, ResponsiveContext, RangeInput, Box, ThemeContext, Heading
 import { normalizeColor } from "grommet/utils"
 import { DropMenu, DropOption, DropSelectProps } from "@components/dropMenu"
 import { ToolMenu } from "@components/toolMenu"
-import { ColorDrop, ShapeCircle, Ruler, Font } from "@components/icon"
+import { ColorDrop, ShapeCircle, Ruler, Font, SmileyEmoji } from "@components/icon"
 import * as DrawSettingsContext from "@components/Draw/context"
 import { DesignColor } from "@components/App/theme"
 import Info, { Shortcut, Shortcuts } from "@components/Info"
+
+import "styled-components/macro"
+
+import 'emoji-mart/css/emoji-mart.css'
+
+import { Picker, EmojiData } from 'emoji-mart'
+
+// import { Picker } from 'emoji-mart'
 
 const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
 const shapes: DrawSettingsContext.DrawShape[] = ["circle", "square", "star"]
 const HiddenTextInput = TextInput as any
 
 const DrawTools = (): JSX.Element => {
-  const { tool, setTool, color, setColor, shape, setShape, size, setSize } = DrawSettingsContext.useDrawSettings()
+  const { tool, setTool, color, setColor, shape, setShape, size, setSize, setEmoji } = DrawSettingsContext.useDrawSettings()
   const [showColorOptions, setShowColorOptions] = React.useState<boolean>(false)
   const [showShapeOptions, setShowShapeOptions] = React.useState<boolean>(false)
   const [showSizeOptions, setShowSizeOptions] = React.useState<boolean>(false)
@@ -25,10 +33,13 @@ const DrawTools = (): JSX.Element => {
   const shapeMenuItemRef = React.useRef() as any
   const sizeMenuItemRef = React.useRef() as any
   const textMenuItemRef = React.useRef() as any
+  const emojiMenuItemRef = React.useRef() as any
 
   const closeColorOptions = (): void => setShowColorOptions(false)
   const closeShapeOptions = (): void => setShowShapeOptions(false)
   const closeSizeOptions = (): void => setShowSizeOptions(false)
+  const closeEmojiOptions = (): void => setShowEmojiOptions(false)
+
   const screenWidth = React.useContext(ResponsiveContext)
   const theme = React.useContext(ThemeContext)
 
@@ -76,7 +87,9 @@ const DrawTools = (): JSX.Element => {
   return (
     <ToolMenu size={screenWidth === "small" ? "small" : "medium"}>
       <>
-        <HiddenTextInput id="draw-tools-hidden-input" ref={textInputRef} css="z-index: -1; position: absolute; width: 0; height: 0; opacity: 0;" />
+        <Box css="z-index: -1; position: absolute; width: 0; height: 0; opacity: 0; overflow: hidden;">
+          <HiddenTextInput id="draw-tools-hidden-input" ref={textInputRef} />
+        </Box>
         <Button
           onClick={() => setShowColorOptions(!showColorOptions)}
           title="Color"
@@ -115,15 +128,47 @@ const DrawTools = (): JSX.Element => {
             <DropMenu {...shapeSelectProps} />
           </Drop>
         )}
-
         <Button
-          onClick={() => { setTool("text") }}
+          onClick={() => setTool("text")}
           title="Text"
           active={tool === "text"}
           ref={textMenuItemRef}
           key="draw-text"
           icon={<Font size={iconSize} color={normalizeColor("text", theme)} />}
         />
+        <Button
+          onClick={() => {
+            setShowEmojiOptions(true)
+            setTool("emoji")
+          }}
+          title="Emoji"
+          active={tool === "emoji"}
+          ref={emojiMenuItemRef}
+          key="draw-emoji"
+          icon={<SmileyEmoji color="plain" size={iconSize} />}
+        />
+        {showEmojiOptions && emojiMenuItemRef && emojiMenuItemRef.current && (
+          <Drop
+            align={{ top: "top", left: "right" }}
+            target={emojiMenuItemRef.current}
+            onClickOutside={closeEmojiOptions}
+            onEsc={closeEmojiOptions}
+          >
+            <Picker
+              set="twitter"
+              emojiSize={32}
+              onClick={(clickedEmoji: EmojiData) => {
+                setEmoji(clickedEmoji)
+                setShowEmojiOptions(false)
+              }}
+              onSelect={(selectedEmoji: EmojiData) => {
+                setEmoji(selectedEmoji)
+                setShowEmojiOptions(false)
+              }}
+              emojiTooltip
+            />
+          </Drop>
+        )}
         <Button
           onClick={() => setShowSizeOptions(!showSizeOptions)}
           title="Size"

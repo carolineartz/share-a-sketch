@@ -5,19 +5,20 @@ type PointData = {
 }
 
 type SharedExternalData = {
-  dataType: "path" | "text"
+  dataType: "path" | "text" | "emoji"
   id: string
-  color: string
   localId: string
 }
 
 export type PathData = SharedExternalData & {
+  color: string
   dataType: "path"
   strokeWidth: number
   definition: string
 }
 
 export type TextData = SharedExternalData & {
+  color: string
   dataType: "text"
   content: string
   fontFamily: string
@@ -26,7 +27,14 @@ export type TextData = SharedExternalData & {
   position: PointData
 }
 
-export type ExternalData = TextData | PathData
+export type EmojiItemData = SharedExternalData & {
+  dataType: "emoji"
+  code: string
+  scale: number
+  position: PointData
+}
+
+export type ExternalData = TextData | PathData | EmojiItemData
 export type ExternalLoadType = "initial" | "added" | "updated"
 
 export function generateLocalId(): string {
@@ -36,4 +44,8 @@ export function generateLocalId(): string {
 
 export function mapToRange(value: number, inMin: number, inMax: number, outMin: number, outMax: number) {
   return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
+}
+
+export function emojiSrc(code: string) {
+  return `https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/${code}.svg`
 }

@@ -15,8 +15,8 @@ type CreatePaperHookType = {
 
 export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType => {
   const [canvas, setCanvas] = React.useState<HTMLCanvasElement | null>(null);
-  const { tool, shape, color, size } = DrawSettingsContext.useDrawSettings();
-  const localState = React.useRef<LocalState>({tool, size, color, shape})
+  const { tool, shape, color, size, emoji } = DrawSettingsContext.useDrawSettings();
+  const localState = React.useRef<LocalState>({tool, size, color, shape, emoji})
   const localIds = React.useRef<string[]>([])
 
   const paperTool = React.useRef<PaperTool | undefined>()
@@ -56,6 +56,17 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
                 }
               );
             }
+            if (drawings && drawings.emojis) {
+             Object.entries(drawings.emojis).forEach(
+                ([emojiId, emojiVal]: [string, any]) => {
+                  itemLoader.load({
+                    dataType: "emoji",
+                    id: emojiId,
+                    ...emojiVal
+                  }, "initial");
+               }
+             )
+            }
           } catch (e) {
             console.error(e);
           }
@@ -77,6 +88,14 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
             }, "added");
           })
 
+          firebase.emojis().on("child_added", (addedSnapshot: firebase.database.DataSnapshot) => {
+            itemLoader.load({
+              dataType: "emoji",
+              id: addedSnapshot.key,
+              ...addedSnapshot.val()
+            }, "added");
+          })
+
           firebase.paths().on("child_removed", (removedSnapshot: firebase.database.DataSnapshot) => {
             const existingPaths = (paper.project.activeLayer.children as paper.Path[]).filter(p => {
               return (
@@ -90,6 +109,18 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
           })
 
           firebase.texts().on("child_removed", (removedSnapshot: firebase.database.DataSnapshot) => {
+            const existingPaths = (paper.project.activeLayer.children as paper.Path[]).filter(p => {
+              return (
+                p.data.id === removedSnapshot.key || p.data.localId === removedSnapshot.val().localId
+              )
+            });
+
+            if (existingPaths.length) {
+              existingPaths.forEach(p => p.remove());
+            }
+          })
+
+          firebase.emojis().on("child_removed", (removedSnapshot: firebase.database.DataSnapshot) => {
             const existingPaths = (paper.project.activeLayer.children as paper.Path[]).filter(p => {
               return (
                 p.data.id === removedSnapshot.key || p.data.localId === removedSnapshot.val().localId
@@ -119,10 +150,10 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
 
   React.useEffect(() => {
     if (paperTool.current) {
-      paperTool.current.updateContext({ tool, shape, color, size })
+      paperTool.current.updateContext({ tool, shape, color, size, emoji })
       paperTool.current.clearCursorShape()
     }
-  }, [tool, shape, color, size, paperTool])
+  }, [tool, shape, color, size, paperTool, emoji])
 
   return { setCanvas }
 }

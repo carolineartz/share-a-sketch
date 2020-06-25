@@ -1,23 +1,34 @@
 import paper from "paper";
 
-type CurrentItemState = {
+type LocalItemState = {
   isActive: boolean
   isNew: boolean // opposite isPersisted
   isSynced: boolean
 }
 
-const defaultInitialState: CurrentItemState = {
+export type PaperItemType = "path" | "shape" | "emoji" | "text"
+
+const defaultInitialState: LocalItemState = {
   isActive: false,
   isNew: true,
   isSynced: false
 }
 
-export class CurrentItem {
-  static stubSource = () => new paper.Item();
-  private _source: paper.Item = CurrentItem.stubSource();
-  private _state: CurrentItemState = defaultInitialState;
+const stub = new paper.Item()
+stub.data.stub = true
 
-  set(item: paper.Item, state: Partial<CurrentItemState> = {}) {
+export class LocalPaperItem {
+  static stubSource = () => stub;
+  private _source: paper.Item = LocalPaperItem.stubSource();
+  private _state: LocalItemState = defaultInitialState;
+
+  constructor(item?: paper.Item) {
+    if (item) {
+      this.set(item)
+    }
+  }
+
+  set(item: paper.Item, state: Partial<LocalItemState> = {}) {
     this.clear();
     this._source = item;
     this._state = { ...defaultInitialState, ...state };
@@ -27,8 +38,23 @@ export class CurrentItem {
     }
   }
 
+  get itemType(): PaperItemType {
+    if (this.isText) {
+      return "text"
+    }
+    else if (this.isShape) {
+      return "shape"
+    }
+    else if (this.isPath) {
+      return "path"
+    }
+    else {
+      return "emoji"
+    }
+  }
+
   get(): paper.Item {
-    return this._source || CurrentItem.stubSource();
+    return this._source || LocalPaperItem.stubSource();
   }
 
   setDirty(): void {
@@ -44,7 +70,7 @@ export class CurrentItem {
   }
 
   clear(): void {
-    this._source = CurrentItem.stubSource();
+    this._source = LocalPaperItem.stubSource();
     this._state = {
       isNew: true,
       isActive: false,
@@ -66,6 +92,10 @@ export class CurrentItem {
 
   get isPath(): boolean {
     return this._source instanceof paper.Path;
+  }
+
+  get isEmoji(): boolean {
+    return this._source.data.sourceType === "emoji" || this._source instanceof paper.Group
   }
 
   get isLine(): boolean {

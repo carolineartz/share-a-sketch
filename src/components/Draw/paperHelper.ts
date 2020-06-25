@@ -1,8 +1,8 @@
 import paper from "paper";
-import { PathData, TextData, generateLocalId, mapToRange } from "./utils";
+import { PathData, TextData, generateLocalId, mapToRange, emojiSrc, EmojiItemData } from "./utils";
 import { DrawSettingsContextType } from "./context";
 
-export type PaperItemContext = Pick<DrawSettingsContextType, 'tool' | 'shape' | 'size' | 'color'>
+export type PaperItemContext = Pick<DrawSettingsContextType, 'tool' | 'shape' | 'size' | 'color' | 'emoji'>
 
 export class PaperHelper {
   constructor(
@@ -21,6 +21,7 @@ export class PaperHelper {
     this.context.tool = context.tool || this.context.tool;
     this.context.shape = context.shape || this.context.shape;
     this.context.size = context.size || this.context.size;
+    this.context.emoji = context.emoji || this.context.emoji
   }
 
   existingItem(id: string): paper.Item | undefined {
@@ -49,6 +50,21 @@ export class PaperHelper {
     return newPath;
   }
 
+  createEmojiFromRemote(data: EmojiItemData): paper.Item {
+    const url = emojiSrc(data.code)
+    const item = this.paper.project.activeLayer.importSVG(url, (item: any, _str: any) => {
+      item.setPosition(new paper.Point(data.position.x, data.position.y))
+      item.scale(data.scale)
+      item.data.scale = data.scale
+      item.data.sourceType = "emoji"
+      item.data.code = data.code
+      item.data.localId = data.localId
+      item.data.id = data.id
+    })
+
+    return item
+  }
+
   createTextFromRemote(data: TextData): paper.PointText {
     const newText = new paper.PointText({
       point: Object.values(data.point),
@@ -59,7 +75,7 @@ export class PaperHelper {
     });
 
     newText.data.localId = data.localId;
-    newText.data.id = data.id;
+    newText.data.id = data.id
 
     return newText;
   }
@@ -131,6 +147,28 @@ export class PaperHelper {
     };
   }
 
+  createLocalEmoji(point: paper.Point, onCreate: (item: paper.Item, foo: any) => void): void {
+    const localId = generateLocalId();
+    this.storeLocalItemId(localId);
+
+    const emojiData = this.context.emoji as any
+
+    const url = emojiSrc(emojiData.unified)
+
+    this.paper.project.activeLayer.importSVG(url, (item: any, str: any) => {
+      item.setPosition(point)
+      item.scale(this.context.size / 8)
+      item.data.localId = localId
+      item.data.scale = this.context.size / 8
+      item.data.sourceType = "emoji"
+      item.data.code = emojiData.unified
+
+      onCreate(item, {})
+    })
+
+    // return item
+  }
+
   createLocalPath(point: paper.Point): paper.Item {
     const localId = generateLocalId();
     this.storeLocalItemId(localId);
@@ -183,10 +221,10 @@ export class PaperHelper {
       fontFamily: "Quicksand"
     });
 
-    text.data.localId = localId;
-    text.data.color = this.context.color;
+    text.data.localId = localId
+    text.data.color = this.context.color
 
-    return text;
+    return text
   }
 
   private setupTextInputHack() {

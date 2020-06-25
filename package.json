@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:4000",
   "dependencies": {
+    "@types/emoji-mart": "^3.0.2",
     "@types/jest": "^24.0.0",
     "@types/lodash.constant": "^3.0.6",
     "@types/lodash.debounce": "^4.0.6",
@@ -22,6 +23,7 @@
     "@typescript-eslint/eslint-plugin": "^3.1.0",
     "@typescript-eslint/parser": "^3.1.0",
     "concurrently": "^5.2.0",
+    "emoji-mart": "^3.0.0",
     "eslint": "^7.1.0",
     "eslint-config-airbnb-typescript": "^8.0.2",
     "eslint-config-prettier": "^6.11.0",

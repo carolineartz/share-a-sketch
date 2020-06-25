@@ -4,17 +4,19 @@ import { PaperHelper } from "./paperHelper";
 import { FirebaseHelper } from "./firebaseHelper";
 import { DrawSettingsContext } from ".";
 import { DesignColor } from "@components/App/theme";
-import { CurrentItem } from "./currentItem";
+import { LocalPaperItem } from "./localPaperItem";
+import { EmojiItem } from "./context";
 
 export type LocalState = {
   tool: DrawSettingsContext.DrawTool
   size: number
   color: DesignColor
   shape: DrawSettingsContext.DrawShape
+  emoji: EmojiItem
 }
 
 export class PaperTool extends paper.Tool {
-  currentItem: CurrentItem = new CurrentItem()
+  currentItem: LocalPaperItem = new LocalPaperItem()
   cursorShape: paper.Item | null = null
 
   constructor(
@@ -61,13 +63,25 @@ export class PaperTool extends paper.Tool {
   onMouseDown = (evt: paper.ToolEvent) => {
     switch (this.tool) {
       case "paint":
-        this.currentItem.set(this.paperHelper.createLocalPath(evt.point), {isActive: true})
-        const key = this.firebaseHelper.broadcastCreate(this.currentItem.get()).key
+        this.currentItem.set(this.paperHelper.createLocalPath(evt.point), { isActive: true })
+        const key = this.firebaseHelper.broadcastCreate(this.currentItem).key
 
         if (key) {
           this.currentItem.id = key
           this.paperHelper.setLocalHandlers(this.currentItem.get())
         }
+        break
+      case "emoji":
+        this.paperHelper.createLocalEmoji(evt.point, (item: paper.Item) => {
+          this.currentItem.set(item, { isActive: true })
+
+          const key = this.firebaseHelper.broadcastCreate(this.currentItem).key
+
+          if (key) {
+            this.currentItem.id = key
+            this.paperHelper.setLocalHandlers(this.currentItem.get())
+          }
+        })
         break
       case "shape":
         // don't broadcast create until the mouse is up for shapes
@@ -81,7 +95,7 @@ export class PaperTool extends paper.Tool {
         const target = evt.item
 
         if (target) {
-          this.firebaseHelper.broadcastDestroy(target) // but do the actual destroy the paper item from the firebase event response
+          this.firebaseHelper.broadcastDestroy(new LocalPaperItem(target)) // but do the actual destroy the paper item from the firebase event response
         }
     }
   }
@@ -89,7 +103,7 @@ export class PaperTool extends paper.Tool {
   onMouseUp = (_evt: paper.ToolEvent) => {
     switch (this.tool) {
       case "shape":
-        const key = this.firebaseHelper.broadcastCreate(this.currentItem.get()).key
+        const key = this.firebaseHelper.broadcastCreate(this.currentItem).key
 
         if (key) {
           this.currentItem.id = key
@@ -100,7 +114,7 @@ export class PaperTool extends paper.Tool {
         this.currentItem.simplifyPath()
 
         if (this.currentItem.isDirty && !this.currentItem.isEmpty) {
-          this.firebaseHelper.broadcastUpdate(this.currentItem.get())()
+          this.firebaseHelper.broadcastUpdate(this.currentItem)()
         }
     }
 
@@ -115,7 +129,7 @@ export class PaperTool extends paper.Tool {
         this.currentItem.setActive(true)
         const target = evt.item
         if (target) {
-          this.firebaseHelper.broadcastDestroy(target)
+          this.firebaseHelper.broadcastDestroy(new LocalPaperItem(target))
         }
         break
       case "paint":
@@ -123,7 +137,7 @@ export class PaperTool extends paper.Tool {
         this.currentItem.addPoint(evt.point)
 
         if (this.currentItem.isDirty && !this.currentItem.isEmpty) {
-           this.firebaseHelper.broadcastUpdate(this.currentItem.get())()
+           this.firebaseHelper.broadcastUpdate(this.currentItem)()
         }
     }
   }
@@ -169,7 +183,7 @@ export class PaperTool extends paper.Tool {
     }
 
     if (this.currentItem.isText && this.currentItem.isDirty && this.currentItem.isNew) {
-      const key = this.firebaseHelper.broadcastCreate(this.currentItem.get()).key
+      const key = this.firebaseHelper.broadcastCreate(this.currentItem).key
 
       if (key) {
         this.currentItem.id = key
@@ -178,7 +192,7 @@ export class PaperTool extends paper.Tool {
     }
 
     else if (this.currentItem.isDirty) {
-      this.firebaseHelper.broadcastUpdate(this.currentItem.get())()
+      this.firebaseHelper.broadcastUpdate(this.currentItem)()
     }
   }
 }

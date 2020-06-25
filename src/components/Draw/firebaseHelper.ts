@@ -3,42 +3,62 @@ import throttle from "lodash.throttle";
 import paper from "paper";
 import { ExternalData } from './utils';
 
+import { LocalPaperItem } from "./localPaperItem"
+
 export class FirebaseHelper {
   constructor(
     public firebase: Firebase) {
   }
 
-  broadcastCreate(item: paper.Item) {
-    if (item instanceof paper.PointText) {
-      return this.firebase.texts().push({
-        content: item.content,
-        color: item.data.color,
-        localId: item.data.localId,
-        fontFamily: item.fontFamily,
-        fontSize: item.fontSize,
-        point: {
-          x: item.point.x,
-          y: item.point.y
-        },
-        position: {
-          x: item.position.x,
-          y: item.position.y
-        }
-      });
-    }
-    else {
-      const path = item as paper.Path;
-      return this.firebase.paths().push({
-        definition: path.pathData,
-        strokeWidth: path.closed ? 0 : path.strokeWidth,
-        color: path.data.color,
-        localId: path.data.localId
-      });
+  broadcastCreate(item: LocalPaperItem) {
+    let source
+    switch (item.itemType) {
+      case "emoji":
+        source = item.get()
+
+        return this.firebase.emojis().push({
+          scale: source.data.scale,
+          code: source.data.code,
+          localId: source.data.localId,
+          position: {
+            x: source.position.x,
+            y: source.position.y
+          }
+        })
+      case "text":
+        source = item.get() as paper.PointText
+
+        return this.firebase.texts().push({
+          content: source.content,
+          color: source.data.color,
+          localId: source.data.localId,
+          fontFamily: source.fontFamily,
+          fontSize: source.fontSize,
+          point: {
+            x: source.point.x,
+            y: source.point.y
+          },
+          position: {
+            x: source.position.x,
+            y: source.position.y
+          }
+        });
+      case "shape":
+      case "path":
+        source = item.get() as paper.Path
+
+        return this.firebase.paths().push({
+          definition: source.pathData,
+          strokeWidth: source.closed ? 0 : source.strokeWidth,
+          color: source.data.color,
+          localId: source.data.localId
+        });
     }
   }
 
-  broadcastUpdate(item: paper.Item) {
+  broadcastUpdate(localItem: LocalPaperItem) {
     return throttle(() => {
+      const item = localItem.get()
       if (!item.data.id) {
         console.log("no id!");
         return;
@@ -76,13 +96,17 @@ export class FirebaseHelper {
     });
   }
 
-  broadcastDestroy(item: paper.Item) {
+  broadcastDestroy(localItem: LocalPaperItem) {
+    const item = localItem.get()
     switch (item.constructor) {
       case paper.Path:
         this.firebase.path(item.data.id).remove();
         break;
       case paper.PointText:
         this.firebase.text(item.data.id).remove();
+        break;
+      default:
+        this.firebase.emoji(item.data.id).remove()
     }
   }
 

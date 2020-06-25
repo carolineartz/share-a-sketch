@@ -14,7 +14,7 @@ export const ToolMenu = ({ children, size }: ToolMenuProps): JSX.Element => {
   const [visible, setVisible] = React.useState<boolean>(true)
 
   return (
-    <StyledToolMenu visible={visible} size={size}>
+    <StyledToolMenu id="tool-menu" visible={visible} size={size}>
       <Box
         background="white"
         direction="row"
