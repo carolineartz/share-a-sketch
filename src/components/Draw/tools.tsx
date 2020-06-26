@@ -156,6 +156,9 @@ const DrawTools = (): JSX.Element => {
           >
             <Picker
               set="twitter"
+              emoji='point_up'
+              title='Pick your emoji…'
+              perLine={screenWidth === "small" ? 6 : 9}
               emojiSize={32}
               onClick={(clickedEmoji: EmojiData) => {
                 setEmoji(clickedEmoji)
