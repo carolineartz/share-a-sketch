@@ -44,5 +44,4 @@ const GlobalStyle = createGlobalStyle`
     position: absolute;
     overflow: hidden;
   }
-
 `

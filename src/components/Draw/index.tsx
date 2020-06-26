@@ -8,6 +8,7 @@ import * as DrawSettingsContext from "./context"
 import DrawTools from "./tools"
 import { usePaperJs } from "./usePaperjs"
 import { withFirebase, WithFirebaseProps } from '../Firebase';
+import { Canvas } from "./canvas"
 
 export { DrawSettingsContext }
 
@@ -83,7 +84,7 @@ const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
     <Keyboard target="document" onKeyDown={handleKeyDown}>
       <DrawTools />
       <Main className={cursorClass}>
-        <canvas ref={canvasRef} style={{ background: "white", width: "100vw", height: "100vh" }} width="100%" height="100%" />
+        <Canvas ref={canvasRef} />
       </Main>
     </Keyboard>
   )
