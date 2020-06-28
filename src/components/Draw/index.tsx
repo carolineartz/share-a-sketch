@@ -8,18 +8,18 @@ import * as DrawSettingsContext from "./context"
 import DrawTools from "./tools"
 import { usePaperJs } from "./usePaperjs"
 import { withFirebase, WithFirebaseProps } from '../Firebase';
-import { Canvas } from "./canvas"
 
 export { DrawSettingsContext }
 
 const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const { setTool, color, tool, setSize, size } = DrawSettingsContext.useDrawSettings()
-  const { setCanvas } = usePaperJs({ firebase })
+  const { setCanvas, width, height } = usePaperJs({ firebase })
 
   React.useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
+      console.log("setting canvas initial")
       setCanvas(canvas)
     }
   }, [canvasRef, setCanvas])
@@ -84,7 +84,7 @@ const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
     <Keyboard target="document" onKeyDown={handleKeyDown}>
       <DrawTools />
       <Main className={cursorClass}>
-        <Canvas ref={canvasRef} />
+        <canvas  id={`canvas-${width}-${height}`} ref={canvasRef} style={{ background: "white", width: `${width}px`, height: `${height}px` }} />
       </Main>
     </Keyboard>
   )
