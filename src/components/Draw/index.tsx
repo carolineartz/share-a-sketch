@@ -19,7 +19,6 @@ const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
   React.useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
-      console.log("setting canvas initial")
       setCanvas(canvas)
     }
   }, [canvasRef, setCanvas])

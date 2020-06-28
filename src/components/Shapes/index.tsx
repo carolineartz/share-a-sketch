@@ -50,7 +50,6 @@ const Shapes = ({firebase}: WithFirebaseProps): JSX.Element => {
       timeoutId.current = setTimeout(() => {
         setEntered("in")
       }, 3000)
-      console.log(timeoutId, loading)
     }
 
     return () => {

@@ -35,7 +35,6 @@ export const usePaperJs = ({ firebase }: WithFirebaseProps): CreatePaperHookType
     }
 
     if (canvas) {
-      console.log(canvas)
       paper.setup(canvas);
       setWidth(window.innerWidth)
       setHeight(window.innerHeight)
@@ -109,14 +108,12 @@ export const usePaperJs = ({ firebase }: WithFirebaseProps): CreatePaperHookType
   }, [width, height, canvas, firebase]);
 
   React.useEffect(() => {
-    console.log("running set paperTool")
     if (paperTool.current) {
       paperTool.current.activate()
     }
   }, [width, height])
 
   React.useEffect(() => {
-    console.log("running set context")
     if (paperTool.current) {
       paperTool.current.updateContext({ tool, shape, color, size, emoji })
       paperTool.current.clearCursorShape()
@@ -132,7 +129,6 @@ export const usePaperJs = ({ firebase }: WithFirebaseProps): CreatePaperHookType
       canvas.height = window.innerHeight
       canvas.style.width = `${window.innerWidth}px`
       canvas.style.height = `${window.innerHeight}px`
-      console.log("setting canvas after resize")
       setCanvas(canvas)
     }
   }, 500, {leading: true, trailing: true})
