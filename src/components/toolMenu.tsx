@@ -1,9 +1,11 @@
 import * as React from "react"
-import "styled-components/macro"
+import { useMediaQuery } from 'react-responsive'
 
-import { Box, Nav, BoxProps, Button } from "grommet"
-import { FormPrevious, FormNext } from "grommet-icons"
+import "styled-components/macro"
 import styled from "styled-components"
+
+import { Box, Nav, BoxProps, Button, ResponsiveContext } from "grommet"
+import { FormPrevious, FormNext } from "grommet-icons"
 
 type ToolMenuProps = {
   children: React.ReactChild
@@ -13,8 +15,12 @@ type ToolMenuProps = {
 export const ToolMenu = ({ children, size }: ToolMenuProps): JSX.Element => {
   const [visible, setVisible] = React.useState<boolean>(true)
 
+  const screenWidth = React.useContext(ResponsiveContext)
+  const isShort = useMediaQuery({ query: '(max-device-height: 450px)' })
+  const isNarrow = screenWidth === "small"
+
   return (
-    <StyledToolMenu id="tool-menu" visible={visible} size={size}>
+    <StyledToolMenu id="tool-menu" visible={visible} short={isShort} narrow={isNarrow}>
       <Box
         background="white"
         direction="row"
@@ -39,16 +45,17 @@ export const ToolMenu = ({ children, size }: ToolMenuProps): JSX.Element => {
 
 type StyledToolMenuProps = BoxProps & {
   visible: boolean
-  size: ToolMenuProps["size"]
+  narrow: boolean
+  short: boolean
 }
 
 const StyledToolMenu = styled(Box)<StyledToolMenuProps>`
   transition: all 0.5s ease;
   display: inline-block;
   position: relative;
-  top: 10vh;
+  top: ${props => (props.short ? '0' : '10vh')};
   z-index: 1;
-  left: ${props => (props.visible ? 0 : props.size === "small" ? "-54px" : "-78px")};
+  left: ${props => (props.visible ? 0 : props.narrow || props.short ? "-54px" : "-78px")};
 
   div {
     border: 6px solid white;

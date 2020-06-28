@@ -1,4 +1,6 @@
 import * as React from "react"
+import { useMediaQuery } from 'react-responsive'
+
 import { Edit, Erase, Star, StopFill } from "grommet-icons"
 import { Drop, Button, ResponsiveContext, RangeInput, Box, ThemeContext, Heading, Text, TextInput } from "grommet"
 import { normalizeColor } from "grommet/utils"
@@ -41,9 +43,13 @@ const DrawTools = (): JSX.Element => {
   const closeEmojiOptions = (): void => setShowEmojiOptions(false)
 
   const screenWidth = React.useContext(ResponsiveContext)
+  const isShort = useMediaQuery({ query: '(max-device-height: 450px)' })
+  const isNarrow = screenWidth === "small"
+  const isSmall = isShort || isNarrow
+
   const theme = React.useContext(ThemeContext)
 
-  const iconSize = screenWidth === "small" ? "medium" : "large"
+  const iconSize = isSmall ? "medium" : "large"
 
   const colorOptions: DropOption<DesignColor>[] = colors.map((c: DesignColor) => ({
     value: c,
@@ -85,7 +91,7 @@ const DrawTools = (): JSX.Element => {
   }
 
   return (
-    <ToolMenu size={screenWidth === "small" ? "small" : "medium"}>
+    <ToolMenu size={isSmall? "small" : "medium"}>
       <>
         <Box css="z-index: -1; position: absolute; width: 0; height: 0; opacity: 0; overflow: hidden;">
           <HiddenTextInput id="draw-tools-hidden-input" ref={textInputRef} />
