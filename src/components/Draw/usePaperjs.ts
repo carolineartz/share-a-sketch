@@ -13,7 +13,7 @@ type CreatePaperHookType = {
   setCanvas: (canvas: HTMLCanvasElement) => void;
 };
 
-export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType => {
+export const usePaperJs = ({ firebase }: WithFirebaseProps): CreatePaperHookType => {
   const [canvas, setCanvas] = React.useState<HTMLCanvasElement | null>(null);
   const { tool, shape, color, size, emoji } = DrawSettingsContext.useDrawSettings();
   const localState = React.useRef<LocalState>({tool, size, color, shape, emoji})
@@ -21,7 +21,6 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
 
   const paperTool = React.useRef<PaperTool | undefined>()
 
-  // TODO: DRY up the firebase event subscribers code.
   React.useEffect(() => {
     if (canvas) {
       paper.setup(canvas);
@@ -32,110 +31,62 @@ export const usePaperJs = ({firebase}: WithFirebaseProps): CreatePaperHookType =
       paperTool.current = new PaperTool(paperHelper, firebaseHelper)
 
       firebase.drawings().orderByKey().once("value", (snapshot: firebase.database.DataSnapshot) => {
-          try {
-            const drawings = snapshot.val();
-            if (drawings && drawings.paths) {
-              Object.entries(drawings.paths).forEach(
-                ([pathId, pathVal]: [string, any]) => {
-                  itemLoader.load({
-                    dataType: "path",
-                    id: pathId,
-                    ...pathVal
-                  }, "initial");
-                }
-              );
-            }
-            if (drawings && drawings.texts) {
-             Object.entries(drawings.texts).forEach(
-                ([pathId, pathVal]: [string, any]) => {
-                  itemLoader.load({
-                    dataType: "text",
-                    id: pathId,
-                    ...pathVal
-                  }, "initial");
-                }
-              );
-            }
-            if (drawings && drawings.emojis) {
-             Object.entries(drawings.emojis).forEach(
-                ([emojiId, emojiVal]: [string, any]) => {
-                  itemLoader.load({
-                    dataType: "emoji",
-                    id: emojiId,
-                    ...emojiVal
-                  }, "initial");
-               }
-             )
-            }
-          } catch (e) {
-            console.error(e);
-          }
-        })
-        .then(() => {
-          firebase.paths().on("child_added", (addedSnapshot: firebase.database.DataSnapshot) => {
+        try {
+          const drawings = snapshot.val() || {}
+          const { paths = {}, texts = {}, emojis = {} } = drawings
+          const response = [
+            { val: paths, dataType: "path" },
+            { val: texts, dataType: "text" },
+            { val: emojis, dataType: "emoji"}
+          ]
+
+          response.forEach(({ val, dataType }) => {
+            Object.entries(val).forEach(
+              ([id, itemVal]: [string, any]) => {
+                itemLoader.load({
+                  dataType,
+                  id,
+                  ...itemVal
+                }, "initial");
+              }
+            );
+          })
+        } catch (e) {
+          console.error(e);
+        }
+      })
+      .then(() => {
+        [
+          { ref: firebase.paths(), dataType: "path" },
+          { ref: firebase.texts(), dataType: "text" },
+          { ref: firebase.emojis(), dataType: "emoji"}
+        ].forEach(({ ref, dataType}) => {
+          ref.on("child_added", (addedSnapshot: firebase.database.DataSnapshot) => {
             itemLoader.load({
-              dataType: "path",
+              dataType,
               id: addedSnapshot.key,
               ...addedSnapshot.val()
             }, "added");
           })
 
-          firebase.texts().on("child_added", (addedSnapshot: firebase.database.DataSnapshot) => {
-            itemLoader.load({
-              dataType: "text",
-              id: addedSnapshot.key,
-              ...addedSnapshot.val()
-            }, "added");
-          })
-
-          firebase.emojis().on("child_added", (addedSnapshot: firebase.database.DataSnapshot) => {
-            itemLoader.load({
-              dataType: "emoji",
-              id: addedSnapshot.key,
-              ...addedSnapshot.val()
-            }, "added");
-          })
-
-          firebase.paths().on("child_removed", (removedSnapshot: firebase.database.DataSnapshot) => {
-            const existingPaths = (paper.project.activeLayer.children as paper.Path[]).filter(p => {
+          ref.on("child_removed", (removedSnapshot: firebase.database.DataSnapshot) => {
+            const existingItems = (paper.project.activeLayer.children as paper.Item[]).filter(p => {
               return (
                 p.data.id === removedSnapshot.key || p.data.localId === removedSnapshot.val().localId
               )
             });
 
-            if (existingPaths.length) {
-              existingPaths.forEach(p => p.remove());
-            }
-          })
-
-          firebase.texts().on("child_removed", (removedSnapshot: firebase.database.DataSnapshot) => {
-            const existingPaths = (paper.project.activeLayer.children as paper.Path[]).filter(p => {
-              return (
-                p.data.id === removedSnapshot.key || p.data.localId === removedSnapshot.val().localId
-              )
-            });
-
-            if (existingPaths.length) {
-              existingPaths.forEach(p => p.remove());
-            }
-          })
-
-          firebase.emojis().on("child_removed", (removedSnapshot: firebase.database.DataSnapshot) => {
-            const existingPaths = (paper.project.activeLayer.children as paper.Path[]).filter(p => {
-              return (
-                p.data.id === removedSnapshot.key || p.data.localId === removedSnapshot.val().localId
-              )
-            });
-
-            if (existingPaths.length) {
-              existingPaths.forEach(p => p.remove());
+            if (existingItems.length) {
+              existingItems.forEach(p => p.remove());
             }
           })
         })
+      })
     }
 
     return () => {
       firebase.drawings().off();
+
       if (paperTool.current) {
         paperTool.current.remove()
       }
