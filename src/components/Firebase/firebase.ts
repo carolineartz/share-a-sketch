@@ -1,5 +1,5 @@
-import firebase from "firebase";
-import app from "firebase/app";
+
+import * as firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/analytics';
 
@@ -29,7 +29,7 @@ class Firebase {
       firebase.app()
     }
 
-    this.db = app.database();
+    this.db = firebase.database();
   }
   // *** Connection API ***
 
