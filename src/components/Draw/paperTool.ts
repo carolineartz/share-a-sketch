@@ -5,14 +5,14 @@ import { FirebaseHelper } from "./firebaseHelper";
 import { DrawSettingsContext } from ".";
 import { DesignColor } from "@components/App/theme";
 import { LocalPaperItem } from "./localPaperItem";
-import { EmojiItem } from "./context";
+import { EmojiData } from 'emoji-mart'
 
 export type LocalState = {
   tool: DrawSettingsContext.DrawTool
   size: number
   color: DesignColor
   shape: DrawSettingsContext.DrawShape
-  emoji: EmojiItem
+  emoji: EmojiData
 }
 
 export class PaperTool extends paper.Tool {

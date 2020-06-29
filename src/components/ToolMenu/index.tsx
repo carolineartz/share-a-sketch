@@ -68,7 +68,7 @@ const StyledToolMenu = styled(Box)<StyledToolMenuProps>`
   position: relative;
   top: ${props => (props.short ? '0' : '10vh')};
   z-index: 1;
-  left: ${props => (props.visible ? 0 : props.short && props.narrow ? "-38px" : props.narrow || props.short || props.medium ? "-49px" : "-73px")};
+  left: ${props => (props.visible ? 0 : props.short && props.narrow ? "-38px" : props.narrow || props.short || props.medium ? "-49px" : "-60px")};
 
   div {
     div {

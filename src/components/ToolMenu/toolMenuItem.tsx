@@ -2,14 +2,14 @@ import * as React from "react"
 import "styled-components/macro"
 
 import { useMediaQuery } from 'react-responsive'
-import { Button, ResponsiveContext, Drop } from "grommet"
+import { Button, ResponsiveContext, Drop, Image } from "grommet"
 
 import { IconProps } from "grommet-icons"
 import { ToolMenuContext } from "./"
 
 type ToolMenuItemProps = {
   title: string
-  icon: {
+  icon: string | {
     icon: React.ComponentType<IconProps & React.SVGProps<SVGSVGElement>>
     color?: string
     activeColor?: string
@@ -68,12 +68,16 @@ export const ToolMenuItem = ({ onSelect, isActive, icon, title, children, isSele
         css={`
           text-align: center;
           width: 100%;
+          padding: 5px;
+          min-height: 36px;
         `}
         title={title}
+        plain
         hoverIndicator
         active={isActive}
         ref={menuItemRef}
-        icon={
+        label={typeof icon === "string" ? <Image src={icon} width={isShort || isNarrow ? 16 : isMediumHeight ? 24 : 48} /> : undefined}
+        icon={ typeof icon === "string" ? undefined :
           <icon.icon
             size={isShort ? "small" : isNarrow || isMediumHeight ? "medium" : "large"}
             color={icon.plain ? "plain" : isActive ? icon.activeColor || "white" : icon.color || "text"}

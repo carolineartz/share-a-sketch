@@ -14,6 +14,7 @@ import "styled-components/macro"
 import 'emoji-mart/css/emoji-mart.css'
 
 import { Picker, EmojiData } from 'emoji-mart'
+import { emojiSrc } from "./utils"
 
 const HiddenTextInput = TextInput as any
 
@@ -52,7 +53,7 @@ const ColorMenuItem = () => {
 
   return (
     <ToolMenuItem
-      title="Draw Tools: Select Shape"
+      title="Draw Tools: Select Color"
       icon={{
         icon: ColorDrop,
         color: color as string
@@ -154,7 +155,7 @@ const TextMenuItem = () => {
 }
 
 const EmojiMenuItem = () => {
-  const { setEmoji, tool, setTool } = DrawSettingsContext.useDrawSettings()
+  const { setEmoji, tool, setTool, emoji } = DrawSettingsContext.useDrawSettings()
   const screenWidth = React.useContext(ResponsiveContext)
   const { displayMode, setToolMenuDisplay, toolMenuDisplay } = ToolMenuContext.useToolMenuDisplay()!
   const [selected, setSelected] = React.useState<boolean>(false)
@@ -167,12 +168,8 @@ const EmojiMenuItem = () => {
 
   return (
     <ToolMenuItem
-      title="Draw Tools: Select Shape"
-      icon={{
-        icon: SmileyEmoji,
-        color: "plain",
-        plain: true
-      }}
+      title="Draw Tools: Select Emoji"
+      icon={emojiSrc((emoji as any).unified)}
       onSelect={() => {
         setTool("emoji")
         setSelected(true)

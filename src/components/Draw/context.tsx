@@ -5,8 +5,6 @@ import { EmojiData } from 'emoji-mart'
 export type DrawTool = "erase" | "paint" | "shape" | "text" | "emoji"
 export type DrawShape = "circle" | "square" | "star"
 
-export type EmojiItem = string | EmojiData
-
 export type DrawSettingsContextType = {
   isActive: boolean
   setActive: (active: boolean) => void
@@ -18,8 +16,19 @@ export type DrawSettingsContextType = {
   setSize: (size: number) => void,
   color: DesignColor
   setColor: (color: DesignColor) => void
-  emoji: EmojiItem
-  setEmoji: (emoji: EmojiItem) => void
+  emoji: EmojiData
+  setEmoji: (emoji: EmojiData) => void
+}
+
+const defaultEmoji: EmojiData = {
+  colons: ":grin:",
+  emoticons: [],
+  id: "grin",
+  name: "Grinning Face with Smiling Eyes",
+  native: "😁",
+  short_names: ["grin"],
+  skin: null,
+  unified: "1f601"
 }
 
 export const DrawSettingsContext = React.createContext<DrawSettingsContextType>({
@@ -33,7 +42,7 @@ export const DrawSettingsContext = React.createContext<DrawSettingsContextType>(
   setSize: _size => {},
   color: "#4291b8",
   setColor: _color => { },
-  emoji: "smiley",
+  emoji: defaultEmoji,
   setEmoji: _emoji => {}
 })
 
@@ -46,7 +55,7 @@ export const Provider = ({ children }: Props): JSX.Element => {
   const [size, setSize] = React.useState<number>(8)
   const [shape, setShape] = React.useState<DrawShape>("circle")
   const [color, setColor] = React.useState<DesignColor>("#4291b8")
-  const [emoji, setEmoji] = React.useState<EmojiItem>("smiley")
+  const [emoji, setEmoji] = React.useState<EmojiData>(defaultEmoji)
   const [isActive, setActive] = React.useState<boolean>(false)
 
   return (
