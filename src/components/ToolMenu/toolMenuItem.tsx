@@ -5,6 +5,7 @@ import { useMediaQuery } from 'react-responsive'
 import { Button, ResponsiveContext, Drop } from "grommet"
 
 import { IconProps } from "grommet-icons"
+import { ToolMenuContext } from "./"
 
 type ToolMenuItemProps = {
   title: string
@@ -18,29 +19,43 @@ type ToolMenuItemProps = {
 
 type ToolMenuToolSelectItemProps = ToolMenuItemProps & {
   onSelect: () => void
-  isActive: boolean
-  subMenu?: {
-    show: boolean
-    setShow: (show: boolean) => void
-  }
+  onDeselect?: () => void
+  isActive: boolean // highlighted
+  isSelected: boolean // in use
   children?: React.ReactNode
 }
 
-export const ToolMenuItem = ({ onSelect, isActive, icon, title, subMenu, children }: ToolMenuToolSelectItemProps) => {
+export const ToolMenuItem = ({ onSelect, isActive, icon, title, children, isSelected, onDeselect }: ToolMenuToolSelectItemProps) => {
   const screenWidth = React.useContext(ResponsiveContext)
   const isShort = useMediaQuery({ query: '(max-device-height: 450px)' })
   const isNarrow = screenWidth === "small"
 
-  const menuItemRef =  React.useRef<HTMLButtonElement>(null)
+  const { toolMenuDisplay, setToolMenuDisplay, displayMode } = ToolMenuContext.useToolMenuDisplay()!
+
+  const menuItemRef = React.useRef<HTMLButtonElement>(null)
+
+  const resetMenuDisplay = function() {
+    if (displayMode === "autohide") {
+      setToolMenuDisplay("minimize")
+    } else {
+      setToolMenuDisplay("maximize")
+    }
+    onDeselect && onDeselect()
+  }
 
   return (
     <>
       <Button
         key={`tool-menu-item-${title}`}
         onClick={() => {
-          if (subMenu) {
-            subMenu.setShow(true)
+          setToolMenuDisplay("maximize") // clear any submenus open?
+
+          if (children) {
             onSelect()
+            setToolMenuDisplay("submenu")
+          } else if (displayMode === "autohide") {
+            onSelect()
+            setToolMenuDisplay("minimize")
           } else {
             onSelect()
           }
@@ -60,15 +75,15 @@ export const ToolMenuItem = ({ onSelect, isActive, icon, title, subMenu, childre
           />
         }
       />
-      {subMenu && subMenu.show && menuItemRef && menuItemRef.current &&
+      {toolMenuDisplay === "submenu" && isSelected && menuItemRef && menuItemRef.current &&
         <Drop
           key={`tool-menu-item-${title}-submenu`}
           align={{ top: "top", left: "right" }}
           target={menuItemRef.current}
-          onClickOutside={() => subMenu.setShow(false)}
-          onEsc={() => subMenu.setShow(false)}
+          onClickOutside={resetMenuDisplay}
+          onEsc={resetMenuDisplay}
         >
-          { children }
+          {children}
         </Drop>
       }
     </>

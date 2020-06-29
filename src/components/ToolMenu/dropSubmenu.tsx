@@ -1,8 +1,9 @@
 import * as React from "react"
 import { Box, Button } from "grommet"
 import { IconProps } from "grommet-icons"
+// import { useDismissTools } from "@components/ToolMenu"
 
-export type DropOption<T> = {
+export type Option<T> = {
   value: T
   icon: {
     icon: React.ComponentType <IconProps & React.SVGProps <SVGSVGElement>>
@@ -10,21 +11,26 @@ export type DropOption<T> = {
   }
 }
 
-export type DropSelectProps<T> = {
-  options: DropOption<T>[]
+export type SelectProps<T> = {
+  options: Option<T>[]
   value: T
   onClick: (value: T) => void
 }
 
-export function DropMenu<T>({ options, value, onClick }: DropSelectProps<T>): JSX.Element {
+export function Menu<T>({ options, value, onClick }: SelectProps<T>): JSX.Element {
+  // const { setToolsOpen, displayMode } = useDismissTools()
+
   return (
     <Box direction="row" flex={false}>
-      {options.map((option: DropOption<T>, i: number) => (
+      {options.map((option: Option<T>, i: number) => (
         <Button
           key={`${value}-${i}`}
           icon={<option.icon.icon color={option.icon.color} />}
           active={value === option.value}
-          onClick={() => onClick(option.value)}
+          onClick={() => {
+            // if (displayMode === "")
+            onClick(option.value)
+          }}
         />
       ))}
     </Box>

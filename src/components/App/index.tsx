@@ -10,6 +10,8 @@ import { Nav } from "./nav"
 import { CursorStyle } from './cursors';
 import { DesignView } from "~/react-app-env"
 
+import { ToolMenuContext } from "@components/ToolMenu"
+
 import ShapeView, { ShapeSettingsContext } from "@components/Shapes"
 import DrawView, { DrawSettingsContext } from "@components/Draw"
 
@@ -18,16 +20,18 @@ const App = (): JSX.Element => {
 
   return (
     <Grommet full theme={customTheme}>
-      <CursorStyle />
-      <GlobalStyle />
-      <ShapeSettingsContext.Provider>
-        <DrawSettingsContext.Provider>
-          {view === "draw" && <DrawView /> }
-          {view === "shapes" && <ShapeView />}
-          <Nav view={view} setView={setView} />
-          <ConnectionStatus />
-        </DrawSettingsContext.Provider>
-      </ShapeSettingsContext.Provider>
+      <ToolMenuContext.Provider>
+        <CursorStyle />
+        <GlobalStyle />
+        <ShapeSettingsContext.Provider>
+          <DrawSettingsContext.Provider>
+            {view === "draw" && <DrawView /> }
+            {view === "shapes" && <ShapeView />}
+            <Nav view={view} setView={setView} />
+            <ConnectionStatus />
+          </DrawSettingsContext.Provider>
+        </ShapeSettingsContext.Provider>
+      </ToolMenuContext.Provider>
     </Grommet>
   )
 }

@@ -1,31 +1,29 @@
 import * as React from "react"
-import { Button, ResponsiveContext, Box, Text, Heading } from "grommet"
-import { Cycle, ClearOption, IconProps } from "grommet-icons"
+import {  ResponsiveContext, Box, Text, Heading } from "grommet"
+import { Cycle, ClearOption } from "grommet-icons"
 import * as ShapeSettingsContext from "./context"
 import { ToolMenu, ToolMenuItem } from "@components/ToolMenu"
 import Info, { Shortcut, Shortcuts } from "@components/Info"
 
+
 const ShapeTools = (): JSX.Element => {
   const { mode, setMode } = ShapeSettingsContext.useShapeSettings()
   const screenWidth = React.useContext(ResponsiveContext)
-  const iconSize = screenWidth === "small" ? "medium" : "large"
 
   return (
     <ToolMenu size={screenWidth === "small" ? "small" : "medium"}>
       <ToolMenuItem
         title="Rotate Shape"
-        icon={{
-          icon: Cycle
-        }}
+        icon={{ icon: Cycle }}
         onSelect={() => setMode("rotate")}
+        isSelected={mode === "rotate"}
         isActive={mode === "rotate"}
       />
       <ToolMenuItem
         title="Color Shape"
-        icon={{
-          icon: ClearOption
-        }}
+        icon={{ icon: ClearOption }}
         onSelect={() => setMode("color")}
+        isSelected={mode === "color"}
         isActive={mode === "color"}
       />
       <Info>

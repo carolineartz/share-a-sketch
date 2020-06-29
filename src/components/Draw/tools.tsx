@@ -2,10 +2,8 @@ import * as React from "react"
 import { useMediaQuery } from 'react-responsive'
 
 import { Edit, Erase, Star, StopFill } from "grommet-icons"
-import { Drop, Button, ResponsiveContext, RangeInput, Box, ThemeContext, Heading, Text, TextInput } from "grommet"
-import { normalizeColor } from "grommet/utils"
-import { DropMenu, DropOption, DropSelectProps } from "@components/dropMenu"
-import { ToolMenu, ToolMenuItem } from "@components/ToolMenu"
+import { ResponsiveContext, RangeInput, Box, Heading, Text, TextInput } from "grommet"
+import { ToolMenu, ToolMenuItem, DropSubmenu, ToolMenuContext } from "@components/ToolMenu"
 import { ColorDrop, ShapeCircle, Ruler, Font, SmileyEmoji } from "@components/icon"
 import * as DrawSettingsContext from "@components/Draw/context"
 import { DesignColor, dark } from "@components/App/theme"
@@ -41,12 +39,16 @@ const DrawTools = (): JSX.Element => {
 
 const ShapeMenuItem = () => {
   const { tool, setTool, shape, color, setShape } = DrawSettingsContext.useDrawSettings()
+  const { displayMode, setToolMenuDisplay, toolMenuDisplay } = ToolMenuContext.useToolMenuDisplay()!
+  const [selected, setSelected] = React.useState<boolean>(false)
 
   const shapes: DrawSettingsContext.DrawShape[] = ["circle", "square", "star"]
-  const [showShapeOptions, setShowShapeOptions] = React.useState<boolean>(false)
-  const screenWidth = React.useContext(ResponsiveContext)
-  const isShort = useMediaQuery({ query: '(max-device-height: 450px)' })
-  const isNarrow = screenWidth === "small"
+
+  React.useEffect(() => {
+    if (toolMenuDisplay === "maximize") {
+      setSelected(false)
+    }
+  }, [toolMenuDisplay])
 
   return (
     <ToolMenuItem
@@ -56,23 +58,24 @@ const ShapeMenuItem = () => {
         color: color as string,
         activeColor: color as string
       }}
-      onSelect={() => setTool("shape")}
-      isActive={tool === "shape"}
-      subMenu={{
-        show: showShapeOptions,
-        setShow: setShowShapeOptions
+      onSelect={() => {
+        setTool("shape")
+        setSelected(true)
       }}
+      isSelected={tool === "shape" && selected}
+      isActive={tool === "shape"}
     >
-      <DropMenu
+      <DropSubmenu.Menu
         onClick={(s: DrawSettingsContext.DrawShape) => {
           setShape(s)
-          setShowShapeOptions(false)
+          setToolMenuDisplay(displayMode === "autohide" ? "minimize" : "maximize")
+          setSelected(false)
         }}
         value={shape}
         options={shapes.map((s: DrawSettingsContext.DrawShape) => ({
           value: s,
           icon: {
-            icon: shape === "circle" ? ShapeCircle : shape === "square" ? StopFill : Star,
+            icon: s === "circle" ? ShapeCircle : s === "square" ? StopFill : Star,
             color
           }
         }))}
@@ -83,9 +86,16 @@ const ShapeMenuItem = () => {
 
 const ColorMenuItem = () => {
   const { color, setColor } = DrawSettingsContext.useDrawSettings()
+  const { displayMode, setToolMenuDisplay, toolMenuDisplay } = ToolMenuContext.useToolMenuDisplay()!
+  const [selected, setSelected] = React.useState<boolean>(false)
 
   const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
-  const [showColorOptions, setShowColorOptions] = React.useState<boolean>(false)
+
+  React.useEffect(() => {
+    if (toolMenuDisplay === "maximize") {
+      setSelected(false)
+    }
+  }, [toolMenuDisplay])
 
   return (
     <ToolMenuItem
@@ -94,17 +104,15 @@ const ColorMenuItem = () => {
         icon: ColorDrop,
         color: color as string
       }}
-      onSelect={() => setShowColorOptions(true)}
+      onSelect={() => setSelected(true)}
+      onDeselect={() => setSelected(false)}
+      isSelected={selected}
       isActive={false}
-      subMenu={{
-        show: showColorOptions,
-        setShow: setShowColorOptions
-      }}
     >
-      <DropMenu
+      <DropSubmenu.Menu
         onClick={(c: DesignColor) => {
           setColor(c)
-          setShowColorOptions(false)
+          setToolMenuDisplay(displayMode === "autohide" ? "minimize" : "maximize")
         }}
         value={color}
         options={colors.map((c: DesignColor) => ({
@@ -128,11 +136,10 @@ const TextMenuItem = () => {
       <ToolMenuItem
         title="Draw Tools: Text Tool"
         key="draw-tools-text-tool-item"
-        icon={{
-          icon: Font
-        }}
+        icon={{icon: Font}}
         onSelect={() => setTool("text")}
         isActive={tool === "text"}
+        isSelected={tool === "text"}
       />
       <Box key="draw-tools-text-tool-hidden-text-input" css="z-index: -1; position: absolute; width: 0; height: 0; opacity: 0; overflow: hidden;">
         <HiddenTextInput id="draw-tools-hidden-input" ref={textInputRef} />
@@ -144,7 +151,14 @@ const TextMenuItem = () => {
 const EmojiMenuItem = () => {
   const { setEmoji, tool, setTool } = DrawSettingsContext.useDrawSettings()
   const screenWidth = React.useContext(ResponsiveContext)
-  const [showEmojiOptions, setShowEmojiOptions] = React.useState<boolean>(false)
+  const { displayMode, setToolMenuDisplay, toolMenuDisplay } = ToolMenuContext.useToolMenuDisplay()!
+  const [selected, setSelected] = React.useState<boolean>(false)
+
+  React.useEffect(() => {
+    if (toolMenuDisplay === "maximize") {
+      setSelected(false)
+    }
+  }, [toolMenuDisplay])
 
   return (
     <ToolMenuItem
@@ -154,12 +168,12 @@ const EmojiMenuItem = () => {
         color: "plain",
         plain: true
       }}
-      onSelect={() => setTool("emoji")}
-      isActive={tool === "emoji"}
-      subMenu={{
-        show: showEmojiOptions,
-        setShow: setShowEmojiOptions
+      onSelect={() => {
+        setTool("emoji")
+        setSelected(true)
       }}
+      isActive={tool === "emoji"}
+      isSelected={tool === "emoji" && selected}
     >
       <Picker
         set="twitter"
@@ -169,11 +183,11 @@ const EmojiMenuItem = () => {
         emojiSize={32}
         onClick={(clickedEmoji: EmojiData) => {
           setEmoji(clickedEmoji)
-          setShowEmojiOptions(false)
+          setToolMenuDisplay(displayMode === "autohide" ? "minimize" : "maximize")
         }}
         onSelect={(selectedEmoji: EmojiData) => {
           setEmoji(selectedEmoji)
-          setShowEmojiOptions(false)
+          setToolMenuDisplay(displayMode === "autohide" ? "minimize" : "maximize")
         }}
         emojiTooltip
       />
@@ -183,26 +197,32 @@ const EmojiMenuItem = () => {
 
 const SizeMenuItem = () => {
   const { setSize, size } = DrawSettingsContext.useDrawSettings()
-  const screenWidth = React.useContext(ResponsiveContext)
-  const [showSizeOptions, setShowSizeOptions] = React.useState<boolean>(false)
+  const { toolMenuDisplay } = ToolMenuContext.useToolMenuDisplay()!
+  const [selected, setSelected] = React.useState<boolean>(false)
+
+  React.useEffect(() => {
+    if (toolMenuDisplay === "maximize") {
+      setSelected(false)
+    }
+  }, [toolMenuDisplay])
 
   return (
     <ToolMenuItem
       title="Draw Tools: Set Size"
       icon={{ icon: Ruler, color: dark }}
-      onSelect={() => setShowSizeOptions(true)}
+      onSelect={() => setSelected(true)}
+      onDeselect={() => setSelected(false)}
       isActive={false}
-      subMenu={{
-        show: showSizeOptions,
-        setShow: setShowSizeOptions
-      }}
+      isSelected={selected}
     >
       <Box pad={{vertical: "medium", horizontal: "small"}}>
         <RangeInput
           value={size}
           min={3}
           max={60}
-          onChange={(event: any) => setSize(event.target.value)}
+          onChange={(event: any) => {
+            setSize(event.target.value)
+          }}
         />
       </Box>
     </ToolMenuItem>
@@ -217,6 +237,7 @@ const PaintMenuItem = () => {
       title="Draw Tools: Paint Tool"
       icon={{ icon: Edit }}
       onSelect={() => setTool("paint")}
+      isSelected={tool === "paint"}
       isActive={tool === "paint"}
     />
   )
@@ -230,6 +251,7 @@ const EraseMenuItem = () => {
       title="Draw Tools: Erase Tool"
       icon={{ icon: Erase }}
       onSelect={() => setTool("erase")}
+      isSelected={tool === "erase"}
       isActive={tool === "erase"}
     />
   )
