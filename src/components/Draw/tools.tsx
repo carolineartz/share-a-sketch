@@ -57,7 +57,10 @@ const ColorMenuItem = () => {
         icon: ColorDrop,
         color: color as string
       }}
-      onSelect={() => setSelected(true)}
+      onSelect={() => {
+        setToolMenuDisplay("maximize")
+        setSelected(true)
+      }}
       onDeselect={() => setSelected(false)}
       isSelected={selected}
       isActive={false}
@@ -65,7 +68,7 @@ const ColorMenuItem = () => {
       <DropSubmenu.Menu
         onClick={(c: DesignColor) => {
           setColor(c)
-          setSelected(false)
+          // setSelected(false)
           setToolMenuDisplay(displayMode === "autohide" ? "minimize" : "maximize")
         }}
         value={color}
@@ -106,6 +109,7 @@ const ShapeMenuItem = () => {
         setTool("shape")
         setSelected(true)
       }}
+      onDeselect={() => setSelected(false)}
       isSelected={tool === "shape" && selected}
       isActive={tool === "shape"}
     >
@@ -173,6 +177,7 @@ const EmojiMenuItem = () => {
         setTool("emoji")
         setSelected(true)
       }}
+      onDeselect={() => setSelected(false)}
       isActive={tool === "emoji"}
       isSelected={tool === "emoji" && selected}
     >
