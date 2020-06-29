@@ -27,7 +27,12 @@ type ToolMenuToolSelectItemProps = ToolMenuItemProps & {
 
 export const ToolMenuItem = ({ onSelect, isActive, icon, title, children, isSelected, onDeselect }: ToolMenuToolSelectItemProps) => {
   const screenWidth = React.useContext(ResponsiveContext)
-  const isShort = useMediaQuery({ query: '(max-device-height: 450px)' })
+  const isShortDesktop = useMediaQuery({ query: '(max-height: 450px)' })
+  const isShortMobile = useMediaQuery({ query: '(max-device-height: 450px)' })
+  const isMediumHeightDesktop = useMediaQuery({ query: '(max-height: 640px)' })
+  const isMediumHeightMobile = useMediaQuery({ query: '(max-device-height: 640px)' })
+  const isMediumHeight = isMediumHeightDesktop || isMediumHeightMobile
+  const isShort = isShortDesktop || isShortMobile
   const isNarrow = screenWidth === "small"
 
   const { toolMenuDisplay, setToolMenuDisplay, displayMode } = ToolMenuContext.useToolMenuDisplay()!
@@ -70,7 +75,7 @@ export const ToolMenuItem = ({ onSelect, isActive, icon, title, children, isSele
         ref={menuItemRef}
         icon={
           <icon.icon
-            size={isShort ? "small" : isNarrow ? "medium" : "large"}
+            size={isShort ? "small" : isNarrow || isMediumHeight ? "medium" : "large"}
             color={icon.plain ? "plain" : isActive ? icon.activeColor || "white" : icon.color || "text"}
           />
         }

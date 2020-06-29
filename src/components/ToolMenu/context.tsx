@@ -17,7 +17,7 @@ type Props = {
 
 export const Provider = ({ children }: Props) => {
   const [toolMenuDisplay, setToolMenuDisplay] = React.useState<ToolMenuDisplay>("maximize");
-  const [displayMode, setDisplayMode] = React.useState<ToolMenuDisplayMode>("show")
+  const [displayMode, setDisplayMode] = React.useState<ToolMenuDisplayMode>("autohide")
 
   return (
     <ToolMenuDisplayContext.Provider value={{

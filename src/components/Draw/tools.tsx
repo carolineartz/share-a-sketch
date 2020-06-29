@@ -37,6 +37,50 @@ const DrawTools = (): JSX.Element => {
   )
 }
 
+const ColorMenuItem = () => {
+  const { color, setColor } = DrawSettingsContext.useDrawSettings()
+  const { displayMode, setToolMenuDisplay, toolMenuDisplay } = ToolMenuContext.useToolMenuDisplay()!
+  const [selected, setSelected] = React.useState<boolean>(false)
+
+  const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
+
+  React.useEffect(() => {
+    if (toolMenuDisplay === "maximize") {
+      setSelected(false)
+    }
+  }, [toolMenuDisplay])
+
+  return (
+    <ToolMenuItem
+      title="Draw Tools: Select Shape"
+      icon={{
+        icon: ColorDrop,
+        color: color as string
+      }}
+      onSelect={() => setSelected(true)}
+      onDeselect={() => setSelected(false)}
+      isSelected={selected}
+      isActive={false}
+    >
+      <DropSubmenu.Menu
+        onClick={(c: DesignColor) => {
+          setColor(c)
+          setSelected(false)
+          setToolMenuDisplay(displayMode === "autohide" ? "minimize" : "maximize")
+        }}
+        value={color}
+        options={colors.map((c: DesignColor) => ({
+          value: c,
+          icon: {
+            icon: ShapeCircle,
+            color: c
+          }
+        }))}
+      />
+    </ToolMenuItem>
+  )
+}
+
 const ShapeMenuItem = () => {
   const { tool, setTool, shape, color, setShape } = DrawSettingsContext.useDrawSettings()
   const { displayMode, setToolMenuDisplay, toolMenuDisplay } = ToolMenuContext.useToolMenuDisplay()!
@@ -77,49 +121,6 @@ const ShapeMenuItem = () => {
           icon: {
             icon: s === "circle" ? ShapeCircle : s === "square" ? StopFill : Star,
             color
-          }
-        }))}
-      />
-    </ToolMenuItem>
-  )
-}
-
-const ColorMenuItem = () => {
-  const { color, setColor } = DrawSettingsContext.useDrawSettings()
-  const { displayMode, setToolMenuDisplay, toolMenuDisplay } = ToolMenuContext.useToolMenuDisplay()!
-  const [selected, setSelected] = React.useState<boolean>(false)
-
-  const colors: DesignColor[] = ["#42b8a4", "#4291b8", "#4256b8", "#6942b8", "#a442b8"]
-
-  React.useEffect(() => {
-    if (toolMenuDisplay === "maximize") {
-      setSelected(false)
-    }
-  }, [toolMenuDisplay])
-
-  return (
-    <ToolMenuItem
-      title="Draw Tools: Select Shape"
-      icon={{
-        icon: ColorDrop,
-        color: color as string
-      }}
-      onSelect={() => setSelected(true)}
-      onDeselect={() => setSelected(false)}
-      isSelected={selected}
-      isActive={false}
-    >
-      <DropSubmenu.Menu
-        onClick={(c: DesignColor) => {
-          setColor(c)
-          setToolMenuDisplay(displayMode === "autohide" ? "minimize" : "maximize")
-        }}
-        value={color}
-        options={colors.map((c: DesignColor) => ({
-          value: c,
-          icon: {
-            icon: ShapeCircle,
-            color: c
           }
         }))}
       />
