@@ -4,11 +4,13 @@ import { useMediaQuery } from 'react-responsive'
 import "styled-components/macro"
 import styled from "styled-components"
 
-import { Box, Nav, BoxProps, Button, ResponsiveContext } from "grommet"
-import { FormPrevious, FormNext } from "grommet-icons"
+import { Box, Nav, BoxProps, Button, ResponsiveContext, Drop } from "grommet"
+import { FormPrevious, FormNext, IconProps } from "grommet-icons"
+
+export { ToolMenuItem } from "./toolMenuItem"
 
 type ToolMenuProps = {
-  children: React.ReactChild
+  children: React.ReactNode
   size: "small" | "medium"
 }
 
@@ -28,7 +30,7 @@ export const ToolMenu = ({ children, size }: ToolMenuProps): JSX.Element => {
         round={{ size: "xsmall", corner: "right" }}
         elevation="large"
       >
-        <Nav>{children}</Nav>
+        <Box as="nav">{ children }</Box>
         <Button
           hoverIndicator
           css={`
