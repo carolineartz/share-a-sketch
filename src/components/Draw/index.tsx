@@ -8,13 +8,17 @@ import * as DrawSettingsContext from "./context"
 import DrawTools from "./tools"
 import { usePaperJs } from "./usePaperjs"
 import { withFirebase, WithFirebaseProps } from '../Firebase';
+import { ToolMenuContext } from "@components/ToolMenu"
 
 export { DrawSettingsContext }
 
 const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const { setTool, color, tool, setSize, size } = DrawSettingsContext.useDrawSettings()
+   const { toolMenuDisplay } = ToolMenuContext.useToolMenuDisplay()!
   const { setCanvas, width, height } = usePaperJs({ firebase })
+
+  const emojiMenuOpen = toolMenuDisplay === "submenu" && tool === "emoji"
 
   React.useEffect(() => {
     const canvas = canvasRef.current
@@ -47,7 +51,8 @@ const DrawView = ({ firebase }: WithFirebaseProps): JSX.Element => {
       }
     }
 
-    else if (tool !== "text") {
+    // allow using the keyboard normally for searching emojis
+    else if (!emojiMenuOpen && tool !== "text") {
       switch (evt.key) {
         case "e":
           setTool("erase")
