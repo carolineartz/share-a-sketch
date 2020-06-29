@@ -32,7 +32,7 @@ const Info = ({ children }: InfoProps): JSX.Element => {
           onClickOutside={() => setShowInfo(false)}
           onEsc={() => setShowInfo(false)}
         >
-          <Box fill background="white" pad={{bottom: "medium", horizontal: "medium"}} css="position: relative">
+          <Box fill background="white" pad={{horizontal: "medium"}} css="position: relative">
             <Box css="position: absolute; top: 1em; right: 1em;">
               <Button plain icon={<Close color="text" />} onClick={() => setShowInfo(false)} />
             </Box>

@@ -264,32 +264,43 @@ const EraseMenuItem = () => {
 }
 
 const InfoItem = () => {
+  const screenWidth = React.useContext(ResponsiveContext)
+  const isShortMobile = useMediaQuery({ query: '(max-device-height: 450px)' })
+  const isShortDesktop = useMediaQuery({ query: '(max-height: 450px)' })
+  const isShort = isShortMobile || isShortDesktop
+  const isMediumHeightDesktop = useMediaQuery({ minHeight: 451, maxHeight: 640 })
+  const isMediumHeightMobile = useMediaQuery({ minDeviceHeight: 451, maxDeviceHeight: 640 })
+  const isMediumHeight = isMediumHeightDesktop || isMediumHeightMobile
+  const isNarrow = screenWidth === "small"
+
+  const textSize = isShort || isNarrow ? "small" : "medium"
+
   return (
     <Info>
       <Box>
-        <Heading level="3">Draw!</Heading>
+        <Heading level="3" margin={{ vertical: isShort || isNarrow ? "xsmall" : "small" }}>Draw!</Heading>
         <Text>Doodle designs with the pen or stamp with shapes. Adjust settings for various sizes and colors.</Text>
-        <Heading level="4">Shortcuts</Heading>
+        <Heading level="4" margin={{ vertical: isShort || isNarrow ? "xsmall" : "small" }}>Shortcuts</Heading>
         <Shortcuts>
           <Shortcut
             keys={["p", 'd']}
-            description={<Box direction="row" gap="small"><Text>Switch to paint mode</Text><Edit color="text" /></Box>}
+            description={<Box direction="row" align="center" gap="small"><Text size={textSize}>Switch to paint mode</Text><Edit color="text" /></Box>}
           />
           <Shortcut
             keys={["s"]}
-            description={<Box direction="row" gap="small"><Text>Switch to stamp/shape mode</Text><Star color="text" /></Box>}
+            description={<Box direction="row" align="center" gap="small"><Text size={textSize}>Switch to stamp/shape mode</Text><Star color="text" /></Box>}
           />
           <Shortcut
             keys={["e"]}
-            description={<Box direction="row" gap="small"><Text>Switch to erase mode</Text><Erase color="text" /></Box>}
+            description={<Box direction="row" align="center" gap="small"><Text size={textSize}>Switch to erase mode</Text><Erase color="text" /></Box>}
           />
           <Shortcut
             keys={["+"]}
-            description={<Text>Increase size</Text>}
+            description={<Text size={textSize}>Increase size</Text>}
           />
           <Shortcut
             keys={["-"]}
-            description={<Text>Decrease size</Text>}
+            description={<Text size={textSize}>Decrease size</Text>}
           />
         </Shortcuts>
       </Box>
